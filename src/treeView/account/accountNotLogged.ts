@@ -1,7 +1,7 @@
 import vscode from 'vscode';
-import { TreeItem } from "./base";
-import { initOctokit } from "../Octokit/octokit";
-import { openOAuthWebPage, copyOAuthLinkToClipboard } from '../auth/oauth';
+import { TreeItem } from "../base";
+import { initOctokit } from "../../octokit/octokit";
+import { openOAuthWebPage, copyOAuthLinkToClipboard } from '../../auth/oauth';
 
 export function activateNotLogged() {
   // Open OAuth web page

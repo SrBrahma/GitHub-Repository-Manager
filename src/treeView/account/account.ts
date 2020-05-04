@@ -1,6 +1,6 @@
 import vscode from 'vscode';
-import { TreeItem, BaseTreeDataProvider } from './base';
-import { user } from '../Octokit/User';
+import { TreeItem, BaseTreeDataProvider } from '../base';
+import { user } from '../../User/User';
 import { getLoggedTreeData, activateLogged } from './accountLogged';
 import { getNotLoggedTreeData, activateNotLogged } from './accountNotLogged';
 

@@ -1,15 +1,20 @@
 import vscode from 'vscode';
 
+
+
 interface CommandWithoutTitle extends Omit<vscode.Command, 'title'> {
   title?: string;
 }
+
+
 export interface TreeItemConstructor extends Omit<vscode.TreeItem, 'command'> {
-  label: string,
-  children?: TreeItem[],
+  label?: string,
+  children?: TreeItem[] | TreeItem,
 
   // You can provide a vscode.Command like object, or the command directly, as a string.
   command?: CommandWithoutTitle | string;
 }
+
 
 export class TreeItem extends vscode.TreeItem {
   children?: TreeItem[];
@@ -19,7 +24,7 @@ export class TreeItem extends vscode.TreeItem {
       vscode.TreeItemCollapsibleState.Expanded;
 
     super(label, collapsibleState);
-    this.children = children;
+    this.children = Array.isArray(children) ? children : [children];
 
     if (typeof command === 'string')
       this.command = { command: command, title: '' };
@@ -53,7 +58,7 @@ export abstract class BaseTreeDataProvider implements vscode.TreeDataProvider<Tr
     this._onDidChangeTreeData.fire();
   }
 
-  protected abstract makeData();
+  protected abstract makeData(): void;
 
 
   getTreeItem(element: TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {

@@ -1,7 +1,7 @@
 import vscode from 'vscode';
-import { TreeItem } from "./base";
-import { user } from "../Octokit/User";
-import { logoutAndForgetToken } from "../Octokit/octokit";
+import { TreeItem } from "../base";
+import { user } from "../../User/User";
+import { logoutAndForgetToken } from "../../octokit/octokit";
 
 export function activateLogged() {
   // Open user profile page

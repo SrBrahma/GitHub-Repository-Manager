@@ -21,9 +21,12 @@
 
 
 import vscode from 'vscode';
-import { TreeItem, BaseTreeDataProvider } from './base';
-import { Repository, repositories } from '../Octokit/Repository';
-import { cloneTo } from '../commands/cloneTo';
+import { BaseTreeDataProvider } from '../base';
+import { Repository, repositories } from '../../Repository/Repository';
+import { RepoItem } from './repoItem';
+import { getClonedTreeItem, activateClonedRepos } from './clonedRepos';
+import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
+import { uiCreateRepo } from '../../uiCommands/uiCreateRepo';
 
 
 export let repositoriesTreeDataProvider: TreeDataProvider;
@@ -34,11 +37,21 @@ export function activateTreeViewRepositories() {
   vscode.window.registerTreeDataProvider('githubRepoMgr.views.repositories',
     repositoriesTreeDataProvider);
 
-  // Clone repo to [open select repo location]. You must pass the repo as arg.
-  vscode.commands.registerCommand('githubRepoMgr.commands.auth.cloneTo',
-    (repo: Repository) => cloneTo(repo));
-}
+  // Access GitHub Web Page
+  vscode.commands.registerCommand('githubRepoMgr.commands.repos.openWebPage', ({ repo }: RepoItem) =>
+    vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(repo.htmlUrl)));
 
+  // Reload repos
+  vscode.commands.registerCommand('githubRepoMgr.commands.repos.reload', () =>
+    repositories.loadRepos());
+
+  // Create Repo
+  vscode.commands.registerCommand('githubRepoMgr.commands.repos.createRepo', () =>
+    uiCreateRepo());
+
+  activateClonedRepos();
+  activateNotClonedRepos();
+}
 
 
 // There is a TreeItem from vscode. Should I use it? But it would need a workaround to
@@ -50,22 +63,17 @@ class TreeDataProvider extends BaseTreeDataProvider {
   }
 
   protected makeData() {
-    this.data = repositories.map(repo => new TreeItem({
-      label: repo.name,
-      command: {
-        command: 'githubRepoMgr.commands.auth.cloneTo', arguments: [repo]
-      }
-    }));
+    const clonedRepos: Repository[] = [];
+    const notClonedRepos: Repository[] = [];
+
+    repositories.repos.forEach(repo => {
+      (repo.localPath ? clonedRepos : notClonedRepos).push(repo);
+    });
+
+    this.data = [getClonedTreeItem(clonedRepos), getNotClonedTreeItem(notClonedRepos)];
   }
 }
 
 
 
-// interface RepoItemConstructor extends TreeItemConstructor {
 
-// }
-// class RepoItem extends TreeItem {
-//   constructor({ label, children, command }: RepoItemConstructor) {
-//     super({ label, children, command });
-//   }
-// }

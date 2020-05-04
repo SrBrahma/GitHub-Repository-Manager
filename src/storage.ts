@@ -1,5 +1,5 @@
 import vscode from 'vscode';
-import { configs } from './configurations';
+import { configs } from './configs';
 // import fs
 
 export namespace storage {
@@ -26,7 +26,7 @@ export namespace storage {
   }
 
   // https://stackoverflow.com/a/57857305
-  function removeKey(key) {
+  function removeKey(key: string) {
     context.globalState.update(key, undefined);
   }
 
@@ -42,7 +42,7 @@ export namespace storage {
   }
 
   export function loadToken() {
-    return context.globalState.get(keys.token);
+    return context.globalState.get<string>(keys.token);
   }
 
   // Or could export removeKey and keys.

@@ -25,7 +25,10 @@
     "@octokit/core": "^2.5.0",
     "@octokit/oauth-app": "^1.1.0",
     "@octokit/rest": "^17.6.0",
+    "@types/mz": "^2.7.0",
+    "@types/rimraf": "^3.0.0",
     "express": "^4.17.1",
+    "mz": "^2.7.0",
     "rimraf": "^3.0.2"
   },
   "devDependencies": {
@@ -36,6 +39,7 @@
     "@typescript-eslint/parser": "^2.26.0",
     "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
+    "prettier": "^2.0.5",
     "typescript": "^3.8.3"
   },
   "engines": {
@@ -55,29 +59,16 @@
         "githubRepoMgr.saveToken": {
           "type": "boolean",
           "default": true,
-          "description": "Saves the token (OAuth or Personal access token) in a internal file. You shouldn't use this if your account has important repositories, as it isn't too hard to a malicious application or even another extension to retrieve the token. Remember you can delete a token of yours at any time in your GitHub settings web page."
+          "description": "Saves the token (OAuth or Personal access token) in an internal file. You must be careful while using this option, as malicious applications and extensions could retrieve the stored token and read and write to your repositories. Remember you can delete your Personal access token under GitHub > Settings > Developer settings > Personal access token and your OAuth under GitHub > Settings > Applications > Authorized OAuth Apps"
         }
       }
     },
-    "commands": [
-      {
-        "command": "githubRepoMgr.repos.openWebPage",
-        "title": "Open Repository Web Page in Browser"
-      }
-    ],
     "viewsContainers": {
       "activitybar": [
         {
           "id": "githubRepoMgr",
           "title": "GitHub Repository Loader",
-          "icon": "src/github-logo.svg"
-        }
-      ]
-    },
-    "menus": {
-      "view/item/context": [
-        {
-          "command": "githubRepoMgr.repos.openWebPage"
+          "icon": "src/logo.svg"
         }
       ]
     },
@@ -90,6 +81,100 @@
         {
           "id": "githubRepoMgr.views.repositories",
           "name": "Repositories"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "title": "Create Repository",
+        "command": "githubRepoMgr.commands.repos.createRepo",
+        "icon": "$(repo-create)"
+      },
+      {
+        "title": "Reload Repositories",
+        "command": "githubRepoMgr.commands.repos.reload",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "githubRepoMgr.commands.repos.openWebPage",
+        "title": "Open GitHub Page"
+      },
+      {
+        "command": "githubRepoMgr.commands.clonedRepos.open",
+        "title": "Open"
+      },
+      {
+        "command": "githubRepoMgr.commands.clonedRepos.openInNewWindow",
+        "title": "Open in New Window"
+      },
+      {
+        "command": "githubRepoMgr.commands.clonedRepos.addToWorkspace",
+        "title": "Add to Workspace"
+      },
+      {
+        "command": "githubRepoMgr.commands.clonedRepos.openContainingFolder",
+        "title": "Open Containing Folder"
+      },
+      {
+        "command": "githubRepoMgr.commands.clonedRepos.copyPath",
+        "title": "Copy Path"
+      },
+      {
+        "command": "githubRepoMgr.commands.notClonedRepos.cloneTo",
+        "title": "Clone to"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "githubRepoMgr.commands.repos.createRepo",
+          "when": "view == githubRepoMgr.views.repositories",
+          "group": "navigation"
+        },
+        {
+          "command": "githubRepoMgr.commands.repos.reload",
+          "when": "view == githubRepoMgr.views.repositories",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "githubRepoMgr.commands.repos.openWebPage",
+          "when": "viewItem == githubRepoMgr.context.clonedRepo",
+          "group": "9@0"
+        },
+        {
+          "command": "githubRepoMgr.commands.clonedRepos.open",
+          "when": "viewItem == githubRepoMgr.context.clonedRepo",
+          "group": "0@0"
+        },
+        {
+          "command": "githubRepoMgr.commands.clonedRepos.openInNewWindow",
+          "when": "viewItem == githubRepoMgr.context.clonedRepo",
+          "group": "0@1"
+        },
+        {
+          "command": "githubRepoMgr.commands.clonedRepos.addToWorkspace",
+          "when": "viewItem == githubRepoMgr.context.clonedRepo",
+          "group": "0@2"
+        },
+        {
+          "command": "githubRepoMgr.commands.clonedRepos.openContainingFolder",
+          "when": "viewItem == githubRepoMgr.context.clonedRepo",
+          "group": "1@0"
+        },
+        {
+          "command": "githubRepoMgr.commands.clonedRepos.copyPath",
+          "when": "viewItem == githubRepoMgr.context.clonedRepo",
+          "group": "1@1"
+        },
+        {
+          "command": "githubRepoMgr.commands.notClonedRepos.cloneTo",
+          "when": "viewItem == githubRepoMgr.context.notClonedRepo"
+        },
+        {
+          "command": "githubRepoMgr.commands.repos.openWebPage",
+          "when": "viewItem == githubRepoMgr.context.notClonedRepo"
         }
       ]
     }

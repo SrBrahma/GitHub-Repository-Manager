@@ -1,6 +1,6 @@
 import { workspace, window, Uri, commands } from 'vscode';
-import { Repository } from "../Octokit/Repository";
-import { cloneRepo } from "../Octokit/commands/cloneRepo";
+import { Repository, repositories } from "../Repository/Repository";
+import { cloneRepo } from "../octokit/commands/cloneRepo";
 import os from 'os';
 import path from 'path';
 
@@ -21,7 +21,7 @@ const openInNewWindowStr = 'Open in New Window';
 const addToWorkspaceStr = 'Add to Workspace';
 
 // TODO: Add cancel button
-export async function cloneTo(repo: Repository) {
+export async function uiCloneTo(repo: Repository) {
   // Took this dir path code from vscode git clone code.
   const config = workspace.getConfiguration('git');
   let defaultCloneDirectory = config.get<string>('defaultCloneDirectory') || os.homedir();
@@ -31,13 +31,18 @@ export async function cloneTo(repo: Repository) {
   if (labelRepoName.length >= 15)
     labelRepoName = `${labelRepoName.substr(0, 12)}...`;
 
-  const parentPath = (await window.showOpenDialog({
-    defaultUri: Uri.file(defaultCloneDirectory), // TODO: dont open in recent
+  const thenable = await window.showOpenDialog({
+    defaultUri: Uri.file(defaultCloneDirectory),
     openLabel: `Clone ${labelRepoName} here`,
     canSelectFiles: false,
     canSelectFolders: true,
     canSelectMany: false
-  }))[0].fsPath;
+  });
+
+  if (!thenable) // Cancel if quitted dialog
+    return;
+
+  const parentPath = thenable[0].fsPath;
 
   const repoPath = path.resolve(parentPath, repo.name);
   const uri = Uri.file(repoPath);
@@ -54,7 +59,8 @@ export async function cloneTo(repo: Repository) {
     return;
   }
 
-  // TODO: is this msg good?
+  repositories.loadRepos();
+
   const action = await window.showInformationMessage(`Cloned ${repo.name} to ${repoPath}!`,
     openStr, openInNewWindowStr, addToWorkspaceStr);
   switch (action) {

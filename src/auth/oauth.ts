@@ -1,20 +1,13 @@
-import {
-  oauthCallbackPort, authCallbackPath, srcPath, callbackPagePath
-} from '../consts';
-
+import { oauthCallbackPort, authCallbackPath, srcPath, callbackPagePath } from '../consts';
 import * as vscode from "vscode";
-import querystring from 'querystring';
 import express from 'express';
 import path from 'path';
-import { Octokit } from '@octokit/rest';
-import { initOctokit } from '../Octokit/octokit';
+import { initOctokit } from '../octokit/octokit';
 
 
 let expressApp: express.Express | null = null;
 
-// https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/
-const oauthUri = `https://micro-github.srbrahma.now.sh/api/login?scope=repo`;
-
+const oauthUri = `https://micro-github.srbrahma.now.sh/api/login`;
 
 /**
  * Also starts the server.

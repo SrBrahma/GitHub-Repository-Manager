@@ -25,8 +25,8 @@
 // After those two, the pulled repo don't have a remote (github link). So we add it.
 
 
-import { Repository } from "../Repository";
-import { exec } from './aux';
+import { Repository } from "../../Repository/Repository";
+import { exec } from 'mz/child_process';
 import path from 'path';
 import fs from 'fs';
 import { token } from "../octokit";
@@ -44,19 +44,25 @@ export async function cloneRepo(repo: Repository, parentPath: string) {
   if (fs.existsSync(repoPath))
     throw new Error(`There is already a directory named ${repo.name} in ${parentPath}!`);
 
-  // let execRtn: { stdout: string, stderr: string; };
   try {
     await exec(`git init ${repo.name}`,
       { cwd: parentPath });
-    await exec(`git pull https://${token}@github.com/${repo.ownerLogin}/${repo.name}.git master`,
-      { cwd: repoPath });
     await exec(`git remote add GitHub https://github.com/${repo.ownerLogin}/${repo.name}.git`,
       { cwd: repoPath });
+    await exec(`git pull https://${token}@github.com/${repo.ownerLogin}/${repo.name}.git master`,
+      { cwd: repoPath });
   }
-  catch (error) {
-    rimraf(repoPath);
-    console.error(error);
-    throw new Error(error);
 
+  catch (error) {
+    // This will happen if the repository never had a push. As we know it really exists, isn't a problem at all.
+    if ((error.message as string).includes("couldn't find remote ref master"))
+      return;
+
+    // Removes the repo dir if error. For some reason rimraf needs this empty callback.
+    rimraf(repoPath, () => { });
+
+    // Removes the token from the error message
+    const censoredMsg = (error.message as string).replace(token, '[tokenHidden]');
+    throw new Error(censoredMsg);
   }
 }
