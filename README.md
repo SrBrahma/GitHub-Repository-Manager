@@ -14,8 +14,16 @@ Uses Vercel to handle the OAuth token generation (https://github.com/SrBrahma/mi
 
 ## What this Extension doesn't do
 
-Delete repositories -> For your security, in case someone else gets your access token, this person won't be able to delete your repositories.
+For your security, in case someone else gets your access token, they won't be able to delete your repositories or any dangerous operation. This extension only allows reading and writing to your repositories.
 
-## Future
+## Roadmap
 
-Optional README.md on repository creation.
+Optional README.md on repository creation
+Templates support
+Search and clone public repositories
+
+## Donation
+
+Help me to keep and improve this project!
+
+[![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6P2HYMMC2VWMG)
