@@ -1,8 +1,10 @@
-# GitHub Repository Manager README
+# GitHub Repository Manager
+
+<img src=https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/src/logo.png width=220px height=220px>
 
 ## Features
 
-Lists your GitHub repositories, allows cloning them and creating new ones, all directly from your VS Code, via OAuth or Personal token access.
+Lists your GitHub repositories, allows cloning them and creating new ones. All directly from your VS Code, via OAuth or Personal token access.
 
 Uses Vercel to handle the OAuth token generation (https://github.com/SrBrahma/micro-github-1 hosted on https://micro-github.srbrahma.now.sh/).
 
