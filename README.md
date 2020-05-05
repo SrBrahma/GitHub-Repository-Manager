@@ -1,6 +1,6 @@
 # GitHub Repository Manager
 
-<img src=https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/src/logo.png width=220px height=220px>
+<img src=https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/src/logo.png width=200px height=200px>
 
 ## Features
 
