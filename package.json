@@ -56,10 +56,29 @@
     "configuration": {
       "title": "GitHub Repository Manager",
       "properties": {
-        "githubRepoMgr.saveToken": {
+        "githubRepositoryManager.saveToken": {
           "type": "boolean",
           "default": true,
           "description": "Saves the token (OAuth or Personal access token) in an internal file. You must be careful while using this option, as malicious applications and extensions could retrieve the stored token and read and write to your repositories. Remember you can delete your Personal access token under GitHub > Settings > Developer settings > Personal access token and your OAuth under GitHub > Settings > Applications > Authorized OAuth Apps"
+        },
+        "githubRepositoryManager.clonedRepositoriesSearch.searchOnDefaultCloneDirectory": {
+          "type": "boolean",
+          "default": true,
+          "description": "Search for cloned repos on the 'git.defaultCloneDirectory' path setting. Only applies if 'git.defaultCloneDirectory' is setted."
+        },
+        "githubRepositoryManager.clonedRepositoriesSearch.defaultCloneDirectoryMaximumDepth": {
+          "minimum": 1,
+          "default": 3,
+          "type": "integer",
+          "description": "How deep on 'git.defaultCloneDirectory' o searching for cloned repositories. A depth of 3 means it can find a repository until 'defaultCloneDir/1/2/repository'. Note that upon finding a .git directory, it will stop searching on any further on that directory."
+        },
+        "githubRepositoryManager.clonedRepositoriesSearch.directoriesToSkip": {
+          "type": "array",
+          "default": [
+            "node_modules",
+            ".vscode"
+          ],
+          "description": "Saves the token (OAuth or Personal access token) in an internal file. You must be careful while using this option, as malicious applications and extensions could retrieve the stored token and read and write to your repositories. Remember you can delete your Personal access token under GitHub Settings > Developer settings > Personal access token, and your OAuth under GitHub Settings > Applications > Authorized OAuth Apps"
         }
       }
     },

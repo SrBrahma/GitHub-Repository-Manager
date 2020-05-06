@@ -1,4 +1,4 @@
-import { findLocalReposAndSetRepoPath } from "./findLocalRepos";
+import { searchLocalReposAndSetRepoPath, SearchClonedReposStatus } from "./searchClonedRepos";
 import { repositoriesTreeDataProvider } from "../treeView/repositories/repositories";
 import { window } from "vscode";
 import { getRepos } from '../octokit/commands/getRepos';
@@ -23,21 +23,14 @@ export class Repository {
   }
 }
 
+
 export class Repositories {
   private repositories: Repository[] = [];
-  private searchingLocalRepos = false;
-  get repos() { return this.repositories; }
-  get isSearchingLocalRepos() { return this.searchingLocalRepos; }
+  get repos() { return this.repositories; } // Shorter form, also, external readonly.
 
+  SearchLocalReposStatus = SearchClonedReposStatus;
+  searchLocalReposStatus = SearchClonedReposStatus.ok;
 
-  async findLocalRepos() {
-    this.searchingLocalRepos = true;
-    repositoriesTreeDataProvider.refresh();
-
-    await findLocalReposAndSetRepoPath(this.repositories);
-    this.searchingLocalRepos = false;
-    repositoriesTreeDataProvider.refresh();
-  }
   /**
   * You probably don't want to await this function, as it will run findLocalRepos...()
   */
@@ -54,6 +47,14 @@ export class Repositories {
 
   clearRepositories() {
     this.repositories = [];
+  }
+
+  async findLocalRepos() {
+    this.searchLocalReposStatus = SearchClonedReposStatus.searching;
+    repositoriesTreeDataProvider.refresh();
+
+    this.searchLocalReposStatus = await searchLocalReposAndSetRepoPath(this.repositories);
+    repositoriesTreeDataProvider.refresh();
   }
 }
 

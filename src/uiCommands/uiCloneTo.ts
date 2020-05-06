@@ -3,6 +3,7 @@ import { Repository, repositories } from "../Repository/Repository";
 import { cloneRepo } from "../octokit/commands/cloneRepo";
 import os from 'os';
 import path from 'path';
+import { configs } from '../configs';
 
 // Made to look similar to vscode clone command. Also, took some small pieces from it.
 // uses the git.defaultCloneDirectory setting, as, you know, the default clone directory.
@@ -23,16 +24,14 @@ const addToWorkspaceStr = 'Add to Workspace';
 // TODO: Add cancel button
 export async function uiCloneTo(repo: Repository) {
   // Took this dir path code from vscode git clone code.
-  const config = workspace.getConfiguration('git');
-  let defaultCloneDirectory = config.get<string>('defaultCloneDirectory') || os.homedir();
-  defaultCloneDirectory = defaultCloneDirectory.replace(/^~/, os.homedir());
+
 
   let labelRepoName = `/${repo.name}`;
   if (labelRepoName.length >= 15)
     labelRepoName = `${labelRepoName.substr(0, 12)}...`;
 
   const thenable = await window.showOpenDialog({
-    defaultUri: Uri.file(defaultCloneDirectory),
+    defaultUri: Uri.file(configs.defaultCloneToDir),
     openLabel: `Clone ${labelRepoName} here`,
     canSelectFiles: false,
     canSelectFolders: true,

@@ -29,23 +29,40 @@ export async function activateClonedRepos() {
   });
 }
 
-export function getClonedTreeItem(clonedRepos: Repository[]): TreeItem | undefined {
-  // TODO: Add remember cloned repos when not logged option?
-  if (user.status === user.Status.logged) {
-    let children: TreeItem | TreeItem[];
 
-    if (repositories.isSearchingLocalRepos)
-      children = new TreeItem({
+// Just to use switch with return.
+function getChildren(clonedRepos: Repository[]): TreeItem | TreeItem[] {
+  switch (repositories.searchLocalReposStatus) {
+    case repositories.SearchLocalReposStatus.searching:
+      return new TreeItem({
         label: 'Searching for cloned repositories...',
         iconPath: new ThemeIcon('kebab-horizontal')
-        // iconPath: new ThemeIcon('loading~spin') // spin doesn't seem to work at the current moment.
       });
 
-    else
-      children = clonedRepos.map(clonedRepo => new RepoItem({
+    case repositories.SearchLocalReposStatus.noStartingSearchDirs:
+      return new TreeItem({
+        label: 'No directories to search found, please review your settings',
+        iconPath: new ThemeIcon('x')
+      });
+
+    case repositories.SearchLocalReposStatus.noClonedReposFound:
+      return new TreeItem({
+        label: 'No cloned repositories found',
+      });
+
+    default:
+    case repositories.SearchLocalReposStatus.ok:
+      return clonedRepos.map(clonedRepo => new RepoItem({
         repo: clonedRepo,
         contextValue: 'githubRepoMgr.context.clonedRepo'
       }));
+  }
+}
+
+export function getClonedTreeItem(clonedRepos: Repository[]): TreeItem | undefined {
+  // TODO: Add remember cloned repos when not logged option?
+  if (user.status === user.Status.logged) {
+    let children = getChildren(clonedRepos);
 
     return new TreeItem({
       label: 'Cloned',

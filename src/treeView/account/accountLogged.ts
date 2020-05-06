@@ -1,4 +1,4 @@
-import vscode from 'vscode';
+import vscode, { ThemeIcon } from 'vscode';
 import { TreeItem } from "../base";
 import { user } from "../../User/User";
 import { logoutAndForgetToken } from "../../octokit/octokit";
@@ -17,6 +17,7 @@ export function getLoggedTreeData() {
   return [
     new TreeItem({
       label: `Hi, ${user.login}!`,
+      iconPath: new ThemeIcon('verified')
     }),
     new TreeItem({
       label: '  Open your GitHub page',
