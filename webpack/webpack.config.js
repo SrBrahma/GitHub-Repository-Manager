@@ -1,16 +1,18 @@
-//@ts-check
+// https://code.visualstudio.com/api/working-with-extensions/bundling-extension
+// Also big thanks to Extensions Sync code!
 
 'use strict';
 
 const path = require('path');
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 /**@type {import('webpack').Configuration}*/
 const config = {
   target: 'node',
 
-  entry: './src/extension.ts',
+  entry: path.resolve(__dirname, '..', 'src', 'extension.ts'),
   output: {
-    path: path.resolve(__dirname, 'out'),
+    path: path.resolve(__dirname, '..', 'dist'),
     filename: 'extension.js',
     libraryTarget: 'commonjs2',
     devtoolModuleFilenameTemplate: '../[resource-path]'
@@ -37,6 +39,7 @@ const config = {
         ]
       }
     ]
-  }
+  },
+  plugins: [new CleanWebpackPlugin()]
 };
 module.exports = config;
