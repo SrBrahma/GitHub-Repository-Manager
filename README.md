@@ -1,8 +1,6 @@
 # GitHub Repository Manager
 
-<img src=https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/logo.png width=200px height=200px>
-
-## Features
+### [ Beta version! Tutorial and documentation will come soon! ]
 
 Lists your GitHub public and private repositories, allowing you to clone them and creating new ones, all directly from your VS Code, via OAuth or Personal token access.
 
@@ -16,7 +14,7 @@ Uses Vercel to handle the OAuth token generation (https://github.com/SrBrahma/mi
 
 Add other paths than git.defaultCloneDirectory to local cloned repositories search
 
-Optional README.md on repository creation
+Optional READ<span>ME.m</span>d on repository creation
 
 Templates support
 
