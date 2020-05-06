@@ -11,9 +11,12 @@ Uses Vercel to handle the OAuth token generation (https://github.com/SrBrahma/mi
 0.1.0 : Initial release
 
 ## Roadmap
-Add other paths than git.defaultCloneDirectory to 
+Add other paths than git.defaultCloneDirectory to local cloned repositories search
+
 Optional README.md on repository creation
+
 Templates support
+
 Search and clone public repositories
 
 ## Donation
