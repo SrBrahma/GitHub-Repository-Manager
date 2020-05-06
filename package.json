@@ -1,5 +1,11 @@
 {
   "name": "github-repository-manager",
+  "publisher": "Henrique Bruno",
+  "author": {
+    "name": "Henrique Bruno",
+    "email": "henrique.bruno.fa@gmail.com"
+  },
+  "icon": "https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/src/img/logo128.png",
   "displayName": "GitHub Repository Manager",
   "description": "Easily and quickly clone public and private repositories",
   "version": "0.1.0",
@@ -87,7 +93,7 @@
         {
           "id": "githubRepoMgr",
           "title": "GitHub Repository Loader",
-          "icon": "src/logo.svg"
+          "icon": "src/img/logo.svg"
         }
       ]
     },
