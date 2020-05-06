@@ -1,31 +1,44 @@
 {
   "name": "github-repository-manager",
-  "publisher": "Henrique Bruno",
+  "publisher": "HenriqueBruno",
+  "displayName": "GitHub Repository Manager",
+  "description": "Easily and quickly clone your GitHub repositories and create new ones.",
   "author": {
     "name": "Henrique Bruno",
     "email": "henrique.bruno.fa@gmail.com"
   },
-  "icon": "https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/src/img/logo128.png",
-  "displayName": "GitHub Repository Manager",
-  "description": "Easily and quickly clone public and private repositories",
+  "repository": {
+    "url": "https://github.com/SrBrahma/GitHub-Repository-Manager"
+  },
+  "icon": "images/logo128.png",
   "version": "0.1.0",
   "main": "./out/extension.js",
-  "scripts": {
-    "vscode:prepublish": "yarn run compile",
-    "start": "yarn watch",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./"
+  "engines": {
+    "vscode": "^1.44.0"
   },
+  "categories": [
+    "Other",
+    "SCM Providers"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "license": "MIT",
   "keywords": [
     "github",
     "repository",
-    "manager",
     "clone",
-    "cloner",
-    "auth",
-    "token",
+    "init",
     "oauth"
   ],
+  "scripts": {
+    "vscode:prepublish": "webpack --mode production",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
+    "test-compile": "tsc -p ./",
+    "watch": "yarn webpack-dev",
+    "start": "yarn webpack-dev"
+  },
   "dependencies": {
     "@octokit/auth-oauth-app": "^3.0.2",
     "@octokit/core": "^2.5.0",
@@ -46,26 +59,19 @@
     "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
     "prettier": "^2.0.5",
-    "typescript": "^3.8.3"
+    "ts-loader": "^7.0.2",
+    "typescript": "^3.8.3",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
   },
-  "engines": {
-    "vscode": "^1.44.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [
-    "*"
-  ],
-  "license": "MIT",
   "contributes": {
     "configuration": {
       "title": "GitHub Repository Manager",
       "properties": {
         "githubRepositoryManager.saveToken": {
           "type": "boolean",
-          "default": true,
-          "description": "Saves the token (OAuth or Personal access token) in an internal file. You must be careful while using this option, as malicious applications and extensions could retrieve the stored token and read and write to your repositories. Remember you can delete your Personal access token under GitHub > Settings > Developer settings > Personal access token and your OAuth under GitHub > Settings > Applications > Authorized OAuth Apps"
+          "default": false,
+          "description": "Saves the token (OAuth or Personal access token) in an internal file. You must be careful while using this option, as malicious extensions and applications could retrieve the stored token and read and write to your repositories. The stored token (OAuth or Persoanal access token) is deleted from the disk if you click on \"Logout and forget token\", while logged. You can also delete at any time your Personal access token on GitHub website > Settings > Developer settings > Personal access token, and your OAuth under GitHub website > Settings > Applications > Authorized OAuth Apps."
         },
         "githubRepositoryManager.clonedRepositoriesSearch.searchOnDefaultCloneDirectory": {
           "type": "boolean",
@@ -73,10 +79,10 @@
           "description": "Search for cloned repos on the 'git.defaultCloneDirectory' path setting. Only applies if 'git.defaultCloneDirectory' is setted."
         },
         "githubRepositoryManager.clonedRepositoriesSearch.defaultCloneDirectoryMaximumDepth": {
-          "minimum": 1,
+          "minimum": 0,
           "default": 3,
           "type": "integer",
-          "description": "How deep on 'git.defaultCloneDirectory' o searching for cloned repositories. A depth of 3 means it can find a repository until 'defaultCloneDir/1/2/repository'. Note that upon finding a .git directory, it will stop searching on any further on that directory."
+          "description": "How deep on 'git.defaultCloneDirectory' local cloned repositories will be searched. A depth of 0 means it will only search on the directory itself, a depth of 3 means it will search up to 3 directories below."
         },
         "githubRepositoryManager.clonedRepositoriesSearch.directoriesToSkip": {
           "type": "array",
@@ -84,7 +90,7 @@
             "node_modules",
             ".vscode"
           ],
-          "description": "Saves the token (OAuth or Personal access token) in an internal file. You must be careful while using this option, as malicious applications and extensions could retrieve the stored token and read and write to your repositories. Remember you can delete your Personal access token under GitHub Settings > Developer settings > Personal access token, and your OAuth under GitHub Settings > Applications > Authorized OAuth Apps"
+          "description": "Directories names to not search for repositories in them."
         }
       }
     },
@@ -93,7 +99,7 @@
         {
           "id": "githubRepoMgr",
           "title": "GitHub Repository Loader",
-          "icon": "src/img/logo.svg"
+          "icon": "images/logo.svg"
         }
       ]
     },

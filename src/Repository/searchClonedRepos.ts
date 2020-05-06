@@ -40,12 +40,12 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
 
 
 // Recursive function to find directories with .git dir.
-async function getDirsWithDotGit(currentPath: string, availableDepth: number): Promise<string[]> {
-  const dirsPath = (await readdir(currentPath, { withFileTypes: true }))
+async function getDirsWithDotGit(currentPath: string, availableDepth: number, dirsToSkip: string[]): Promise<string[]> {
+  const dirsName = (await readdir(currentPath, { withFileTypes: true }))
     .filter(file => file.isDirectory()).map(dir => dir.name);
 
   // If current dir is a repository
-  if (dirsPath.find(dir => dir === '.git'))
+  if (dirsName.find(dir => dir === '.git'))
     return [currentPath];
 
   // If this was the last depth and we didn't find a .gir dir, return empty array;
@@ -54,9 +54,10 @@ async function getDirsWithDotGit(currentPath: string, availableDepth: number): P
 
   // Else, go deeper!
   const results = [];
-  for (const dirPath of dirsPath) // Maybe could use forEach as it doesn't wait awaits, the 'parallelism' could work nice. Needs benchmark.
-    results.push(...await getDirsWithDotGit(path.resolve(currentPath, dirPath), availableDepth - 1));
-
+  for (const dirName of dirsName) { // Maybe could use forEach as it doesn't wait awaits, the 'parallelism' could work nice. Needs benchmark.
+    if (!dirsToSkip.includes(dirName))
+      results.push(...await getDirsWithDotGit(path.resolve(currentPath, dirName), availableDepth - 1, dirsToSkip));
+  }
   return results;
 }
 
@@ -94,17 +95,21 @@ export async function searchLocalReposAndSetRepoPath(repos: Repository[]): Promi
   if (startingSearchPaths.length === 0)
     return SearchClonedReposStatus.noStartingSearchDirs;
 
-  // Get local repositories paths
+  // Get local repositories paths.
   const repositoriesPaths: string[] = [];
+  const dirsToSkip = configs.clonedReposSearch.dirsToSkip || [];
   for (const startingSearchPath of startingSearchPaths)
-    repositoriesPaths.push(...(await getDirsWithDotGit(startingSearchPath.path, startingSearchPath.availableDepth)));
+    repositoriesPaths.push(...(await getDirsWithDotGit(
+      startingSearchPath.path,
+      startingSearchPath.availableDepth,
+      dirsToSkip)
+    ));
 
-  console.log(repositoriesPaths);
+
   // Get the repositories remotes (git url) and compare with the user repositories url,
   // and set the repo.localPath.
   const dirsWithGitUrl = await getGitUrls(repositoriesPaths);
-  console.log(dirsWithGitUrl);
-  console.log(repos);
+
   for (const repo of repos) {
     const index = dirsWithGitUrl.findIndex(dirWithGitUrl => dirWithGitUrl.gitUrl === repo.htmlUrl);
     if (index !== -1) {

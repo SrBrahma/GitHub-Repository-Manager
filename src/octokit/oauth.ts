@@ -1,8 +1,13 @@
-import { oauthCallbackPort, authCallbackPath, srcPath, callbackPagePath } from '../consts';
-import * as vscode from "vscode";
+import { oauthCallbackPort, authCallbackPath, callbackPagePath } from '../consts';
+import vscode from "vscode";
 import express from 'express';
-import path from 'path';
-import { initOctokit } from '../octokit/octokit';
+import { initOctokit } from './octokit';
+
+
+// Thanks to Settings-Sync extension where I learned how they made the OAuth authorization
+// (and to many other extensions where I learned lots of stuff to get this done)
+// They however exposes publicly the clientId and clientSecret in the code. I decidede to
+// use Vercel, which handles the communication with GitHub api.
 
 
 let expressApp: express.Express | null = null;
@@ -51,7 +56,7 @@ function openServer() {
 
   // Just to remove the URI with the token. This is a success page.
   expressApp.get(callbackPagePath, (req, res) => {
-    res.sendFile(path.resolve(srcPath, 'auth', 'callbackPage.html'));
+    res.send(callbackHtmlPage);
   });
 
 }
@@ -61,3 +66,37 @@ function closeServer() {
   expressApp = null;
 }
 
+const callbackHtmlPage = `
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Auth Success!</title>
+  </head>
+
+  <body>
+    <div>
+      <h2>GitHub Repository Manager</h2>
+      <h1>Authorization Succeeded!</h1>
+      <h3>You can close this page.</h3>
+    </div>
+
+    <style>
+      html,
+      body {
+        background-color: #e6dcdc;
+        color: #495c6b;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 95%;
+      }
+      div {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+      }
+    </style>
+  </body>
+</html>
+`;
