@@ -22,6 +22,7 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
       // This one seems to work better than the other commands.
       // The others, won't work with a custom remote name or other git stuff that I really don't understand.
       // But managed to make this work.
+      // EDIT: this don't works if branch master isn't setted
       let [gitUrl] = await exec('git ls-remote --get-url', { cwd: dirPath });
 
       // Remove the .git the gitUrl may or not have (as our repository object htmlUrl never has .git)
