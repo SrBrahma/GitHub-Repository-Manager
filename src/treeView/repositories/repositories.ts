@@ -39,7 +39,7 @@ export function activateTreeViewRepositories() {
 
   // Access GitHub Web Page
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.openWebPage', ({ repo }: RepoItem) =>
-    vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(repo.htmlUrl)));
+    vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(repo.url)));
 
   // Reload repos
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.reload', () =>

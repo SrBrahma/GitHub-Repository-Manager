@@ -19,21 +19,26 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
   for (const dirPath of dirsPath) {
     try {
       // https://stackoverflow.com/a/23682620/10247962
-      // This one seems to work better than the other commands.
-      // The others, won't work with a custom remote name or other git stuff that I really don't understand.
-      // But managed to make this work.
-      // EDIT: this don't works if branch master isn't setted
-      let [gitUrl] = await exec('git ls-remote --get-url', { cwd: dirPath });
+      // Using 'git remote -v', as the other commands may not work on specific cases. It retuns in this format:
+      // origin    https://github.com/torvalds/linux.git (fetch)
+      // origin    https://github.com/torvalds/linux.git (push)
+      // We are goint to just take the first URI. If you have a non desired result with it, open an issue! :)
+      let [result] = await exec('git remote -v', { cwd: dirPath });
 
-      // Remove the .git the gitUrl may or not have (as our repository object htmlUrl never has .git)
-      gitUrl = gitUrl.replace('.git', '');
+      // This will get every non whitespace char to the left and right of github uri.
+      const regex = result.match(/\S+github.com\S+/);
 
-      // The gitUrl have a line break on end.
-      gitUrl = gitUrl.trim();
+      if (regex) {
+        // Remove the .git the gitUrl may or not have (as our repo.htmlUrl don't have .git)
+        let gitUrl = regex[0].replace('.git', '');
 
-      dirsWithGitUrl.push({ gitUrl, dirPath });
+        dirsWithGitUrl.push({ gitUrl, dirPath });
+      }
     }
-    catch (error) { } // If error, it's because there isn't a remote.
+    catch (error) {
+      // If error, it's because there isn't a remote. No need to manage it, may be left empty.
+      // console.log(dirPath, error); // Uncomment to debug.
+    }
   };
   return dirsWithGitUrl;
 }
@@ -112,7 +117,7 @@ export async function searchLocalReposAndSetRepoPath(repos: Repository[]): Promi
   const dirsWithGitUrl = await getGitUrls(repositoriesPaths);
 
   for (const repo of repos) {
-    const index = dirsWithGitUrl.findIndex(dirWithGitUrl => dirWithGitUrl.gitUrl === repo.htmlUrl);
+    const index = dirsWithGitUrl.findIndex(dirWithGitUrl => dirWithGitUrl.gitUrl === repo.url);
     if (index !== -1) {
       repo.localPath = dirsWithGitUrl[index].dirPath;
       dirsWithGitUrl.splice(index, 1);

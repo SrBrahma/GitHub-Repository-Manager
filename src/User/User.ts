@@ -11,8 +11,6 @@ enum Status {
 
 export interface UserInterface {
   readonly login: string;
-  readonly name: string;
-  readonly avatarUri: string;
   readonly profileUri: string;
 }
 

@@ -3,15 +3,23 @@ import { repositoriesTreeDataProvider } from "../treeView/repositories/repositor
 import { window } from "vscode";
 import { getRepos } from '../octokit/commands/getRepos';
 
+
 interface RepositoryInterface {
-  isPrivate: boolean;
-  isFork: boolean,
-  userIsAdmin: boolean,
+  // TODO: createdAt, updatedAt
   name: string,
-  ownerLogin: string,
   description: string,
-  language: string,  // "C++" etc
-  htmlUrl: string;
+  ownerLogin: string,
+  languageName?: string,  // "C++" etc
+  url: string,
+
+  isPrivate: boolean,
+  isTemplate: boolean,
+  isFork: boolean,
+
+  userIsAdmin: boolean,
+
+  parentRepoName?: string,
+  parentRepoOwnerLogin?: string,
 }
 
 //https://github.com/microsoft/TypeScript/issues/5326#issuecomment-592058988
@@ -29,6 +37,7 @@ export class Repositories {
   get repos() { return this.repositories; } // Shorter form, also, external readonly.
 
   SearchLocalReposStatus = SearchClonedReposStatus;
+
   searchLocalReposStatus = SearchClonedReposStatus.ok;
 
   /**

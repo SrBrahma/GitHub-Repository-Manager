@@ -5,9 +5,9 @@ import { initOctokit } from './octokit';
 
 
 // Thanks to Settings-Sync extension where I learned how they made the OAuth authorization
-// (and to many other extensions where I learned lots of stuff to get this done)
-// They however exposes publicly the clientId and clientSecret in the code. I decidede to
-// use Vercel, which handles the communication with GitHub api.
+// (and to many other extensions where I learned lots of stuff to get this one done)
+// Settings-Sync however exposes publicly the GitHub OAuth App clientId and clientSecret in the code.
+// I decided to use Vercel, which handles the communication with GitHub api.
 
 
 let expressApp: express.Express | null = null;
@@ -44,9 +44,11 @@ export async function copyOAuthLinkToClipboard() {
 }
 
 
+// TODO: Add custom port support. For now, it displays an error if port already in use.
 async function openServer(): Promise<void> {
 
-  function asyncListen(port: number) { // https://github.com/nodejs/node/issues/21482#issuecomment-626025579
+  // https://github.com/nodejs/node/issues/21482#issuecomment-626025579
+  function asyncListen(port: number) {
     return new Promise((resolve, reject) => {
       expressApp.listen(port)
         .once('listening', resolve)

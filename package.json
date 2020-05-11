@@ -11,7 +11,7 @@
     "url": "https://github.com/SrBrahma/GitHub-Repository-Manager"
   },
   "icon": "images/logo128.png",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "main": "./dist/extension.js",
   "engines": {
     "vscode": "^1.44.0"
@@ -74,20 +74,20 @@
         "githubRepositoryManager.saveToken": {
           "type": "boolean",
           "default": false,
-          "description": "Saves the token (OAuth or Personal access token) in an internal file. You must be careful while using this option, as malicious extensions and applications could retrieve the stored token and read and write to your repositories. The stored token (OAuth or Persoanal access token) is removed from the disk when \"Logout and forget token\" is clicked, while logged. You can also delete at any time your Personal access token on GitHub website > Settings > Developer settings > Personal access token, and your OAuth under GitHub website > Settings > Applications > Authorized OAuth Apps."
+          "description": "By default, when closing the VSCode, your token (OAuth or Personal access token) is forgotten, and on each VSCode opening, you will need to login again to use this extension functionalities. This setting saves the token (OAuth or Personal access token) in an internal file. You must be careful while using this option, as malicious extensions and applications can retrieve the stored token and read and write to your repositories (but not delete). The stored token is removed from the disk when \"Logout and forget token\" is clicked when logged. You can also delete at any time your Personal access token on GitHub website > Settings > Developer settings > Personal access token, and your OAuth under GitHub website > Settings > Applications > Authorized OAuth Apps."
         },
         "githubRepositoryManager.clonedRepositoriesSearch.searchOnDefaultCloneDirectory": {
           "type": "boolean",
           "default": true,
-          "description": "Search for cloned repos on the 'git.defaultCloneDirectory' path setting. Only applies if 'git.defaultCloneDirectory' is setted."
+          "description": "Search for cloned repos on the \"git.defaultCloneDirectory\" path setting. Only applies if 'git.defaultCloneDirectory' is set."
         },
         "githubRepositoryManager.clonedRepositoriesSearch.defaultCloneDirectoryMaximumDepth": {
           "minimum": 0,
           "default": 3,
           "type": "integer",
-          "description": "How deep on 'git.defaultCloneDirectory' local cloned repositories will be searched. A depth of 0 means it will only search on the directory itself, a depth of 3 means it will search up to 3 directories below."
+          "description": "How deep on \"git.defaultCloneDirectory\" local cloned repositories will be searched. A depth of 0 means it will only search on the directory itself, a depth of 3 means it will search up to 3 directories below."
         },
-        "githubRepositoryManager.clonedRepositoriesSearch.directoriesToSkip": {
+        "githubRepositoryManager.clonedRepositoriesSearch.directoriesToIgnore": {
           "type": "array",
           "default": [
             "node_modules",

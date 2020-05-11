@@ -30068,18 +30068,23 @@ async function getGitUrls(dirsPath) {
     for (const dirPath of dirsPath) {
         try {
             // https://stackoverflow.com/a/23682620/10247962
-            // This one seems to work better than the other commands.
-            // The others, won't work with a custom remote name or other git stuff that I really don't understand.
-            // But managed to make this work.
-            // EDIT: this don't works if branch master isn't setted
-            let [gitUrl] = await child_process_1.exec('git ls-remote --get-url', { cwd: dirPath });
-            // Remove the .git the gitUrl may or not have (as our repository object htmlUrl never has .git)
-            gitUrl = gitUrl.replace('.git', '');
-            // The gitUrl have a line break on end.
-            gitUrl = gitUrl.trim();
-            dirsWithGitUrl.push({ gitUrl, dirPath });
+            // Using 'git remote -v', as the other commands may not work on specific cases. It retuns in this format:
+            // origin    https://github.com/torvalds/linux.git (fetch)
+            // origin    https://github.com/torvalds/linux.git (push)
+            // We are goint to just take the first URI. If you have a non desired result with it, open an issue! :)
+            let [result] = await child_process_1.exec('git remote -v', { cwd: dirPath });
+            // This will get every non whitespace char to the left and right of github uri.
+            const regex = result.match(/\S+github.com\S+/);
+            if (regex) {
+                // Remove the .git the gitUrl may or not have (as our repo.htmlUrl don't have .git)
+                let gitUrl = regex[0].replace('.git', '');
+                dirsWithGitUrl.push({ gitUrl, dirPath });
+            }
         }
-        catch (error) { } // If error, it's because there isn't a remote.
+        catch (error) {
+            // If error, it's because there isn't a remote. No need to manage it, may be left empty.
+            // console.log(dirPath, error); // Uncomment to debug.
+        }
     }
     ;
     return dirsWithGitUrl;
@@ -30138,7 +30143,7 @@ async function searchLocalReposAndSetRepoPath(repos) {
     // and set the repo.localPath.
     const dirsWithGitUrl = await getGitUrls(repositoriesPaths);
     for (const repo of repos) {
-        const index = dirsWithGitUrl.findIndex(dirWithGitUrl => dirWithGitUrl.gitUrl === repo.htmlUrl);
+        const index = dirsWithGitUrl.findIndex(dirWithGitUrl => dirWithGitUrl.gitUrl === repo.url);
         if (index !== -1) {
             repo.localPath = dirsWithGitUrl[index].dirPath;
             dirsWithGitUrl.splice(index, 1);
@@ -30343,12 +30348,12 @@ function getOctokitErrorMessage(error) {
         return `${error.name} ${error.status} : ${aux_1.upperCaseFirstLetter(error.message)}`;
     }
     function customErrorMsg(msg) {
-        return `${msg} ${defaultErrorMsg()}`;
+        return `${msg} [${defaultErrorMsg()}]`;
     }
     let errorMessage = '';
     switch (error.status) {
         case 401:
-            errorMessage = customErrorMsg('Looks like the provided token is wrong!');
+            errorMessage = customErrorMsg('The entered or stored token is wrong, has expired or has been revoked! If you want, authenticate again!');
             break;
         case 500:
             errorMessage = customErrorMsg('Looks like your internet is off!');
@@ -30488,24 +30493,38 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const octokit_1 = __webpack_require__(/*! ../octokit */ "./src/octokit/octokit.ts");
 const Repository_1 = __webpack_require__(/*! ../../Repository/Repository */ "./src/Repository/Repository.ts");
 const aux_1 = __webpack_require__(/*! ./aux */ "./src/octokit/commands/aux.ts");
-function extractRepositoryFromData(data) {
+function extractRepositoryFromData(node) {
+    var _a, _b, _c;
     return new Repository_1.Repository({
-        name: data.name,
-        description: data.description,
-        ownerLogin: data.owner.login,
-        language: data.language,
-        isFork: data.fork,
-        isPrivate: data.private,
-        userIsAdmin: data.permissions.admin,
-        htmlUrl: data.html_url
+        name: node.name,
+        description: node.description,
+        ownerLogin: node.owner.login,
+        languageName: (_a = node.primaryLanguage) === null || _a === void 0 ? void 0 : _a.name,
+        url: node.url,
+        isPrivate: node.private,
+        isFork: node.isFork,
+        isTemplate: node.isTemplate,
+        userIsAdmin: node.viewerCanAdminister,
+        // parent may be null if isn't a fork.
+        parentRepoName: (_b = node.parent) === null || _b === void 0 ? void 0 : _b.name,
+        parentRepoOwnerLogin: (_c = node.parent) === null || _c === void 0 ? void 0 : _c.owner.login,
     });
 }
 exports.extractRepositoryFromData = extractRepositoryFromData;
-// could use graphql to reduce net usage.
 async function getRepos() {
     try {
-        const { data: datas } = await octokit_1.octokit.repos.listForAuthenticatedUser();
-        const repos = datas.map((data) => extractRepositoryFromData(data));
+        const repos = [];
+        // For pagination (if user has more repos than the query results (current max per query is 100))
+        let endCursor = null;
+        let hasNextPage = false;
+        do {
+            // https://github.com/octokit/graphql.js/#variables
+            const { nodes, pageInfo } = (await octokit_1.octokit.graphql(query, {
+                after: endCursor
+            })).viewer.repositories;
+            ({ endCursor, hasNextPage } = pageInfo);
+            repos.push(...nodes.map((node) => extractRepositoryFromData(node)));
+        } while (hasNextPage);
         return repos;
     }
     catch (error) { // Octokit has a patter for errors, which we display properly at octokitErrorDisplay().
@@ -30513,6 +30532,41 @@ async function getRepos() {
     }
 }
 exports.getRepos = getRepos;
+// Made with https://developer.github.com/v4/explorer/
+const query = `
+query getRepos ($after: String) {
+  viewer {
+    repositories(first: 100, orderBy: {field: NAME, direction: ASC}, after: $after) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      nodes {
+        name
+        description
+        owner {
+          login
+        }
+        primaryLanguage {
+          name
+        }
+        url
+
+        isPrivate
+        isFork
+        isTemplate
+        viewerCanAdminister
+        parent {
+          name
+          owner {
+            login
+          }
+        }
+      }
+    }
+  }
+}
+`;
 
 
 /***/ }),
@@ -30531,15 +30585,19 @@ const aux_1 = __webpack_require__(/*! ./aux */ "./src/octokit/commands/aux.ts");
 const octokit_1 = __webpack_require__(/*! ../octokit */ "./src/octokit/octokit.ts");
 async function getUser() {
     try {
-        const { data: userData } = await octokit_1.octokit.request('/user');
+        const userData = (await octokit_1.octokit.graphql(`query getUser {
+        viewer {
+          login
+          url
+        }
+      }`)).viewer;
         return {
             login: userData.login,
-            name: userData.name,
-            avatarUri: userData.avatar_url,
-            profileUri: userData.html_url
+            profileUri: userData.url
         };
     }
-    catch (error) { // Octokit has a pattern for errors, which we display properly at octokitErrorDisplay().
+    // Octokit has a pattern for errors, which we display properly at octokitErrorDisplay().
+    catch (error) {
         throw new Error(aux_1.getOctokitErrorMessage(error));
     }
 }
@@ -30573,9 +30631,9 @@ const vscode_1 = __importStar(__webpack_require__(/*! vscode */ "vscode"));
 const express_1 = __importDefault(__webpack_require__(/*! express */ "./node_modules/express/index.js"));
 const octokit_1 = __webpack_require__(/*! ./octokit */ "./src/octokit/octokit.ts");
 // Thanks to Settings-Sync extension where I learned how they made the OAuth authorization
-// (and to many other extensions where I learned lots of stuff to get this done)
-// They however exposes publicly the clientId and clientSecret in the code. I decidede to
-// use Vercel, which handles the communication with GitHub api.
+// (and to many other extensions where I learned lots of stuff to get this one done)
+// Settings-Sync however exposes publicly the GitHub OAuth App clientId and clientSecret in the code.
+// I decided to use Vercel, which handles the communication with GitHub api.
 let expressApp = null;
 const oauthUri = `https://micro-github.srbrahma.now.sh/api/login`;
 /**
@@ -30606,7 +30664,9 @@ async function copyOAuthLinkToClipboard() {
     }
 }
 exports.copyOAuthLinkToClipboard = copyOAuthLinkToClipboard;
+// TODO: Add custom port support. For now, it displays an error if port already in use.
 async function openServer() {
+    // https://github.com/nodejs/node/issues/21482#issuecomment-626025579
     function asyncListen(port) {
         return new Promise((resolve, reject) => {
             expressApp.listen(port)
@@ -30755,7 +30815,7 @@ exports.logoutAndForgetToken = logoutAndForgetToken;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 const configs_1 = __webpack_require__(/*! ./configs */ "./src/configs.ts");
-// import fs
+// TODO: extension version
 var storage;
 (function (storage) {
     let context;
@@ -31087,9 +31147,14 @@ function getChildren(clonedRepos) {
             });
         default:
         case Repository_1.repositories.SearchLocalReposStatus.ok:
-            return clonedRepos.map(clonedRepo => new repoItem_1.RepoItem({
-                repo: clonedRepo,
-                contextValue: 'githubRepoMgr.context.clonedRepo'
+            return clonedRepos.map(repo => new repoItem_1.RepoItem({
+                repo,
+                contextValue: 'githubRepoMgr.context.clonedRepo',
+                command: {
+                    // We wrap the repo in {} because we may call the cloneTo from the right click, and it passes the RepoItem.
+                    command: 'githubRepoMgr.commands.clonedRepos.open',
+                    arguments: [{ repo }]
+                },
             }));
     }
 }
@@ -31185,11 +31250,11 @@ function getTooltip(repo) {
         + (`\r\n${repo.description || 'No description.'}`)
         + `\r\n${repo.ownerLogin}`
         + `\r\n${repo.isPrivate ? 'Private' : 'Public'}`
-        + (repo.language
-            ? `\r\n${repo.language}`
+        + (repo.languageName
+            ? `\r\n${repo.languageName}`
             : '')
         + (repo.isFork
-            ? `\r\nFork of: TODO`
+            ? `\r\nFork of:  ${repo.parentRepoOwnerLogin} / ${repo.parentRepoName}`
             : '');
     return tooltip;
 }
@@ -31248,7 +31313,7 @@ function activateTreeViewRepositories() {
     exports.repositoriesTreeDataProvider = new TreeDataProvider();
     vscode_1.default.window.registerTreeDataProvider('githubRepoMgr.views.repositories', exports.repositoriesTreeDataProvider);
     // Access GitHub Web Page
-    vscode_1.default.commands.registerCommand('githubRepoMgr.commands.repos.openWebPage', ({ repo }) => vscode_1.default.commands.executeCommand("vscode.open", vscode_1.default.Uri.parse(repo.htmlUrl)));
+    vscode_1.default.commands.registerCommand('githubRepoMgr.commands.repos.openWebPage', ({ repo }) => vscode_1.default.commands.executeCommand("vscode.open", vscode_1.default.Uri.parse(repo.url)));
     // Reload repos
     vscode_1.default.commands.registerCommand('githubRepoMgr.commands.repos.reload', () => Repository_1.repositories.loadRepos());
     // Create Repo
@@ -31407,8 +31472,8 @@ async function uiCreateRepo() {
         const newRepo = await createRepo_1.create({ name, description, privateRepo });
         name = ''; // Clears the fields, as we successfully created the repo.
         description = '';
-        const answer = await vscode_1.window.showInformationMessage(`Repository ${name} created successfully! Do you want to clone it?`, 'Yes', 'No');
         Repository_1.repositories.loadRepos();
+        const answer = await vscode_1.window.showInformationMessage(`Repository ${name} created successfully! Do you want to clone it?`, 'Yes', 'No');
         if (answer === 'Yes') {
             uiCloneTo_1.uiCloneTo(newRepo); // uiCloneTo will call repositories.loadRepos() again on success.
         }
