@@ -1,5 +1,10 @@
-# **GitHub Repository Manager**
+<h1 align="center">
+<b>GitHub Repository Manager</b>
+</h1>
 
+<h3 align="center">
+Lists your GitHub repositories, allowing you to clone them and creating new ones, all directly from your VS Code.
+</h3>
 
 <div align="center">
 
@@ -8,51 +13,54 @@
 
 </div>
 
-
-Lists your GitHub repositories, allowing you to clone them and creating new ones, all directly from your VS Code, via GitHub OAuth or Personal token access.
-
-Uses Vercel to handle the OAuth token generation (https://github.com/SrBrahma/micro-github hosted on https://micro-github.srbrahma.now.sh/).
-
-![Usage .gif](https://github.com/SrBrahma/GitHub-Repository-Manager/tree/master/images/usage.gif)
+<br/>
 
 
 
-<!-- Guide -->
+<div align="center">
+<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/usage.gif" width="80%" >
+</div>
+<br/>
 
-# Guide
 
+<h1 align="center">
+Guide
+</h1>
 
-## Login with OAuth
+<h2><b>Login with OAuth</b></h2>
 
 Under **Login with**, click on the **OAuth -> Open in browser** or **OAuth -> Copy link to clipboard** and paste that link on your browser (useful if your VSCode is having trouble opening the browser). Authenticate, and on success, it will redirect to a localhost web page, hosted under the port 60002 by default. You are now logged! You may close the redirect page.
 
 Under the hoods, it's returned to you a token via the localhost redirect, similar to the Personal access token.
 
-## Login with Personal access token
+Uses Vercel to handle the OAuth token generation (https://github.com/SrBrahma/micro-github hosted on https://micro-github.srbrahma.now.sh/).
+
+<h2><b>Login with Personal access token</b></h2>
 
 If you want to login using a Personal access token, go to your GitHub web page, Settings, Developer settings, Personal access tokens, mark the bold **repo** option, click on the **Generate token** button, and your token will show up. You may now enter it on **Personal access token**, under **Login with**.
 
-![Personal access token](https://github.com/SrBrahma/GitHub-Repository-Manager/tree/master/images/personalAccessToken.png)
+<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/personalAccessToken.png" alt="Personal access token" width="60%" >
 
-## Cloning a repository
+
+<h2><b> Cloning a repository </b></h2>
 
 Left-click a repository under Not Cloned list or right-click it and select **Clone to**, then select the destination directory. Upon completion, you may choose to open it.
 
 The default destination path is the **"git.defaultCloneDirectory"** VSCode setting, or if not set, it's your OS home directory. Read more about this defaultCloneDirectory on the **Cloned Repositories Search** topic below.
 
-## Creating a repository
+
+<h2><b> Creating a repository </b></h2>
 
 While hovering the **REPOSITORIES** tree view title, a plus (**+**) button appears. Click it, and enter the new repository name (follows the same naming rules as creating a repository on GitHub), description (optional, may be left blank), and visibility (private or public). On success, you may choose to clone it.
 
-## Cloned Repositories Search
+
+<h2><b> Cloned Repositories Search </b></h2>
 
 To make your GitHub cloned repositories show up in the **Cloned** tree on the **REPOSITORIES** tree view, you will need to set the **"git.defaultCloneDirectory"** setting on your VSCode settings.json file to an absolute path where your cloned repositories are located (may be on a deep directory), so our Searcher will look for your GitHub repositories there. You may use "~" to point to your home directory. I usually store my repos under **"~/Dev"**, so that's what I use as my **"git.defaultCloneDirectory"** value. It's already planned to allow setting more than one directory as a serching directory. Read about **Cloned Repositories Search** configurations on its Settings topic below.
 
 
-
-<!-- Settings -->
-
-# Settings
+<br/>
+<h1 align="center"> Settings </h1>
 
 
 - ## **Save Token**
@@ -63,9 +71,8 @@ But, while the GitHub Repository Manager is an uknown extension, you surely won'
 ##### Default: false
 
 
-<!-- Cloned Repositories Search -->
 
-## Repositories Search
+<h2 align="center"><b> Repositories Search </b></h2>
 
 
 - ## **Default Clone Directory Maximum Depth**
@@ -88,13 +95,15 @@ At the current (v0.2.0), cloned repositories may only be found using this option
 ##### Default: true
 
 
+<br/>
+<h1 align="center">
+  <a href="https://github.com/SrBrahma/GitHub-Repository-Manager/blob/master/CHANGELOG.md">
+      Changelog
+  </a>
+</h1>
 
-
-# [Changelog](https://github.com/SrBrahma/GitHub-Repository-Manager/blob/master/CHANGELOG.md)
-
-
-
-# Roadmap
+<br/>
+<h1 align="center"> Roadmap </h1>
 
 - Add other paths than git.defaultCloneDirectory to local cloned repositories search
 
@@ -114,13 +123,18 @@ At the current (v0.2.0), cloned repositories may only be found using this option
 
 - Extension Settings description using markdown
 
-
-# Donation
-
-Help me to keep and improve this project!
-
-[![Paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6P2HYMMC2VWMG)
+<br/>
+<h2 align="center"> Feel free to open an issue for features requests, problems or questions! </h2>
 
 
+<br/>
+<h1 align="center"> Donation </h1>
 
-# Feel free to open an issue for features requests, problems or questions!
+<h3 align="center">
+  Help me to keep and improve this project!
+  </br></br>
+  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6P2HYMMC2VWMG">
+    <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Paypal">
+  </a>
+</h3>
+
