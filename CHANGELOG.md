@@ -1,5 +1,9 @@
 # Change Log : GitHub Repository Manager
 
+### 0.2.1 - May 11, 2020
+
+Quick README fix.
+
 ### 0.2.0 - May 11, 2020
 
 Fixed Cloned Repositories Search not working with some remotes.
