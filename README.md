@@ -18,7 +18,7 @@ Lists your GitHub repositories, allowing you to clone them and creating new ones
 
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/usage.gif" width="80%" >
+<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/README_md/usage.gif" width="80%" >
 </div>
 <br/>
 
@@ -39,7 +39,7 @@ Uses Vercel to handle the OAuth token generation (https://github.com/SrBrahma/mi
 
 If you want to login using a Personal access token, go to your GitHub web page, Settings, Developer settings, Personal access tokens, mark the bold **repo** option, click on the **Generate token** button, and your token will show up. You may now enter it on **Personal access token**, under **Login with**.
 
-<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/personalAccessToken.png" alt="Personal access token" width="60%" >
+<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/README_md/personalAccessToken.png" alt="Personal access token" width="60%" >
 
 
 <h2><b> Cloning a repository </b></h2>
