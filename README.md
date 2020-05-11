@@ -56,7 +56,7 @@ While hovering the **REPOSITORIES** tree view title, a plus (**+**) button appea
 
 <h2><b> Cloned Repositories Search </b></h2>
 
-To make your GitHub cloned repositories show up in the **Cloned** tree on the **REPOSITORIES** tree view, you will need to set the **"git.defaultCloneDirectory"** setting on your VSCode settings.json file to an absolute path where your cloned repositories are located (may be on a deep directory), so our Searcher will look for your GitHub repositories there. You may use "~" to point to your home directory. I usually store my repos under **"~/Dev"**, so that's what I use as my **"git.defaultCloneDirectory"** value. It's already planned to allow setting more than one directory as a serching directory. Read about **Cloned Repositories Search** configurations on its Settings topic below.
+To make your GitHub cloned repositories show up in the **Cloned** tree on the **REPOSITORIES** tree view, you will need to set the **"git.defaultCloneDirectory"** setting on your VSCode settings.json file to an absolute path where your cloned repositories are located (may be on a deep directory), so our Searcher will look for your GitHub repositories there. You may use **"\~"** to point to your home directory. I usually store my repos under **"\~/Dev"**, so that's what I use as my **"git.defaultCloneDirectory"** value. It's already planned to allow setting more than one directory as a serching directory. Read about **Cloned Repositories Search** configurations on its Settings topic below.
 
 
 <br/>
