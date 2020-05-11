@@ -27,11 +27,11 @@ function getTooltip(repo: Repository) {
     + (`\r\n${repo.description || 'No description.'}`)
     + `\r\n${repo.ownerLogin}`
     + `\r\n${repo.isPrivate ? 'Private' : 'Public'}`
-    + (repo.language
-      ? `\r\n${repo.language}`
+    + (repo.languageName
+      ? `\r\n${repo.languageName}`
       : '')
     + (repo.isFork
-      ? `\r\nFork of: TODO`
+      ? `\r\nFork of:  ${repo.parentRepoOwnerLogin} / ${repo.parentRepoName}`
       : '');
   return tooltip;
 }

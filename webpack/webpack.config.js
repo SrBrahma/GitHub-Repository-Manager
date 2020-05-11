@@ -5,6 +5,7 @@
 
 const path = require('path');
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 /**@type {import('webpack').Configuration}*/
 const config = {
@@ -34,12 +35,18 @@ const config = {
         exclude: /node_modules/,
         use: [
           {
-            loader: 'ts-loader'
+            loader: 'ts-loader',
+            options: { // Makes the compilation faster https://github.com/TypeStrong/ts-loader#faster-builds
+              transpileOnly: true
+            }
           }
         ]
       }
     ]
   },
-  plugins: [new CleanWebpackPlugin()]
+  plugins: [
+    new CleanWebpackPlugin(),
+    new ForkTsCheckerWebpackPlugin()
+  ]
 };
 module.exports = config;

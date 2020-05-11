@@ -52,7 +52,7 @@ export async function cloneRepo(repo: Repository, parentPath: string) {
     await exec(`git pull https://${token}@github.com/${repo.ownerLogin}/${repo.name}.git master`,
       { cwd: repoPath });
   }
-
+  // TODO SrBrahma: find problem in gostack06
   catch (error) {
     // This will happen if the repository never had a push. As we know it really exists, isn't a problem at all.
     if ((error.message as string).includes("couldn't find remote ref master"))

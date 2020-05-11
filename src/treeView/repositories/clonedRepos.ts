@@ -52,9 +52,14 @@ function getChildren(clonedRepos: Repository[]): TreeItem | TreeItem[] {
 
     default:
     case repositories.SearchLocalReposStatus.ok:
-      return clonedRepos.map(clonedRepo => new RepoItem({
-        repo: clonedRepo,
-        contextValue: 'githubRepoMgr.context.clonedRepo'
+      return clonedRepos.map(repo => new RepoItem({
+        repo,
+        contextValue: 'githubRepoMgr.context.clonedRepo',
+        command: {
+          // We wrap the repo in {} because we may call the cloneTo from the right click, and it passes the RepoItem.
+          command: 'githubRepoMgr.commands.clonedRepos.open',
+          arguments: [{ repo }]
+        },
       }));
   }
 }

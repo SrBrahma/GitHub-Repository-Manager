@@ -50,9 +50,9 @@ export async function uiCreateRepo() {
     const newRepo = await create({ name, description, privateRepo });
     name = ''; // Clears the fields, as we successfully created the repo.
     description = '';
-    const answer = await window.showInformationMessage(`Repository ${name} created successfully! Do you want to clone it?`, 'Yes', 'No');
 
     repositories.loadRepos();
+    const answer = await window.showInformationMessage(`Repository ${name} created successfully! Do you want to clone it?`, 'Yes', 'No');
 
     if (answer === 'Yes') {
       uiCloneTo(newRepo); // uiCloneTo will call repositories.loadRepos() again on success.

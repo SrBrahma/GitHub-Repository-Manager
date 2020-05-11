@@ -1,13 +1,13 @@
 import { oauthCallbackPort, authCallbackPath, callbackPagePath } from '../consts';
-import vscode from "vscode";
+import vscode, { window } from "vscode";
 import express from 'express';
 import { initOctokit } from './octokit';
 
 
 // Thanks to Settings-Sync extension where I learned how they made the OAuth authorization
-// (and to many other extensions where I learned lots of stuff to get this done)
-// They however exposes publicly the clientId and clientSecret in the code. I decidede to
-// use Vercel, which handles the communication with GitHub api.
+// (and to many other extensions where I learned lots of stuff to get this one done)
+// Settings-Sync however exposes publicly the GitHub OAuth App clientId and clientSecret in the code.
+// I decided to use Vercel, which handles the communication with GitHub api.
 
 
 let expressApp: express.Express | null = null;
@@ -18,9 +18,14 @@ const oauthUri = `https://micro-github.srbrahma.now.sh/api/login`;
  * Also starts the server.
  * @export
  */
-export function openOAuthWebPage() {
-  vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(oauthUri));
-  openServer();
+export async function openOAuthWebPage() {
+  try {
+    await openServer();
+    vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(oauthUri));
+  }
+  catch (error) {
+    window.showErrorMessage(error);
+  }
 }
 
 
@@ -28,18 +33,40 @@ export function openOAuthWebPage() {
  * Also starts the server.
  * @export
  */
-export function copyOAuthLinkToClipboard() {
-  vscode.env.clipboard.writeText(oauthUri);
-  openServer();
+export async function copyOAuthLinkToClipboard() {
+  try {
+    await openServer();
+    vscode.env.clipboard.writeText(oauthUri);
+  }
+  catch (error) {
+    window.showErrorMessage(error);
+  }
 }
 
 
-function openServer() {
-  if (expressApp)
+// TODO: Add custom port support. For now, it displays an error if port already in use.
+async function openServer(): Promise<void> {
+
+  // https://github.com/nodejs/node/issues/21482#issuecomment-626025579
+  function asyncListen(port: number) {
+    return new Promise((resolve, reject) => {
+      expressApp.listen(port)
+        .once('listening', resolve)
+        .once('error', reject);
+    });
+  }
+
+  if (expressApp) // Server already running
     return;
 
   expressApp = express().use(express.json());
-  expressApp.listen(oauthCallbackPort);
+
+  try {
+    await asyncListen(oauthCallbackPort);
+  }
+  catch (error) {
+    throw new Error(error);
+  }
 
   // Handles the callback from the server, that contains the token or error.
   expressApp.get(authCallbackPath, (req, res) => {
@@ -100,3 +127,4 @@ const callbackHtmlPage = `
   </body>
 </html>
 `;
+
