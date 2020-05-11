@@ -3,7 +3,7 @@
 </h1>
 
 <h3 align="center">
-Lists your GitHub repositories, allowing you to clone them and creating new ones, all directly from your VS Code.
+Lists your GitHub repositories, allowing you to clone them and creating new ones, directly from your VS Code
 </h3>
 
 <div align="center">

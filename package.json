@@ -33,6 +33,7 @@
   ],
   "scripts": {
     "vscode:prepublish": "webpack --config webpack/webpack.config.prod.js",
+    "publish": "vsce publish",
     "webpack": "webpack --config webpack/webpack.config.dev.js",
     "webpack-dev": "webpack --config webpack/webpack.config.dev.js --watch",
     "test-compile": "tsc -p ./",
