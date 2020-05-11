@@ -1,6 +1,6 @@
 # Change Log : GitHub Repository Manager
 
-### 0.2.1 ~ 0.2.2 - May 11, 2020
+### 0.2.1 ~ 0.2.3 - May 11, 2020
 
 Quick README fix.
 Logo updated again. I looked at my screen while I was a little slid in the chair and I got this idea of the gradient. "Blue gradient. Nice. Now let's add pink or purple." and I kept moving two linear gradients and changing its colors until it looked nice on both of my monitors. lol

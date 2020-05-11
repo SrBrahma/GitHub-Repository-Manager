@@ -1,2 +1,0 @@
-logo256.png is used on GitHub OAuth image. The background color should be #0d0d0d.
-logo128.png is used as VSCode Extension / Marketplace image.
