@@ -11,7 +11,7 @@
     "url": "https://github.com/SrBrahma/GitHub-Repository-Manager"
   },
   "icon": "images/logo/logo128.png",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "main": "./dist/extension.js",
   "engines": {
     "vscode": "^1.44.0"
