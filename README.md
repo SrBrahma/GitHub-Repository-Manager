@@ -62,8 +62,9 @@ To make your GitHub cloned repositories show up in the **Cloned** tree on the **
 <br/>
 <h1 align="center"> Settings </h1>
 
+<h2> <b> General </b></h2>
 
-- ## **Save Token**
+- ## Save Token
 ##### _"githubRepositoryManager.saveToken"_
 By default, when closing the VSCode, your token (OAuth or Personal access token) is forgotten, and on each VSCode opening, you will need to login again to use this extension functionalities. This setting saves the token (OAuth or Personal access token) in an internal file. You must be careful while using this option, as malicious extensions and applications can retrieve the stored token and read and write to your repositories (but not delete). The stored token is removed from the disk when "Logout and forget token" is clicked when logged. You can also delete at any time your Personal access token on GitHub website > Settings > Developer settings > Personal access token, and your OAuth under GitHub website > Settings > Applications > Authorized OAuth Apps.
 
@@ -72,22 +73,22 @@ But, while the GitHub Repository Manager is an uknown extension, you surely won'
 
 
 
-<h2 align="center"><b> Repositories Search </b></h2>
+<h2> <b> Repositories Search </b></h2>
 
 
-- ## **Default Clone Directory Maximum Depth**
+- ## Default Clone Directory Maximum Depth
 ##### _"githubRepositoryManager.clonedRepositoriesSearch.defaultCloneDirectoryMaximumDepth"_
 How deep on "git.defaultCloneDirectory" local cloned repositories will be searched. A depth of 0 means it will only search on the directory itself, a depth of 3 means it will search up to 3 directories below.
 ##### Default: 3
 
 
-- ## **Directories To Ignore**
+- ## Directories To Ignore
 ##### _"githubRepositoryManager.clonedRepositoriesSearch.directoriesToIgnore"_
 Directories names to not search for repositories in them.
 ##### Default: ["node_modules", ".vscode"]
 
 
-- ## **Search On Default Clone Directory**
+- ## Search On Default Clone Directory
 ##### "githubRepositoryManager.clonedRepositoriesSearch.searchOnDefaultCloneDirectory"_
 Search for cloned repos on the "git.defaultCloneDirectory" path setting. Only applies if 'git.defaultCloneDirectory' is set.
 
