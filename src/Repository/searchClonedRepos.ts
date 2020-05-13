@@ -15,6 +15,7 @@ interface DirWithGitUrl {
 async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
   const dirsWithGitUrl: DirWithGitUrl[] = [];
 
+  // console.log(dirsPath);
   // forEach would call all execs 'at the same time', as it doesnt wait await.
   for (const dirPath of dirsPath) {
     try {
@@ -28,10 +29,11 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
       // This will get every non whitespace char to the left and right of github uri.
       const regex = result.match(/\S+github.com\S+/);
 
+      // console.log([dirPath, result, regex]);
       if (regex) {
         // Remove the .git the gitUrl may or not have (as our repo.htmlUrl don't have .git)
-        let gitUrl = regex[0].replace('.git', '');
-
+        let gitUrl = regex[0].replace(/\.git$/, '');
+        // console.log(gitUrl);
         dirsWithGitUrl.push({ gitUrl, dirPath });
       }
     }

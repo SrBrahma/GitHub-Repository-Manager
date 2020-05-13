@@ -1,5 +1,9 @@
 # Change Log : GitHub Repository Manager
 
+### 0.2.7 - May 12, 2020
+
+Fixed username.github.io repositories not being found by the Cloned Repository Searcher. Thanks, u/tHeSiD!
+
 ### 0.2.1 ~ 0.2.6 - May 11, 2020
 
 Quick README fixes.
