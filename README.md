@@ -18,7 +18,7 @@ Lists your GitHub repositories, allowing you to clone them and creating new ones
 
 
 <div align="center">
-<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/README_md/usage.gif" width="80%" >
+<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/README_md/usage.gif" width="85%" >
 </div>
 <br/>
 
@@ -134,8 +134,10 @@ At the current (v0.2.0), cloned repositories may only be found using this option
 <h3 align="center">
   Help me to keep and improve this project!
   </br></br>
-  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6P2HYMMC2VWMG">
-    <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Paypal">
+  <a align="center" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6P2HYMMC2VWMG">
+  <!-- This align again is for the marketplace, where the donate image wasn't centered. -->
+  <!-- not sure if it works, going to see on next release -->
+    <img align="center" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Paypal">
   </a>
 </h3>
 

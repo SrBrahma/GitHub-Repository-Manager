@@ -7,6 +7,7 @@ Fixed username.github.io repositories not being found by the Cloned Repository S
 ### 0.2.1 ~ 0.2.6 - May 11, 2020
 
 Quick README fixes.
+
 Logo updated again. I looked at my screen while I was a little slid in the chair and I got this idea of the gradient. "Blue gradient. Nice. Now let's add pink or purple." and I kept moving two linear gradients and changing its colors until it looked nice on both of my monitors. lol
 
 ### 0.2.0 - May 11, 2020
