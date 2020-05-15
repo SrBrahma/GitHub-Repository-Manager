@@ -1,16 +1,28 @@
 # Change Log : GitHub Repository Manager
 
-### 0.2.7 - May 12, 2020
+
+## 0.3.0 - May 15, 2020
+
+<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/CHANGELOG_md/0_3_0.png" alt="0.3.0">
+
+Added Show Repository Commands Icons and a setting for it. ([#3](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/3))
+
+Thanks for the idea, hediet!
+
+
+## 0.2.7 - May 12, 2020
 
 Fixed username.github.io repositories not being found by the Cloned Repository Searcher. Thanks, u/tHeSiD!
 
-### 0.2.1 ~ 0.2.6 - May 11, 2020
+
+## 0.2.1 ~ 0.2.6 - May 11, 2020
 
 Quick README fixes.
 
 Logo updated again. I looked at my screen while I was a little slid in the chair and I got this idea of the gradient. "Blue gradient. Nice. Now let's add pink or purple." and I kept moving two linear gradients and changing its colors until it looked nice on both of my monitors. lol
 
-### 0.2.0 - May 11, 2020
+
+## 0.2.0 - May 11, 2020
 
 Fixed Cloned Repositories Search not working with some remotes.
 
@@ -24,15 +36,20 @@ Added error message if the extension can't open the OAuth callback server.
 
 Changed REST requests to Graphql. Reduces network usage, reduces time to retrieve the data and also now shows the "Fork of" information when hovering a repository.
 
-### 0.1.1 - May 6, 2020
+
+## 0.1.1 - May 6, 2020
 
 Quick fixes
 
-### 0.1.0 - May 6, 2020
+
+## 0.1.0 - May 6, 2020
 
 First release
 
-## Donation
+
+<br/>
+
+# Donation
 
 Help me to keep and improve this project!
 

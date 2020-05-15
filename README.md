@@ -62,7 +62,7 @@ To make your GitHub cloned repositories show up in the **Cloned** tree on the **
 <br/>
 <h1 align="center"> Settings </h1>
 
-<h2> <b> General </b></h2>
+<h2><b> General </b></h2>
 
 - ## Save Token
 ##### _"githubRepositoryManager.saveToken"_
@@ -72,7 +72,15 @@ But, while the GitHub Repository Manager is an uknown extension, you surely won'
 ##### Default: false
 
 
+- ## Show Repository Commands Icons
+##### _"githubRepositoryManager.showRepositoryCommandsIcons"_
+When hovering a repository in the tree view, shows some common commands icons for quick use. You may also call them via the right-click menu, being this setting enabled or not. Requires restart after changing to take effect.
 
+<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/README_md/config/showRepositoryCommandsIcons.png" alt="Show Repository Commands Icons">
+
+##### Default: true
+
+<br/>
 <h2> <b> Repositories Search </b></h2>
 
 
@@ -124,6 +132,10 @@ At the current (v0.2.0), cloned repositories may only be found using this option
 
 - Extension Settings description using markdown
 
+- Copy Repository URL
+
+
+
 <br/>
 <h2 align="center"> Feel free to open an issue for features requests, problems or questions! </h2>
 
@@ -134,10 +146,11 @@ At the current (v0.2.0), cloned repositories may only be found using this option
 <h3 align="center">
   Help me to keep and improve this project!
   </br></br>
-  <a align="center" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6P2HYMMC2VWMG">
+</h3>
+
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6P2HYMMC2VWMG">
   <!-- This align again is for the marketplace, where the donate image wasn't centered. -->
   <!-- not sure if it works, going to see on next release -->
     <img align="center" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Paypal">
-  </a>
-</h3>
+</a>
 

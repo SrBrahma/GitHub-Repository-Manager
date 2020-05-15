@@ -11,7 +11,7 @@
     "url": "https://github.com/SrBrahma/GitHub-Repository-Manager"
   },
   "icon": "images/logo/logo128.png",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "main": "./dist/extension.js",
   "engines": {
     "vscode": "^1.44.0"
@@ -77,6 +77,11 @@
           "default": false,
           "description": "By default, when closing the VSCode, your token (OAuth or Personal access token) is forgotten, and on each VSCode opening, you will need to login again to use this extension functionalities. This setting saves the token (OAuth or Personal access token) in an internal file. You must be careful while using this option, as malicious extensions and applications can retrieve the stored token and read and write to your repositories (but not delete). The stored token is removed from the disk when \"Logout and forget token\" is clicked when logged. You can also delete at any time your Personal access token on GitHub website > Settings > Developer settings > Personal access token, and your OAuth under GitHub website > Settings > Applications > Authorized OAuth Apps."
         },
+        "githubRepositoryManager.showRepositoryCommandsIcons": {
+          "type": "boolean",
+          "default": true,
+          "description": "When hovering a repository in the tree view, shows some common commands icons for quick use. You may also call them via the right-click menu, being this setting enabled or not. Requires restart after changing to take effect."
+        },
         "githubRepositoryManager.clonedRepositoriesSearch.searchOnDefaultCloneDirectory": {
           "type": "boolean",
           "default": true,
@@ -132,7 +137,8 @@
       },
       {
         "command": "githubRepoMgr.commands.repos.openWebPage",
-        "title": "Open GitHub Page"
+        "title": "Open GitHub Page",
+        "icon": "$(globe)"
       },
       {
         "command": "githubRepoMgr.commands.clonedRepos.open",
@@ -140,7 +146,8 @@
       },
       {
         "command": "githubRepoMgr.commands.clonedRepos.openInNewWindow",
-        "title": "Open in New Window"
+        "title": "Open in New Window",
+        "icon": "$(multiple-windows)"
       },
       {
         "command": "githubRepoMgr.commands.clonedRepos.addToWorkspace",
@@ -148,7 +155,8 @@
       },
       {
         "command": "githubRepoMgr.commands.clonedRepos.openContainingFolder",
-        "title": "Open Containing Folder"
+        "title": "Open Containing Folder",
+        "icon": "$(symbol-folder)"
       },
       {
         "command": "githubRepoMgr.commands.clonedRepos.copyPath",
@@ -175,7 +183,7 @@
       "view/item/context": [
         {
           "command": "githubRepoMgr.commands.repos.openWebPage",
-          "when": "viewItem == githubRepoMgr.context.clonedRepo",
+          "when": "viewItem =~ /githubRepoMgr\\.context\\.(not)?clonedRepo/i",
           "group": "9@0"
         },
         {
@@ -205,11 +213,23 @@
         },
         {
           "command": "githubRepoMgr.commands.notClonedRepos.cloneTo",
-          "when": "viewItem == githubRepoMgr.context.notClonedRepo"
+          "when": "viewItem == githubRepoMgr.context.notClonedRepo",
+          "group": "0@0"
+        },
+        {
+          "command": "githubRepoMgr.commands.clonedRepos.openInNewWindow",
+          "when": "config.githubRepositoryManager.showRepositoryCommandsIcons && viewItem == githubRepoMgr.context.clonedRepo",
+          "group": "inline@0"
+        },
+        {
+          "command": "githubRepoMgr.commands.clonedRepos.openContainingFolder",
+          "when": "config.githubRepositoryManager.showRepositoryCommandsIcons && viewItem == githubRepoMgr.context.clonedRepo",
+          "group": "inline@1"
         },
         {
           "command": "githubRepoMgr.commands.repos.openWebPage",
-          "when": "viewItem == githubRepoMgr.context.notClonedRepo"
+          "when": "config.githubRepositoryManager.showRepositoryCommandsIcons && viewItem =~ /githubRepoMgr\\.context\\.(not)?clonedRepo/i",
+          "group": "inline@5"
         }
       ]
     }
