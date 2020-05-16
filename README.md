@@ -134,7 +134,7 @@ At the current (v0.2.0), cloned repositories may only be found using this option
 
 - Copy Repository URL
 
-
+- Git not installed message
 
 <br/>
 <h2 align="center"> Feel free to open an issue for features requests, problems or questions! </h2>
@@ -148,9 +148,9 @@ At the current (v0.2.0), cloned repositories may only be found using this option
   </br></br>
 </h3>
 
+<!-- Without this div, it wasn't being centered on the marketplace. -->
+<div align="center">
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=6P2HYMMC2VWMG">
-  <!-- This align again is for the marketplace, where the donate image wasn't centered. -->
-  <!-- not sure if it works, going to see on next release -->
-    <img align="center" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Paypal">
+    <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" alt="Paypal">
 </a>
-
+</div>

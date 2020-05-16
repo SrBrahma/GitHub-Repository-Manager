@@ -1,6 +1,11 @@
 # Change Log : GitHub Repository Manager
 
 
+## 0.3.1 - May 16, 2020
+
+Fixed donate button centering in Visual Studio Marketplace web page.
+
+
 ## 0.3.0 - May 15, 2020
 
 <img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/CHANGELOG_md/0_3_0.png" alt="0.3.0">
