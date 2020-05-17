@@ -41,6 +41,10 @@ export function activateTreeViewRepositories() {
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.openWebPage', ({ repo }: RepoItem) =>
     vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(repo.url)));
 
+  // Will have .git on the end.
+  vscode.commands.registerCommand('githubRepoMgr.commands.repos.copyRepositoryUrl', ({ repo }: RepoItem) =>
+    vscode.env.clipboard.writeText(`${repo.url}.git`));
+
   // Reload repos
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.reload', () =>
     repositories.loadRepos());

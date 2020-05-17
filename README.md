@@ -132,9 +132,9 @@ At the current (v0.2.0), cloned repositories may only be found using this option
 
 - Extension Settings description using markdown
 
-- Copy Repository URL
-
 - Git not installed message
+
+- Other repositories found by the Cloned Repository Searcher. Useful for quickly opening a repository you don't own.
 
 <br/>
 <h2 align="center"> Feel free to open an issue for features requests, problems or questions! </h2>

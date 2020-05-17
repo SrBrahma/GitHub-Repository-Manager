@@ -1,6 +1,11 @@
 # Change Log : GitHub Repository Manager
 
 
+## 0.3.2 - May 16, 2020
+
+Added "Copy Repository URL" on repository right-click menu
+
+
 ## 0.3.1 - May 16, 2020
 
 Fixed donate button centering in Visual Studio Marketplace web page.
