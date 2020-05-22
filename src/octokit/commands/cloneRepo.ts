@@ -24,16 +24,7 @@
 //
 // After those two, the pulled repo don't have a remote (github link). So we add it.
 
-`
-[core]
-	repositoryformatversion = 0
-	filemode = true
-	bare = false
-	logallrefupdates = true
-[remote "GitHub"]
-	url = https://github.com/SrBrahma/Strenner.git
-	fetch = +refs/heads/*:refs/remotes/GitHub/*
-`;
+
 import { Repository } from "../../Repository/Repository";
 import { exec } from 'mz/child_process';
 import path from 'path';
@@ -60,6 +51,16 @@ export async function cloneRepo(repo: Repository, parentPath: string) {
       { cwd: repoPath });
     await exec(`git pull https://${token}@github.com/${repo.ownerLogin}/${repo.name}.git master`,
       { cwd: repoPath });
+
+    // I didn't find a way to automatically set the push destination.
+    // The usual way is by doing "git push -u origin master", however, it requires the user being
+    // logged, which isn't always true (and we actually didn't in previous steps)
+
+    fs.appendFileSync(path.resolve(parentPath, repo.name, '.git', 'config'),
+      `[branch "master"]
+  remote = origin
+  merge = refs/heads/master`);
+
   }
   catch (err) {
     // This will happen if the repository never had a push. As we know it really exists, isn't a problem at all.

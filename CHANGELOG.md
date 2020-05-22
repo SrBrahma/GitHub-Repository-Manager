@@ -1,5 +1,9 @@
 # Change Log : GitHub Repository Manager
 
+## 0.3.5 - May 22, 2020
+
+Clone command seems to be fully fixed. Now, on repository commit, it will have "master" as the default destination.
+
 
 ## 0.3.4 - May 22, 2020
 
