@@ -5,7 +5,7 @@ import { getRepos } from '../octokit/commands/getRepos';
 
 interface RepositoryInterface {
   name: string,
-  description: string,
+  description: string | null,
   ownerLogin: string,
   languageName?: string,  // "C++" etc
   url: string,

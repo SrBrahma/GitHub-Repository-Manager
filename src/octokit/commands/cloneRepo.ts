@@ -58,8 +58,8 @@ export async function cloneRepo(repo: Repository, parentPath: string) {
 
     fs.appendFileSync(path.resolve(parentPath, repo.name, '.git', 'config'),
       `[branch "master"]
-  remote = origin
-  merge = refs/heads/master`);
+\tremote = origin
+\tmerge = refs/heads/master`);
 
   }
   catch (err) {

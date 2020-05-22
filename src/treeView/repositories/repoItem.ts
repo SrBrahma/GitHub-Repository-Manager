@@ -1,8 +1,13 @@
 import { Repository } from "../../Repository/Repository";
 import vscode from 'vscode';
 import { TreeItem, TreeItemConstructor } from "../base";
+import { stringInsert } from "../../aux";
 
 // https://code.visualstudio.com/api/references/icons-in-labels
+
+
+
+
 
 // TODO: Use GitHub icons (must resize them)
 // we may use repo-cloned as icon for template.
@@ -18,23 +23,23 @@ function getIcon(repo: Repository) {
 }
 
 
-// TODO: is template (how to, via octokit? this isnt returned in the
-// current used request. maybe graphql?) Update: yes graphql allow isTemplate.
 function getTooltip(repo: Repository) {
   let tooltip = ''
-    + `\r\n${repo.name}`
-    + (`\r\n${repo.description || 'No description.'}`)
-    + `\r\n${repo.ownerLogin}`
-    + `\r\n${repo.isPrivate ? 'Private' : 'Public'}`
-    + (repo.languageName
-      ? `\r\n${repo.languageName}`
-      : '')
-    + (repo.isFork
-      ? `\r\nFork of:  ${repo.parentRepoOwnerLogin} / ${repo.parentRepoName}`
-      : '')
-    + '\r\n'
-    + `\r\nUpdated  ${repo.updatedAt.toLocaleString()}`
-    + `\r\nCreated    ${repo.createdAt.toLocaleString()}` // Spaces needed to make it aligned.
+    + `\r\Name              :  ${repo.name}`
+
+    + `\r\nDescription :  ${repo.description ? repo.description : 'No description'}`
+
+    + `\r\nAuthor           :  ${repo.ownerLogin}`
+
+    + `\r\nVisibility        :  ${repo.isPrivate ? 'Private' : 'Public'}`
+    // + (repo.isTemplate ? ' | Template' : '') //TODO
+
+    + (repo.languageName ? `\r\nLanguage     :  ${repo.languageName}` : '')
+
+    + (repo.isFork ? `\r\nFork of           :  ${repo.parentRepoOwnerLogin} / ${repo.parentRepoName}` : '')
+    + `\r\nUpdated at  :  ${repo.updatedAt.toLocaleString()}`
+    + `\r\nCreated at    :  ${repo.createdAt.toLocaleString()}`
+
     ;
   return tooltip;
 }
@@ -58,3 +63,35 @@ export class RepoItem extends TreeItem {
     this.repo = repo;
   }
 }
+
+
+// Not used. For > 2 lines, it breaks at different locations, as the font is not monospaced.
+// // Avoid too large tooltips by breaking lines
+// function formatText(string: string) {
+//   // return string;
+//   const maxCharsPerLine = 70;
+
+//   const preNewLine = '\r\n';
+//   const preNewLineDash = '-\r\n';
+
+//   const posNewLine = '  ';
+
+//   let i = maxCharsPerLine - 1;
+//   while (i < string.length) {
+//     if (string[i] !== ' ') {
+//       string = stringInsert(string, i, preNewLineDash);
+//       i += preNewLineDash.length;
+//     }
+//     else {
+//       string = stringInsert(string, i, preNewLine);
+//       i += preNewLine.length;
+//     }
+
+//     string = stringInsert(string, i, posNewLine);
+//     i += posNewLine.length;
+
+//     i += maxCharsPerLine;
+//   }
+
+//   return string;
+// }

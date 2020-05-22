@@ -1,5 +1,13 @@
 # Change Log : GitHub Repository Manager
 
+
+## 0.3.6 - May 22, 2020 -> Today was the day of quick and small changes.
+
+Reworked the Repositories Tree View Item Tooltip. Looks better now. Unfortunatelly, the ":" aren't perfectly alignable, as the font is not monospaced. Yeah, it annoys me too. We have to accept it!!
+
+<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/CHANGELOG_md/0_3_6.png" alt="0.3.6">
+
+
 ## 0.3.5 - May 22, 2020
 
 Clone command seems to be fully fixed. Now, on repository commit, it will have "master" as the default destination.
