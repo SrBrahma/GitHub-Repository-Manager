@@ -24,7 +24,16 @@
 //
 // After those two, the pulled repo don't have a remote (github link). So we add it.
 
-
+`
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "GitHub"]
+	url = https://github.com/SrBrahma/Strenner.git
+	fetch = +refs/heads/*:refs/remotes/GitHub/*
+`;
 import { Repository } from "../../Repository/Repository";
 import { exec } from 'mz/child_process';
 import path from 'path';
@@ -47,7 +56,7 @@ export async function cloneRepo(repo: Repository, parentPath: string) {
   try {
     await exec(`git init ${repo.name}`,
       { cwd: parentPath });
-    await exec(`git remote add GitHub https://github.com/${repo.ownerLogin}/${repo.name}.git`,
+    await exec(`git remote add origin https://github.com/${repo.ownerLogin}/${repo.name}.git`,
       { cwd: repoPath });
     await exec(`git pull https://${token}@github.com/${repo.ownerLogin}/${repo.name}.git master`,
       { cwd: repoPath });
