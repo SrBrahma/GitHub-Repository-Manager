@@ -3,9 +3,7 @@ import { repositoriesTreeDataProvider } from "../treeView/repositories/repositor
 import { window } from "vscode";
 import { getRepos } from '../octokit/commands/getRepos';
 
-
 interface RepositoryInterface {
-  // TODO: createdAt, updatedAt
   name: string,
   description: string,
   ownerLogin: string,
@@ -20,6 +18,9 @@ interface RepositoryInterface {
 
   parentRepoName?: string,
   parentRepoOwnerLogin?: string,
+
+  createdAt: Date,
+  updatedAt: Date,
 }
 
 //https://github.com/microsoft/TypeScript/issues/5326#issuecomment-592058988
@@ -48,9 +49,9 @@ export class Repositories {
       this.repositories = await getRepos();
       this.findLocalRepos();
     }
-    catch (error) {
-      window.showErrorMessage(error.message);
-      throw new Error(error);
+    catch (err) {
+      window.showErrorMessage(err.message);
+      throw new Error(err);
     }
   }
 

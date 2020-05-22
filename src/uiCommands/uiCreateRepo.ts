@@ -22,7 +22,6 @@ export async function uiCreateRepo() {
   if (!name) // We don't allow empty names.
     return;
 
-  // TODO: Pressing Esc or enter (in empty input) returns undefined.
   // User won't be able to quit dialogue now by pressing Esc, as empty descriptions are allowed.
   description = await window.showInputBox({
     prompt: 'Enter the repository description (optional)',
@@ -59,8 +58,8 @@ export async function uiCreateRepo() {
     }
   }
 
-  catch (error) {
-    window.showErrorMessage(error.message);
+  catch (err) {
+    window.showErrorMessage(err.message);
     return;
   }
 }

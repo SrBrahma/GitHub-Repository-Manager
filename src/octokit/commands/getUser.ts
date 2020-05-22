@@ -18,7 +18,7 @@ export async function getUser(): Promise<UserInterface> {
     };
   }
   // Octokit has a pattern for errors, which we display properly at octokitErrorDisplay().
-  catch (error) {
-    throw new Error(getOctokitErrorMessage(error));
+  catch (err) {
+    throw new Error(getOctokitErrorMessage(err));
   }
 }

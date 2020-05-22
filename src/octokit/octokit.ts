@@ -41,7 +41,7 @@ export async function initOctokit(tokenArg: string): Promise<void> {
     await repositories.loadRepos();
   }
 
-  catch (error) {
+  catch (err) {
     octokit = null;
     return;
   }

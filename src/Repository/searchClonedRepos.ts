@@ -4,7 +4,6 @@ import path from 'path';
 import { exec } from 'mz/child_process';
 import { Repository } from "./Repository";
 
-// TODO: Stores the cloned repos local path in globalState
 // mz lib is a little old but does the job.
 // https://stackoverflow.com/a/37532027/10247962
 
@@ -38,7 +37,7 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
         dirsWithGitUrl.push({ gitUrl, dirPath });
       }
     }
-    catch (error) {
+    catch (err) {
       // If error, it's because there isn't a remote. No need to manage it, may be left empty.
       // console.log(dirPath, error); // Uncomment to debug.
     }

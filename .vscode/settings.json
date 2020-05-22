@@ -11,5 +11,6 @@
   },
   "search.exclude": {
     "dist": true // set this to false to include "dist" folder in search results
-  }
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

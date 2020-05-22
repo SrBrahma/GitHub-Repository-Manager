@@ -1,6 +1,14 @@
 # Change Log : GitHub Repository Manager
 
 
+## 0.3.3 - May 22, 2020
+
+Fixed private repositories not showing as private.
+
+Added "Created" and "Updated" dates on repository tooltip.
+
+Fixed "Git fatal no configured push destination" on a cloned repository push
+
 ## 0.3.2 - May 16, 2020
 
 Added "Copy Repository URL" on repository right-click menu

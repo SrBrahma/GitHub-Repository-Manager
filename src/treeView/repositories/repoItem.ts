@@ -4,7 +4,6 @@ import { TreeItem, TreeItemConstructor } from "../base";
 
 // https://code.visualstudio.com/api/references/icons-in-labels
 
-
 // TODO: Use GitHub icons (must resize them)
 // we may use repo-cloned as icon for template.
 function getIcon(repo: Repository) {
@@ -32,7 +31,11 @@ function getTooltip(repo: Repository) {
       : '')
     + (repo.isFork
       ? `\r\nFork of:  ${repo.parentRepoOwnerLogin} / ${repo.parentRepoName}`
-      : '');
+      : '')
+    + '\r\n'
+    + `\r\nUpdated  ${repo.updatedAt.toLocaleString()}`
+    + `\r\nCreated    ${repo.createdAt.toLocaleString()}` // Spaces needed to make it aligned.
+    ;
   return tooltip;
 }
 

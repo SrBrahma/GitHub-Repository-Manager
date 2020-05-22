@@ -1,7 +1,6 @@
 import vscode from 'vscode';
 import { configs } from './configs';
 
-// TODO: extension version
 export namespace storage {
 
   let context: vscode.ExtensionContext;

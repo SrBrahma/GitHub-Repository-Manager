@@ -1,6 +1,0 @@
-        "githubRepositoryManager.clonedRepositories.actionOnLeftClick": {
-          "type": "number",
-          "enumDescriptions": ["Open", "Open in a new window", "Add to workspace", "Disabled"],
-          "default": true,
-          "description": "" // todo
-        },

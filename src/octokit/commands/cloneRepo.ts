@@ -52,16 +52,16 @@ export async function cloneRepo(repo: Repository, parentPath: string) {
     await exec(`git pull https://${token}@github.com/${repo.ownerLogin}/${repo.name}.git master`,
       { cwd: repoPath });
   }
-  catch (error) {
+  catch (err) {
     // This will happen if the repository never had a push. As we know it really exists, isn't a problem at all.
-    if ((error.message as string).includes("couldn't find remote ref master"))
+    if ((err.message as string).includes("couldn't find remote ref master"))
       return;
 
     // Removes the repo dir if error. For some reason rimraf needs this empty callback.
     rimraf(repoPath, () => { });
 
     // Removes the token from the error message
-    const censoredMsg = (error.message as string).replace(token, '[tokenHidden]');
+    const censoredMsg = (err.message as string).replace(token, '[tokenHidden]');
     throw new Error(censoredMsg);
   }
 }

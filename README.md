@@ -29,15 +29,17 @@ Guide
 
 <h2><b>Login with OAuth</b></h2>
 
-Under **Login with**, click on the **OAuth -> Open in browser** or **OAuth -> Copy link to clipboard** and paste that link on your browser (useful if your VSCode is having trouble opening the browser). Authenticate, and on success, it will redirect to a localhost web page, hosted under the port 60002 by default. You are now logged! You may close the redirect page.
+Under **Login with**, click on the **OAuth -> Open in browser** or **OAuth -> Copy link to clipboard** and paste that link on your browser (useful if your VSCode is having trouble opening the browser). Authenticate, and on success, it will redirect to a localhost web page, hosted under the port 60002, by default. You are now logged! You may close the redirect page.
 
 Under the hoods, it's returned to you a token via the localhost redirect, similar to the Personal access token.
 
 Uses Vercel to handle the OAuth token generation (https://github.com/SrBrahma/micro-github hosted on https://micro-github.srbrahma.now.sh/).
 
+If this method is not working, you may try the method below.
+
 <h2><b>Login with Personal access token</b></h2>
 
-If you want to login using a Personal access token, go to your GitHub web page, Settings, Developer settings, Personal access tokens, mark the bold **repo** option, click on the **Generate token** button, and your token will show up. You may now enter it on **Personal access token**, under **Login with**.
+To login using a Personal access token, go to your GitHub web page, Settings, Developer settings, Personal access tokens, mark the bold **repo** option, click on the **Generate token** button, and your token will show up. You may now enter it on **Personal access token**, under **Login with**.
 
 <img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/README_md/personalAccessToken.png" alt="Personal access token" width="60%" >
 

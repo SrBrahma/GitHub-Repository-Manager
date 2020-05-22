@@ -22,7 +22,7 @@ export async function create({ name, description, privateRepo }: CreateInterface
     });
     return extractRepositoryFromData(data);
   }
-  catch (error) {
-    throw new Error(error);
+  catch (err) {
+    throw new Error(err);
   }
 }

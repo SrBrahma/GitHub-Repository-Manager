@@ -1,7 +1,6 @@
 import { workspace, window, Uri, commands } from 'vscode';
 import { Repository, repositories } from "../Repository/Repository";
 import { cloneRepo } from "../octokit/commands/cloneRepo";
-import os from 'os';
 import path from 'path';
 import { configs } from '../configs';
 
@@ -52,9 +51,9 @@ export async function uiCloneTo(repo: Repository) {
     await cloneRepo(repo, parentPath);
     statusBar.dispose();
   }
-  catch (error) {
+  catch (err) {
     statusBar.dispose();
-    window.showErrorMessage(error.message);
+    window.showErrorMessage(err.message);
     return;
   }
 

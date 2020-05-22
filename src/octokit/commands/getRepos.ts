@@ -10,7 +10,7 @@ export function extractRepositoryFromData(node: any) {
     languageName: node.primaryLanguage?.name,
     url: node.url,
 
-    isPrivate: node.private,
+    isPrivate: node.isPrivate,
     isFork: node.isFork,
     isTemplate: node.isTemplate,
     userIsAdmin: node.viewerCanAdminister,
@@ -18,6 +18,9 @@ export function extractRepositoryFromData(node: any) {
     // parent may be null if isn't a fork.
     parentRepoName: node.parent?.name,
     parentRepoOwnerLogin: node.parent?.owner.login,
+
+    createdAt: new Date(node.createdAt),
+    updatedAt: new Date(node.updatedAt)
   });
 }
 
@@ -45,8 +48,8 @@ export async function getRepos(): Promise<Repository[]> {
     return repos;
   }
 
-  catch (error) { // Octokit has a patter for errors, which we display properly at octokitErrorDisplay().
-    throw new Error(getOctokitErrorMessage(error));
+  catch (err) { // Octokit has a patter for errors, which we display properly at octokitErrorDisplay().
+    throw new Error(getOctokitErrorMessage(err));
   }
 }
 
@@ -81,6 +84,8 @@ query getRepos ($after: String) {
             login
           }
         }
+        createdAt
+        updatedAt
       }
     }
   }
