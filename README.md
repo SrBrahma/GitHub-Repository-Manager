@@ -85,6 +85,10 @@ When hovering a repository in the tree view, shows some common commands icons fo
 <br/>
 <h2> <b> Repositories Search </b></h2>
 
+- ## Always clone to "git.defaultCloneDirectory"
+##### _"githubRepositoryManager.alwaysCloneToDefaultDirectory"_
+Always clone to the directory specified in "git.defaultCloneDirectory"
+##### Default: false
 
 - ## Default Clone Directory Maximum Depth
 ##### _"githubRepositoryManager.clonedRepositoriesSearch.defaultCloneDirectoryMaximumDepth"_
