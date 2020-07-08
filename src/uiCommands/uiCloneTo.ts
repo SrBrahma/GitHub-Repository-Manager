@@ -29,18 +29,24 @@ export async function uiCloneTo(repo: Repository) {
   if (labelRepoName.length >= 15)
     labelRepoName = `${labelRepoName.substr(0, 12)}...`;
 
-  const thenable = await window.showOpenDialog({
-    defaultUri: Uri.file(configs.defaultCloneToDir),
-    openLabel: `Clone ${labelRepoName} here`,
-    canSelectFiles: false,
-    canSelectFolders: true,
-    canSelectMany: false
-  });
+  let parentPath: string = '';
 
-  if (!thenable) // Cancel if quitted dialog
-    return;
+  if (!configs.alwaysCloneToDefaultDirectory) {
+    const thenable = await window.showOpenDialog({
+      defaultUri: Uri.file(configs.defaultCloneToDir),
+      openLabel: `Clone ${labelRepoName} here`,
+      canSelectFiles: false,
+      canSelectFolders: true,
+      canSelectMany: false
+    });
 
-  const parentPath = thenable[0].fsPath;
+    if (!thenable) // Cancel if quitted dialog
+      return;
+
+    parentPath = thenable[0].fsPath;
+  } else {
+    parentPath = configs.defaultCloneToDir;
+  }
 
   const repoPath = path.resolve(parentPath, repo.name);
   const uri = Uri.file(repoPath);
