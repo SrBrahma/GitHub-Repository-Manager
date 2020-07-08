@@ -38,7 +38,7 @@ export async function getRepos(): Promise<Repository[]> {
       // https://github.com/octokit/graphql.js/#variables
       const { nodes, pageInfo } = (await octokit.graphql(query, {
         after: endCursor
-      })).viewer.repositories;
+      }) as any).viewer.repositories;
 
       ({ endCursor, hasNextPage } = pageInfo);
 
