@@ -48,11 +48,13 @@
     "@types/mz": "^2.7.0",
     "@types/rimraf": "^3.0.0",
     "express": "^4.17.1",
+    "git-url-parse": "^11.1.2",
     "mz": "^2.7.0",
     "rimraf": "^3.0.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.6",
+    "@types/git-url-parse": "^9.0.0",
     "@types/node": "^13.11.0",
     "@types/vscode": "^1.44.0",
     "@typescript-eslint/eslint-plugin": "^2.26.0",

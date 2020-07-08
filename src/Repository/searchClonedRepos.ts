@@ -3,6 +3,7 @@ import { readdir } from 'mz/fs';
 import path from 'path';
 import { exec } from 'mz/child_process';
 import { Repository } from "./Repository";
+import GitUrlParse from "git-url-parse";
 
 // mz lib is a little old but does the job.
 // https://stackoverflow.com/a/37532027/10247962
@@ -30,10 +31,8 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
 
       // console.log([dirPath, result, regex]);
       if (regex) {
-        // Remove the .git the gitUrl may or not have (as our repo.htmlUrl don't have .git)
-        // This $ make it only remove the final .git, not removing .git from ie .github.io.git
-        let gitUrl = regex[0].replace(/\.git$/, '');
-        // console.log(gitUrl);
+        // Parse the git URL into a repository URL
+        let gitUrl = GitUrlParse(regex[0]).toString("https").replace('.git', '');
         dirsWithGitUrl.push({ gitUrl, dirPath });
       }
     }
