@@ -5,6 +5,7 @@ import os from 'os';
 
 class Configs {
   getConfig = getConfig;
+  get alwaysCloneToDefaultDirectory() { return getConfig<boolean>('alwaysCloneToDefaultDirectory'); }
 
   get defaultCloneDir(): string | undefined {
     let path = workspace.getConfiguration('git').get<string>('defaultCloneDirectory');

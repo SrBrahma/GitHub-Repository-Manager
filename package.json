@@ -90,6 +90,11 @@
           "default": true,
           "description": "When hovering a repository in the tree view, shows some common commands icons for quick use. You may also call them via the right-click menu, being this setting enabled or not. Requires restart after changing to take effect."
         },
+        "githubRepositoryManager.alwaysCloneToDefaultDirectory": {
+          "type": "boolean",
+          "default": false,
+          "description": "Always clone to the directory specified in \"git.defaultCloneDirectory\""
+        },
         "githubRepositoryManager.clonedRepositoriesSearch.searchOnDefaultCloneDirectory": {
           "type": "boolean",
           "default": true,
