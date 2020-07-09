@@ -10,7 +10,7 @@ export async function getUser(): Promise<UserInterface> {
           login
           url
         }
-      }`)).viewer;
+      }`) as any).viewer;
 
     return {
       login: userData.login,

@@ -1,5 +1,13 @@
 # Change Log : GitHub Repository Manager
 
+## 0.4.0 - Jul 08, 2020
+
+Added 'one click to clone' setting ([#7](https://github.com/SrBrahma/GitHub-Repository-Manager/pull/7))
+
+Added support to SSH cloned repositories to be found ([#9](https://github.com/SrBrahma/GitHub-Repository-Manager/pull/9))
+
+Thanks to [jonathan-fielding](https://github.com/jonathan-fielding) for both pull requests!
+
 
 ## 0.3.6 - May 22, 2020 -> Today was the day of quick and small changes.
 

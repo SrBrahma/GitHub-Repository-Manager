@@ -55,7 +55,7 @@ export abstract class BaseTreeDataProvider implements vscode.TreeDataProvider<Tr
 
   refresh() {
     this.makeData();
-    this._onDidChangeTreeData.fire();
+    this._onDidChangeTreeData.fire(null);
   }
 
   protected abstract makeData(): void;

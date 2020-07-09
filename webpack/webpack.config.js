@@ -33,20 +33,20 @@ const config = {
       {
         test: /\.ts$/,
         exclude: /node_modules/,
-        use: [
-          {
-            loader: 'ts-loader',
-            options: { // Makes the compilation faster https://github.com/TypeStrong/ts-loader#faster-builds
-              transpileOnly: true
-            }
-          }
-        ]
+        loader: 'ts-loader',
+        options: { // Makes the compilation faster https://github.com/TypeStrong/ts-loader#faster-builds
+          transpileOnly: true
+        }
       }
     ]
   },
   plugins: [
     new CleanWebpackPlugin(),
-    new ForkTsCheckerWebpackPlugin()
+    new ForkTsCheckerWebpackPlugin({
+      eslint: {
+        files: './src/**/*.{ts,tsx,js,jsx}' // required - same as command `eslint ./src/**/*.{ts,tsx,js,jsx} --ext .ts,.tsx,.js,.jsx`
+      }
+    })
   ]
 };
 module.exports = config;
