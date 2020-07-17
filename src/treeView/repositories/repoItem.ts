@@ -54,7 +54,7 @@ export class RepoItem extends TreeItem {
 
   constructor({ repo, command, ...rest }: RepoItemConstructor) {
     super({
-      label: repo.name,
+      label: `${repo.ownerLogin}/${repo.name}`,
       tooltip: getTooltip(repo),
       command,
       iconPath: getIcon(repo),
