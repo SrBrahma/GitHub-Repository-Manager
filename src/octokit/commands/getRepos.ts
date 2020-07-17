@@ -45,6 +45,8 @@ export async function getRepos(): Promise<Repository[]> {
       repos.push(...nodes.map((node: any) => extractRepositoryFromData(node)));
     } while (hasNextPage);
 
+    console.log(repos.length);
+
     return repos;
   }
 
@@ -58,7 +60,12 @@ export async function getRepos(): Promise<Repository[]> {
 const query = `
 query getRepos ($after: String) {
   viewer {
-    repositories(first: 100, orderBy: {field: NAME, direction: ASC}, after: $after) {
+    repositories(
+      first: 100,
+      affiliations: [OWNER, ORGANIZATION_MEMBER, COLLABORATOR], ownerAffiliations:[OWNER, ORGANIZATION_MEMBER, COLLABORATOR],
+      orderBy: {field: NAME, direction: ASC}, after: $after
+    ) {
+
       pageInfo {
         endCursor
         hasNextPage
@@ -77,13 +84,14 @@ query getRepos ($after: String) {
         isPrivate
         isFork
         isTemplate
-        viewerCanAdminister
+
         parent {
           name
           owner {
             login
           }
         }
+
         createdAt
         updatedAt
       }
