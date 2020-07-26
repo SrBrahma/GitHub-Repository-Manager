@@ -24,6 +24,10 @@ export function extractRepositoryFromData(node: any) {
   });
 }
 
+export async function getOrgRepos(orgName: string): Promise<Repository[]> {
+
+  return [];
+}
 
 export async function getRepos(): Promise<Repository[]> {
   try {
@@ -62,7 +66,7 @@ query getRepos ($after: String) {
   viewer {
     repositories(
       first: 100,
-      affiliations: [OWNER, ORGANIZATION_MEMBER, COLLABORATOR], ownerAffiliations:[OWNER, ORGANIZATION_MEMBER, COLLABORATOR],
+      affiliations: [OWNER], ownerAffiliations:[OWNER],
       orderBy: {field: NAME, direction: ASC}, after: $after
     ) {
 
@@ -97,5 +101,18 @@ query getRepos ($after: String) {
       }
     }
   }
-}
-`;
+}`;
+
+const orgQuery = `{
+  organization(login: "Uswitch") {
+    repositories(isFork: false, first: 100, orderBy: {field: UPDATED_AT, direction: DESC}) {
+      pageInfo {
+        endCursor
+      }
+      nodes {
+        name
+        url
+      }
+    }
+  }
+}`;

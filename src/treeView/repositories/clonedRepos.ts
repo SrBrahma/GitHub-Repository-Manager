@@ -1,6 +1,7 @@
 import { commands, Uri, env, workspace, ThemeIcon } from 'vscode';
 import { RepoItem } from './repoItem';
-import { user } from '../../User/User';
+import UserStore from '../../DataStore';
+import { UserStatus } from '../../DataStore/types';
 import { repositories, Repository } from '../../Repository/Repository';
 import { TreeItem } from '../base';
 
@@ -28,7 +29,6 @@ export async function activateClonedRepos() {
     env.clipboard.writeText(repo.localPath);
   });
 }
-
 
 // Just to use switch with return.
 function getChildren(clonedRepos: Repository[]): TreeItem | TreeItem[] {
@@ -65,13 +65,15 @@ function getChildren(clonedRepos: Repository[]): TreeItem | TreeItem[] {
 }
 
 export function getClonedTreeItem(clonedRepos: Repository[]): TreeItem | undefined {
+  const user = UserStore.getState();
   // TODO: Add remember cloned repos when not logged option?
-  if (user.status === user.Status.logged) {
-    let children = getChildren(clonedRepos);
+  if (user.status === UserStatus.logged) {
+    let children = getChildren([]);
 
     return new TreeItem({
       label: 'Cloned',
-      children
+      children: []
     });
   }
+
 }

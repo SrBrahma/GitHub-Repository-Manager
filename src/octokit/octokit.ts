@@ -1,7 +1,7 @@
 import { Octokit } from "@octokit/rest";
 import { repositories } from "../Repository/Repository";
 import { repositoriesTreeDataProvider } from "../treeView/repositories/repositories";
-import { user } from "../User/User";
+import { loadUser, loadRepos } from "../DataStore";
 import { accountTreeDataProvider } from "../treeView/account/account";
 import { storage } from '../storage';
 import { configs } from '../configs';
@@ -29,16 +29,14 @@ export function activateOctokit(): void {
     initOctokit(token);
 }
 
-
-
 export async function initOctokit(tokenArg: string): Promise<void> {
   octokit = new Octokit({
     auth: tokenArg,
   });
 
   try {
-    await user.loadUser();
-    await repositories.loadRepos();
+    await loadUser();
+    await loadRepos();
   }
 
   catch (err) {
@@ -51,9 +49,9 @@ export async function initOctokit(tokenArg: string): Promise<void> {
 }
 
 export function logoutAndForgetToken(): void {
-  storage.removeToken();
-  user.status = user.Status.notLogged;
-  repositories.clearRepositories();
-  accountTreeDataProvider.refresh();
-  repositoriesTreeDataProvider.refresh();
+  // storage.removeToken();
+  // user.status = user.Status.notLogged;
+  // repositories.clearRepositories();
+  // accountTreeDataProvider.refresh();
+  // repositoriesTreeDataProvider.refresh();
 }

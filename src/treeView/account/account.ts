@@ -1,6 +1,7 @@
 import vscode from 'vscode';
 import { TreeItem, BaseTreeDataProvider } from '../base';
-import { user } from '../../User/User';
+import userStore from '../../DataStore';
+import { UserStatus } from '../../DataStore/types';
 import { getLoggedTreeData, activateLogged } from './accountLogged';
 import { getNotLoggedTreeData, activateNotLogged } from './accountNotLogged';
 
@@ -9,6 +10,8 @@ export let accountTreeDataProvider: TreeDataProvider;
 export function activateTreeViewAccount() {
   accountTreeDataProvider = new TreeDataProvider();
   vscode.window.registerTreeDataProvider('githubRepoMgr.views.account', accountTreeDataProvider);
+
+  userStore.subscribe(() => { accountTreeDataProvider.refresh(); });
   activateLogged();
   activateNotLogged();
 }
@@ -20,18 +23,17 @@ class TreeDataProvider extends BaseTreeDataProvider {
   constructor() { super(); }
 
   protected makeData() {
+    const user = userStore.getState();
     switch (user.status) {
-
-      case user.Status.errorLogging: // TODO: Bad when token already stored and we have a connection error
-      case user.Status.notLogged:
+      case UserStatus.errorLogging: // TODO: Bad when token already stored and we have a connection error
+      case UserStatus.notLogged:
         this.data = getNotLoggedTreeData(); break;
-      case user.Status.logging:
+      case UserStatus.logging:
         this.data = [new TreeItem({
           label: 'Loading...'
         })]; break;
-      case user.Status.logged:
+      case UserStatus.logged:
         this.data = getLoggedTreeData(); break;
     }
   }
-
 }

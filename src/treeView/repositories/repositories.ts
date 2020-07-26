@@ -1,6 +1,7 @@
 import vscode from 'vscode';
 import { BaseTreeDataProvider } from '../base';
 import { Repository, repositories } from '../../Repository/Repository';
+import DataStore from '../../DataStore';
 import { RepoItem } from './repoItem';
 import { getClonedTreeItem, activateClonedRepos } from './clonedRepos';
 import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
@@ -11,6 +12,8 @@ export let repositoriesTreeDataProvider: TreeDataProvider;
 
 export function activateTreeViewRepositories() {
   repositoriesTreeDataProvider = new TreeDataProvider();
+
+  DataStore.subscribe(() => { repositoriesTreeDataProvider.refresh(); });
 
   vscode.window.registerTreeDataProvider('githubRepoMgr.views.repositories',
     repositoriesTreeDataProvider);
