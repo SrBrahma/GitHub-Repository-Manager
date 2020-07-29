@@ -1,4 +1,5 @@
-import { Repository } from "../../Repository/Repository";
+
+import { RepositoryInterface } from "../../DataStore/types";
 import vscode from 'vscode';
 import { TreeItem, TreeItemConstructor } from "../base";
 import { stringInsert } from "../../aux";
@@ -11,7 +12,7 @@ import { stringInsert } from "../../aux";
 
 // TODO: Use GitHub icons (must resize them)
 // we may use repo-cloned as icon for template.
-function getIcon(repo: Repository) {
+function getIcon(repo: RepositoryInterface) {
   let iconName;
   if (repo.isPrivate)
     iconName = 'lock';
@@ -23,7 +24,7 @@ function getIcon(repo: Repository) {
 }
 
 
-function getTooltip(repo: Repository) {
+function getTooltip(repo: RepositoryInterface) {
   let tooltip = ''
     + `\r\Name              :  ${repo.name}`
 
@@ -46,11 +47,11 @@ function getTooltip(repo: Repository) {
 
 
 interface RepoItemConstructor extends TreeItemConstructor {
-  repo: Repository;
+  repo: RepositoryInterface;
 }
 
 export class RepoItem extends TreeItem {
-  repo: Repository;
+  repo: RepositoryInterface;
 
   constructor({ repo, command, ...rest }: RepoItemConstructor) {
     super({

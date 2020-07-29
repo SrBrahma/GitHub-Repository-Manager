@@ -1,6 +1,6 @@
 import { octokit } from '../octokit';
 import { extractRepositoryFromData } from './getRepos';
-import { Repository } from '../../Repository/Repository';
+import { RepositoryInterface } from '../../DataStore/types';
 
 interface CreateInterface {
   name: string;
@@ -13,7 +13,7 @@ interface CreateInterface {
 // https://octokit.github.io/rest.js/v17#repos-create-for-authenticated-user
 // Returns the new repository
 // TODO: Create new repo with README.md and other optional stuff (user config.)
-export async function create({ name, description, privateRepo }: CreateInterface): Promise<Repository> {
+export async function create({ name, description, privateRepo }: CreateInterface): Promise<RepositoryInterface> {
   try {
     const { data } = await octokit.repos.createForAuthenticatedUser({
       name,

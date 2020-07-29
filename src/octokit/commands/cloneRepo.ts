@@ -25,7 +25,8 @@
 // After those two, the pulled repo don't have a remote (github link). So we add it.
 
 
-import { Repository } from "../../Repository/Repository";
+
+import { RepositoryInterface } from '../../DataStore/types';
 import { exec } from 'mz/child_process';
 import path from 'path';
 import fs from 'fs';
@@ -38,7 +39,7 @@ import rimraf from 'rimraf';
  * @param {Repository} repo
  * @param {string} parentPath The path which will contain the new repository directory
  */
-export async function cloneRepo(repo: Repository, parentPath: string) {
+export async function cloneRepo(repo: RepositoryInterface, parentPath: string) {
   const repoPath = path.resolve(parentPath, repo.name);
 
   if (fs.existsSync(repoPath))

@@ -13,6 +13,7 @@ export async function getUser(): Promise<UserInterface> {
             edges {
               node {
                 id,
+                login,
                 name
               }
             }

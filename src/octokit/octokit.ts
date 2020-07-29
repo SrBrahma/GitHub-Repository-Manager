@@ -1,12 +1,7 @@
 import { Octokit } from "@octokit/rest";
-import { repositories } from "../Repository/Repository";
-import { repositoriesTreeDataProvider } from "../treeView/repositories/repositories";
 import { loadUser, loadRepos } from "../DataStore";
-import { accountTreeDataProvider } from "../treeView/account/account";
 import { storage } from '../storage';
 import { configs } from '../configs';
-
-
 
 export let octokit: Octokit | null = null;
 export let token = '';

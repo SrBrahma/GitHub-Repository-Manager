@@ -1,6 +1,6 @@
 import vscode from 'vscode';
 import { BaseTreeDataProvider } from '../base';
-import { Repository, repositories } from '../../Repository/Repository';
+import { RepositoryInterface } from '../../DataStore/types';
 import DataStore from '../../DataStore';
 import { RepoItem } from './repoItem';
 import { getClonedTreeItem, activateClonedRepos } from './clonedRepos';
@@ -27,8 +27,8 @@ export function activateTreeViewRepositories() {
     vscode.env.clipboard.writeText(`${repo.url}.git`));
 
   // Reload repos
-  vscode.commands.registerCommand('githubRepoMgr.commands.repos.reload', () =>
-    repositories.loadRepos());
+  // vscode.commands.registerCommand('githubRepoMgr.commands.repos.reload', () =>
+  //   repositories.loadRepos());
 
   // Create Repo
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.createRepo', () =>
@@ -48,12 +48,8 @@ class TreeDataProvider extends BaseTreeDataProvider {
   }
 
   protected makeData() {
-    const clonedRepos: Repository[] = [];
-    const notClonedRepos: Repository[] = [];
-
-    repositories.repos.forEach(repo => {
-      (repo.localPath ? clonedRepos : notClonedRepos).push(repo);
-    });
+    const clonedRepos: RepositoryInterface[] = [];
+    const notClonedRepos: RepositoryInterface[] = [];
 
     this.data = [getClonedTreeItem(clonedRepos), getNotClonedTreeItem(notClonedRepos)];
   }

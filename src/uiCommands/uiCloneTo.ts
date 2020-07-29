@@ -1,5 +1,5 @@
 import { workspace, window, Uri, commands } from 'vscode';
-import { Repository, repositories } from "../Repository/Repository";
+import { RepositoryInterface } from '../DataStore/types';
 import { cloneRepo } from "../octokit/commands/cloneRepo";
 import path from 'path';
 import { configs } from '../configs';
@@ -21,7 +21,7 @@ const openInNewWindowStr = 'Open in New Window';
 const addToWorkspaceStr = 'Add to Workspace';
 
 // TODO: Add cancel button
-export async function uiCloneTo(repo: Repository) {
+export async function uiCloneTo(repo: RepositoryInterface) {
   // Took this dir path code from vscode git clone code.
 
 
@@ -63,7 +63,7 @@ export async function uiCloneTo(repo: Repository) {
     return;
   }
 
-  repositories.loadRepos();
+  // repositories.loadRepos();
 
   const action = await window.showInformationMessage(`Cloned ${repo.name} to ${repoPath}!`,
     openStr, openInNewWindowStr, addToWorkspaceStr);

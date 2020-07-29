@@ -11,13 +11,14 @@ export interface UserInterface {
 
 export enum OrgStatus {
     notLoaded = "Not Loaded",
-    loading = "Loading",
+    loading = "Loading...",
     loaded = "Loaded"
 }
 
 export interface OrgInterface {
     id: string;
     name: string;
+    login: string;
     status: OrgStatus;
     repositories: RepositoryInterface[]
 }
@@ -40,4 +41,5 @@ export interface RepositoryInterface {
 
     createdAt: Date,
     updatedAt: Date,
+    localPath?: string;
 }

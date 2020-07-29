@@ -2,7 +2,7 @@
 
 // import { window } from 'vscode';
 import { getUser } from '../octokit/commands/getUser';
-import { getOrgRepos } from '../octokit/commands/getRepos';
+import { getOrgRepos, getRepos } from '../octokit/commands/getRepos';
 
 import { createStore } from 'redux';
 import { UserInterface, UserStatus, OrgInterface, OrgStatus } from './types';
@@ -12,6 +12,7 @@ function createDefaultOrg(userLogin: string): OrgInterface {
   return {
     id: userLogin,
     name: userLogin,
+    login: userLogin,
     status: OrgStatus.notLoaded,
     repositories: [],
   };
@@ -41,6 +42,15 @@ function data(state: UserInterface = {
         ]
       };
       break;
+    case 'ORG_LOADING':
+      state.organizations = state.organizations.map((org) => {
+        if (action.value.id === org.id) {
+          org.status = OrgStatus.loading;
+        }
+
+        return org;
+      });
+      break;
     case 'ATTACH_REPOS':
       state.organizations = state.organizations.map((org) => {
         if (action.value.id === org.id) {
@@ -67,7 +77,6 @@ export async function loadUser() {
 };
 
 export async function loadRepos() {
-  console.log('load');
   try {
     const user = dataStore.getState();
 
@@ -79,12 +88,14 @@ export async function loadRepos() {
 
     await Promise.all(notLoggedInOrgs.map(loadOrgRepos));
   } catch (error) {
-
+    console.log(error);
   }
 }
 
 async function loadOrgRepos(org: OrgInterface) {
-  const repos = await getOrgRepos(org.name);
-  console.log(repos);
-  dataStore.dispatch({ type: 'ATTACH_REPOS', value: { ...org, repos, status: OrgStatus.loaded } });
+  const user = dataStore.getState();
+  dataStore.dispatch({ type: 'ORG_LOADING', value: { ...org } });
+
+  const repositories = user.login === org.name ? await getRepos() : await getOrgRepos(org.login);
+  dataStore.dispatch({ type: 'ATTACH_REPOS', value: { ...org, repositories, status: OrgStatus.loaded } });
 }

@@ -1,8 +1,7 @@
 import { commands, Uri, env, workspace, ThemeIcon } from 'vscode';
 import { RepoItem } from './repoItem';
 import UserStore from '../../DataStore';
-import { UserStatus } from '../../DataStore/types';
-import { repositories, Repository } from '../../Repository/Repository';
+import { UserStatus, RepositoryInterface } from '../../DataStore/types';
 import { TreeItem } from '../base';
 
 export async function activateClonedRepos() {
@@ -31,44 +30,44 @@ export async function activateClonedRepos() {
 }
 
 // Just to use switch with return.
-function getChildren(clonedRepos: Repository[]): TreeItem | TreeItem[] {
-  switch (repositories.searchLocalReposStatus) {
-    case repositories.SearchLocalReposStatus.searching:
-      return new TreeItem({
-        label: 'Searching for cloned repositories...',
-        iconPath: new ThemeIcon('kebab-horizontal')
-      });
+// function getChildren(clonedRepos: RepositoryInterface[]): TreeItem | TreeItem[] {
+//   switch (repositories.searchLocalReposStatus) {
+//     case repositories.SearchLocalReposStatus.searching:
+//       return new TreeItem({
+//         label: 'Searching for cloned repositories...',
+//         iconPath: new ThemeIcon('kebab-horizontal')
+//       });
 
-    case repositories.SearchLocalReposStatus.noStartingSearchDirs:
-      return new TreeItem({
-        label: 'No directories to search found, please review your settings',
-        iconPath: new ThemeIcon('x')
-      });
+//     case repositories.SearchLocalReposStatus.noStartingSearchDirs:
+//       return new TreeItem({
+//         label: 'No directories to search found, please review your settings',
+//         iconPath: new ThemeIcon('x')
+//       });
 
-    case repositories.SearchLocalReposStatus.noClonedReposFound:
-      return new TreeItem({
-        label: 'No cloned repositories found',
-      });
+//     case repositories.SearchLocalReposStatus.noClonedReposFound:
+//       return new TreeItem({
+//         label: 'No cloned repositories found',
+//       });
 
-    default:
-    case repositories.SearchLocalReposStatus.ok:
-      return clonedRepos.map(repo => new RepoItem({
-        repo,
-        contextValue: 'githubRepoMgr.context.clonedRepo',
-        command: {
-          // We wrap the repo in {} because we may call the cloneTo from the right click, and it passes the RepoItem.
-          command: 'githubRepoMgr.commands.clonedRepos.open',
-          arguments: [{ repo }]
-        },
-      }));
-  }
-}
+//     default:
+//     case repositories.SearchLocalReposStatus.ok:
+//       return clonedRepos.map(repo => new RepoItem({
+//         repo,
+//         contextValue: 'githubRepoMgr.context.clonedRepo',
+//         command: {
+//           // We wrap the repo in {} because we may call the cloneTo from the right click, and it passes the RepoItem.
+//           command: 'githubRepoMgr.commands.clonedRepos.open',
+//           arguments: [{ repo }]
+//         },
+//       }));
+//   }
+// }
 
-export function getClonedTreeItem(clonedRepos: Repository[]): TreeItem | undefined {
+export function getClonedTreeItem(clonedRepos: RepositoryInterface[]): TreeItem | undefined {
   const user = UserStore.getState();
   // TODO: Add remember cloned repos when not logged option?
   if (user.status === UserStatus.logged) {
-    let children = getChildren([]);
+    let children = [];
 
     return new TreeItem({
       label: 'Cloned',

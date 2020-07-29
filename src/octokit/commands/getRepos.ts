@@ -1,9 +1,9 @@
 import { octokit } from "../octokit";
-import { Repository } from "../../Repository/Repository";
+import { RepositoryInterface } from '../../DataStore/types';
 import { getOctokitErrorMessage } from "./aux";
 
-export function extractRepositoryFromData(node: any) {
-  return new Repository({
+export function extractRepositoryFromData(node: any): RepositoryInterface {
+  return {
     name: node.name,
     description: node.description,
     ownerLogin: node.owner.login,
@@ -21,18 +21,46 @@ export function extractRepositoryFromData(node: any) {
 
     createdAt: new Date(node.createdAt),
     updatedAt: new Date(node.updatedAt)
-  });
+  };
 }
 
-export async function getOrgRepos(orgName: string): Promise<Repository[]> {
 
-  return [];
+export async function getOrgRepos(login: string): Promise<RepositoryInterface[]> {
+  try {
+    const repos: RepositoryInterface[] = [];
+
+    let endCursor: string | null = null;
+    let hasNextPage = false;
+
+    do {
+      // https://github.com/octokit/graphql.js/#variables
+      const response = (await octokit.graphql(orgRepoQuery, {
+        after: endCursor,
+        org: login
+      }) as any);
+
+      if (response.viewer.organization === null) {
+        return repos;
+      }
+
+      const { nodes, pageInfo } = response.viewer.organization.repositories;
+
+      ({ endCursor, hasNextPage } = pageInfo);
+
+      repos.push(...nodes.map((node: any) => extractRepositoryFromData(node)));
+    } while (hasNextPage);
+
+    return repos;
+  }
+  catch (err) { // Octokit has a patter for errors, which we display properly at octokitErrorDisplay().
+    throw new Error(getOctokitErrorMessage(err));
+  }
 }
 
-export async function getRepos(): Promise<Repository[]> {
+export async function getRepos(): Promise<RepositoryInterface[]> {
   try {
 
-    const repos: Repository[] = [];
+    const repos: RepositoryInterface[] = [];
 
     // For pagination (if user has more repos than the query results (current max per query is 100))
     let endCursor: string | null = null;
@@ -103,15 +131,40 @@ query getRepos ($after: String) {
   }
 }`;
 
-const orgQuery = `{
-  organization(login: "Uswitch") {
-    repositories(isFork: false, first: 100, orderBy: {field: UPDATED_AT, direction: DESC}) {
-      pageInfo {
-        endCursor
-      }
-      nodes {
-        name
-        url
+
+const orgRepoQuery = `
+query getOrgRepos ($after: String, $org: String!) {
+  viewer {
+    organization(login: $org) {
+      repositories(isFork: false, first: 100, after: $after) {
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+        nodes {
+          name
+          description
+          owner {
+            login
+          }
+          primaryLanguage {
+            name
+          }
+          url
+
+          isPrivate
+          isFork
+          isTemplate
+          viewerCanAdminister
+          parent {
+            name
+            owner {
+              login
+            }
+          }
+          createdAt
+          updatedAt
+        }
       }
     }
   }
