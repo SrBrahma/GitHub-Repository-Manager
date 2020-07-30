@@ -1,7 +1,7 @@
 import vscode from 'vscode';
 import { BaseTreeDataProvider } from '../base';
 import { RepositoryInterface } from '../../DataStore/types';
-import DataStore from '../../DataStore';
+import DataStore, { reloadRepos } from '../../DataStore';
 import { RepoItem } from './repoItem';
 import { getClonedTreeItem, activateClonedRepos } from './clonedRepos';
 import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
@@ -27,8 +27,8 @@ export function activateTreeViewRepositories() {
     vscode.env.clipboard.writeText(`${repo.url}.git`));
 
   // Reload repos
-  // vscode.commands.registerCommand('githubRepoMgr.commands.repos.reload', () =>
-  //   repositories.loadRepos());
+  vscode.commands.registerCommand('githubRepoMgr.commands.repos.reload', () =>
+    reloadRepos());
 
   // Create Repo
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.createRepo', () =>

@@ -130,3 +130,8 @@ export function notCloned(repos: RepositoryInterface[]): RepositoryInterface[] {
 export function cloned(repos: RepositoryInterface[]): RepositoryInterface[] {
   return repos.filter(repo => repo.localPath && repo.localPath.length);
 }
+
+export async function reloadRepos() {
+  await loadUser();
+  await loadRepos();
+}
