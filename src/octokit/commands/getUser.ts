@@ -24,7 +24,7 @@ export async function getUser(): Promise<UserInterface> {
     return {
       login: userData.login,
       profileUri: userData.url,
-      organizations: userData.organizations.edges.map((org: any) => org.node),
+      organizations: userData.organizations.edges.map((org: any) => org.node)
     };
   }
   // Octokit has a pattern for errors, which we display properly at octokitErrorDisplay().

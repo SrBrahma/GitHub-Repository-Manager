@@ -7,6 +7,8 @@ export interface UserInterface {
     profileUri: string;
     organizations: OrgInterface[];
     status?: UserStatus;
+    // Master list of all local repos kept here so we dont have to look it up on every fetch
+    localRepos?: LocalRepositoryInterface[]
 }
 
 export enum OrgStatus {
@@ -42,4 +44,9 @@ export interface RepositoryInterface {
     createdAt: Date,
     updatedAt: Date,
     localPath?: string;
+}
+
+export interface LocalRepositoryInterface {
+    dirPath: string,
+    gitUrl: string,
 }

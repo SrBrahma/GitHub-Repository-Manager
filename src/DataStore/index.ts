@@ -1,11 +1,8 @@
-// Used namespace to use it at least once in life and to have Status under user.
-
-// import { window } from 'vscode';
 import { getUser } from '../octokit/commands/getUser';
 import { getOrgRepos, getRepos } from '../octokit/commands/getRepos';
-
 import { createStore } from 'redux';
-import { UserInterface, UserStatus, OrgInterface, OrgStatus } from './types';
+import { UserInterface, UserStatus, OrgInterface, OrgStatus, RepositoryInterface, LocalRepositoryInterface } from './types';
+import { searchLocalReposAndSetRepoPath } from '../utils/searchClonedRepos';
 
 // We create a default org for the user for repositories they own directly to go into
 function createDefaultOrg(userLogin: string): OrgInterface {
@@ -30,11 +27,13 @@ function data(state: UserInterface = {
   login: '',
   profileUri: '',
   organizations: [],
-  status: UserStatus.notLogged
+  status: UserStatus.notLogged,
+  localRepos: []
 }, action: any) {
   switch (action.type) {
     case 'UPDATE_USER':
       state = {
+        ...state,
         ...action.value,
         organizations: [
           createDefaultOrg(action.value.login),
@@ -59,6 +58,9 @@ function data(state: UserInterface = {
           return org;
         }
       });
+      break;
+    case 'ATTACH_LOCAL_REPOS':
+      state.localRepos = action.value;
       break;
     default:
       break;
@@ -86,16 +88,45 @@ export async function loadRepos() {
 
     const notLoggedInOrgs = user.organizations.filter(org => org.status === OrgStatus.notLoaded);
 
+    await loadLocalRepos(); // Should be fast and is necessary before we fetch from github
     await Promise.all(notLoggedInOrgs.map(loadOrgRepos));
   } catch (error) {
     console.log(error);
   }
 }
 
+async function loadLocalRepos() {
+  const localRepos = await searchLocalReposAndSetRepoPath();
+  dataStore.dispatch({ type: 'ATTACH_LOCAL_REPOS', value: localRepos });
+}
+
 async function loadOrgRepos(org: OrgInterface) {
-  const user = dataStore.getState();
+  const { login, localRepos } = dataStore.getState();
   dataStore.dispatch({ type: 'ORG_LOADING', value: { ...org } });
 
-  const repositories = user.login === org.name ? await getRepos() : await getOrgRepos(org.login);
-  dataStore.dispatch({ type: 'ATTACH_REPOS', value: { ...org, repositories, status: OrgStatus.loaded } });
+  const repositories = login === org.name ? await getRepos() : await getOrgRepos(org.login);
+
+  // We want to append the local path to any repositories so we know where to find them on disc
+  const reposWithLocalPath = repositories.map((repo) => {
+    for (let i = 0; i < localRepos.length; i++) {
+      const localRepo: LocalRepositoryInterface = localRepos[i];
+
+      if (repo.url === localRepo.gitUrl) {
+        repo.localPath = localRepo.dirPath;
+        break;
+      }
+    }
+
+    return repo;
+  });
+
+  dataStore.dispatch({ type: 'ATTACH_REPOS', value: { ...org, repositories: reposWithLocalPath, status: OrgStatus.loaded } });
+}
+
+export function notCloned(repos: RepositoryInterface[]): RepositoryInterface[] {
+  return repos.filter(repo => !repo.localPath);
+}
+
+export function cloned(repos: RepositoryInterface[]): RepositoryInterface[] {
+  return repos.filter(repo => repo.localPath && repo.localPath.length);
 }

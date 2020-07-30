@@ -77,8 +77,6 @@ export async function getRepos(): Promise<RepositoryInterface[]> {
       repos.push(...nodes.map((node: any) => extractRepositoryFromData(node)));
     } while (hasNextPage);
 
-    console.log(repos.length);
-
     return repos;
   }
 

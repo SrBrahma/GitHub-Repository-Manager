@@ -1,6 +1,6 @@
 import { TreeItem } from "../base";
 import { RepoItem } from "./repoItem";
-import DataStore from "../../DataStore";
+import DataStore, { notCloned } from "../../DataStore";
 import { UserStatus, RepositoryInterface } from "../../DataStore/types";
 import { commands } from "vscode";
 import { uiCloneTo } from "../../uiCommands/uiCloneTo";
@@ -28,9 +28,10 @@ export function getNotClonedTreeItem(notClonedRepos: RepositoryInterface[]): Tre
 
   if (user.status === UserStatus.logged) {
     const orgs: TreeItem[] = user.organizations.map((org) => {
+      const repos = notCloned(org.repositories);
       return new TreeItem({
         label: `${org.name}`,
-        children: org.repositories.length ? parseOrgRepos(org.repositories) : [new TreeItem({
+        children: org.repositories.length ? parseOrgRepos(notCloned(org.repositories)) : [new TreeItem({
           label: org.status,
         })],
         collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
