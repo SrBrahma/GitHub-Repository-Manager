@@ -1,6 +1,6 @@
 import vscode, { ThemeIcon } from 'vscode';
 import { TreeItem } from "../base";
-import userStore from "../../DataStore";
+import userStore from "../../store";
 import { logoutAndForgetToken } from "../../octokit/octokit";
 
 export function activateLogged() {

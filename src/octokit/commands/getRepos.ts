@@ -1,5 +1,5 @@
 import { octokit } from "../octokit";
-import { RepositoryInterface } from '../../DataStore/types';
+import { RepositoryInterface } from '../../store/types';
 import { getOctokitErrorMessage } from "./aux";
 
 export function extractRepositoryFromData(node: any): RepositoryInterface {

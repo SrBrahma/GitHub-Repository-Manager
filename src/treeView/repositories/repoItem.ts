@@ -1,5 +1,5 @@
 
-import { RepositoryInterface } from "../../DataStore/types";
+import { RepositoryInterface } from "../../store/types";
 import vscode from 'vscode';
 import { TreeItem, TreeItemConstructor } from "../base";
 import { stringInsert } from "../../aux";

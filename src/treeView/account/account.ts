@@ -1,7 +1,7 @@
 import vscode from 'vscode';
 import { TreeItem, BaseTreeDataProvider } from '../base';
-import userStore from '../../DataStore';
-import { UserStatus } from '../../DataStore/types';
+import userStore from '../../store';
+import { UserStatus } from '../../store/types';
 import { getLoggedTreeData, activateLogged } from './accountLogged';
 import { getNotLoggedTreeData, activateNotLogged } from './accountNotLogged';
 

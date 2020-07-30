@@ -26,7 +26,7 @@
 
 
 
-import { RepositoryInterface } from '../../DataStore/types';
+import { RepositoryInterface } from '../../store/types';
 import { exec } from 'mz/child_process';
 import path from 'path';
 import fs from 'fs';

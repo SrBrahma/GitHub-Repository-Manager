@@ -1,7 +1,7 @@
 import { commands, Uri, env, workspace, ThemeIcon } from 'vscode';
 import { RepoItem } from './repoItem';
-import UserStore, { cloned } from '../../DataStore';
-import { UserStatus, RepositoryInterface } from '../../DataStore/types';
+import UserStore, { cloned } from '../../store';
+import { UserStatus, RepositoryInterface } from '../../store/types';
 import { TreeItem } from '../base';
 
 export async function activateClonedRepos() {

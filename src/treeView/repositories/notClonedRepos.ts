@@ -1,7 +1,7 @@
 import { TreeItem } from "../base";
 import { RepoItem } from "./repoItem";
-import DataStore, { notCloned } from "../../DataStore";
-import { UserStatus, RepositoryInterface } from "../../DataStore/types";
+import DataStore, { notCloned } from "../../store";
+import { UserStatus, RepositoryInterface } from "../../store/types";
 import { commands } from "vscode";
 import { uiCloneTo } from "../../uiCommands/uiCloneTo";
 import vscode from 'vscode';

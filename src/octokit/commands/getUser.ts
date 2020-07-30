@@ -1,6 +1,6 @@
 import { getOctokitErrorMessage } from "./aux";
 import { octokit } from "../octokit";
-import { UserInterface, OrgInterface } from "../../DataStore/types";
+import { UserInterface, OrgInterface } from "../../store/types";
 
 export async function getUser(): Promise<UserInterface> {
   try {

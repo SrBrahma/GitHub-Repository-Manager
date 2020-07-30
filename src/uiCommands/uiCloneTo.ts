@@ -1,5 +1,5 @@
 import { workspace, window, Uri, commands } from 'vscode';
-import { RepositoryInterface } from '../DataStore/types';
+import { RepositoryInterface } from '../store/types';
 import { cloneRepo } from "../octokit/commands/cloneRepo";
 import path from 'path';
 import { configs } from '../configs';

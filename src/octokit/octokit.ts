@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest";
-import { loadUser, loadRepos } from "../DataStore";
+import { loadUser, loadRepos } from "../store";
 import { storage } from '../storage';
 import { configs } from '../configs';
 
