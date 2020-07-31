@@ -1,5 +1,5 @@
 import { Octokit } from "@octokit/rest";
-import { loadUser, loadRepos } from "../store/helpers";
+import { loadUser, loadRepos, logout } from "../store/helpers";
 import { storage } from '../storage';
 import { configs } from '../configs';
 
@@ -42,9 +42,6 @@ export async function initOctokit(tokenArg: string): Promise<void> {
 }
 
 export function logoutAndForgetToken(): void {
-  // storage.removeToken();
-  // user.status = user.Status.notLogged;
-  // repositories.clearRepositories();
-  // accountTreeDataProvider.refresh();
-  // repositoriesTreeDataProvider.refresh();
+  storage.removeToken();
+  logout();
 }

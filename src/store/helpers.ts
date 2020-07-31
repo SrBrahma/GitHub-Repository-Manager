@@ -1,8 +1,18 @@
 import { getUser } from '../octokit/commands/getUser';
 import { getOrgRepos, getRepos } from '../octokit/commands/getRepos';
-import { UserStatus, Org, OrgStatus, Repository, LocalRepository } from './types';
+import { UserStatus, Org, OrgStatus, Repository, LocalRepository, User } from './types';
 import { searchLocalReposAndSetRepoPath } from '../utils/searchClonedRepos';
 import { dataStore } from './index';
+
+export function initialUser(): User {
+    return {
+        login: '',
+        profileUri: '',
+        organizations: [],
+        status: UserStatus.notLogged,
+        localRepos: []
+    };
+}
 
 export async function loadUser() {
     const user = await getUser();
@@ -66,4 +76,8 @@ export function cloned(repos: Repository[]): Repository[] {
 export async function reloadRepos() {
     await loadUser();
     await loadRepos();
+}
+
+export async function logout() {
+    dataStore.dispatch({ type: 'UPDATE_USER', value: initialUser() });
 }
