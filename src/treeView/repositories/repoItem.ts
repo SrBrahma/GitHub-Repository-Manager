@@ -49,9 +49,9 @@ interface RepoItemConstructor extends TreeItemConstructor {
 export class RepoItem extends TreeItem {
   repo: Repository;
 
-  constructor({ repo, command, ...rest }: RepoItemConstructor) {
+  constructor({ repo, command, ...rest }: RepoItemConstructor, includeOwner = false) {
     super({
-      label: `${repo.ownerLogin}/${repo.name}`,
+      label: includeOwner ? `${repo.ownerLogin}/${repo.name}` : repo.name,
       tooltip: getTooltip(repo),
       command,
       iconPath: getIcon(repo),

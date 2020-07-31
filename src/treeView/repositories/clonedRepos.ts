@@ -39,7 +39,7 @@ function parseChildren(clonedRepos: Repository[]): TreeItem | TreeItem[] {
       command: 'githubRepoMgr.commands.clonedRepos.open',
       arguments: [{ repo }]
     },
-  }));
+  }, true));
 }
 
 export function getClonedTreeItem(clonedRepos: Repository[]): TreeItem | undefined {
