@@ -1,7 +1,7 @@
 import { commands, Uri, env, workspace, ThemeIcon } from 'vscode';
 import { RepoItem } from './repoItem';
 import UserStore, { cloned } from '../../store';
-import { UserStatus, RepositoryInterface } from '../../store/types';
+import { UserStatus, Repository } from '../../store/types';
 import { TreeItem } from '../base';
 
 export async function activateClonedRepos() {
@@ -29,7 +29,7 @@ export async function activateClonedRepos() {
   });
 }
 
-function parseChildren(clonedRepos: RepositoryInterface[]): TreeItem | TreeItem[] {
+function parseChildren(clonedRepos: Repository[]): TreeItem | TreeItem[] {
   return clonedRepos.map(repo => new RepoItem({
     repo,
     contextValue: 'githubRepoMgr.context.clonedRepo',
@@ -41,7 +41,7 @@ function parseChildren(clonedRepos: RepositoryInterface[]): TreeItem | TreeItem[
   }));
 }
 
-export function getClonedTreeItem(clonedRepos: RepositoryInterface[]): TreeItem | undefined {
+export function getClonedTreeItem(clonedRepos: Repository[]): TreeItem | undefined {
   const user = UserStore.getState();
   // TODO: Add remember cloned repos when not logged option?
   if (user.status === UserStatus.logged) {

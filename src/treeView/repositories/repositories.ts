@@ -1,6 +1,6 @@
 import vscode from 'vscode';
 import { BaseTreeDataProvider } from '../base';
-import { RepositoryInterface } from '../../store/types';
+import { Repository } from '../../store/types';
 import DataStore, { reloadRepos } from '../../store';
 import { RepoItem } from './repoItem';
 import { getClonedTreeItem, activateClonedRepos } from './clonedRepos';
@@ -48,8 +48,8 @@ class TreeDataProvider extends BaseTreeDataProvider {
   }
 
   protected makeData() {
-    const clonedRepos: RepositoryInterface[] = [];
-    const notClonedRepos: RepositoryInterface[] = [];
+    const clonedRepos: Repository[] = [];
+    const notClonedRepos: Repository[] = [];
 
     this.data = [getClonedTreeItem(clonedRepos), getNotClonedTreeItem(notClonedRepos)];
   }

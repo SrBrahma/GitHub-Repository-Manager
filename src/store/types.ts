@@ -2,13 +2,13 @@ export enum UserStatus {
     notLogged, logging, errorLogging, logged
 }
 
-export interface UserInterface {
+export interface User {
     login: string;
     profileUri: string;
-    organizations: OrgInterface[];
+    organizations: Org[];
     status?: UserStatus;
     // Master list of all local repos kept here so we dont have to look it up on every fetch
-    localRepos?: LocalRepositoryInterface[]
+    localRepos?: LocalRepository[]
 }
 
 export enum OrgStatus {
@@ -17,15 +17,15 @@ export enum OrgStatus {
     loaded = "Loaded"
 }
 
-export interface OrgInterface {
+export interface Org {
     id: string;
     name: string;
     login: string;
     status: OrgStatus;
-    repositories: RepositoryInterface[]
+    repositories: Repository[]
 }
 
-export interface RepositoryInterface {
+export interface Repository {
     name: string,
     description: string | null,
     ownerLogin: string,
@@ -46,7 +46,7 @@ export interface RepositoryInterface {
     localPath?: string;
 }
 
-export interface LocalRepositoryInterface {
+export interface LocalRepository {
     dirPath: string,
     gitUrl: string,
 }

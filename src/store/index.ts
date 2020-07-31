@@ -1,11 +1,11 @@
 import { getUser } from '../octokit/commands/getUser';
 import { getOrgRepos, getRepos } from '../octokit/commands/getRepos';
 import { createStore } from 'redux';
-import { UserInterface, UserStatus, OrgInterface, OrgStatus, RepositoryInterface, LocalRepositoryInterface } from './types';
+import { User, UserStatus, Org, OrgStatus, Repository, LocalRepository } from './types';
 import { searchLocalReposAndSetRepoPath } from '../utils/searchClonedRepos';
 
 // We create a default org for the user for repositories they own directly to go into
-function createDefaultOrg(userLogin: string): OrgInterface {
+function createDefaultOrg(userLogin: string): Org {
   return {
     id: userLogin,
     name: userLogin,
@@ -23,7 +23,7 @@ function addOrgMetaData(org: any) {
   };
 }
 
-function data(state: UserInterface = {
+function data(state: User = {
   login: '',
   profileUri: '',
   organizations: [],
@@ -100,7 +100,7 @@ async function loadLocalRepos() {
   dataStore.dispatch({ type: 'ATTACH_LOCAL_REPOS', value: localRepos });
 }
 
-async function loadOrgRepos(org: OrgInterface) {
+async function loadOrgRepos(org: Org) {
   const { login, localRepos } = dataStore.getState();
   dataStore.dispatch({ type: 'ORG_LOADING', value: { ...org } });
 
@@ -109,7 +109,7 @@ async function loadOrgRepos(org: OrgInterface) {
   // We want to append the local path to any repositories so we know where to find them on disc
   const reposWithLocalPath = repositories.map((repo) => {
     for (let i = 0; i < localRepos.length; i++) {
-      const localRepo: LocalRepositoryInterface = localRepos[i];
+      const localRepo: LocalRepository = localRepos[i];
 
       if (repo.url === localRepo.gitUrl) {
         repo.localPath = localRepo.dirPath;
@@ -123,11 +123,11 @@ async function loadOrgRepos(org: OrgInterface) {
   dataStore.dispatch({ type: 'ATTACH_REPOS', value: { ...org, repositories: reposWithLocalPath, status: OrgStatus.loaded } });
 }
 
-export function notCloned(repos: RepositoryInterface[]): RepositoryInterface[] {
+export function notCloned(repos: Repository[]): Repository[] {
   return repos.filter(repo => !repo.localPath);
 }
 
-export function cloned(repos: RepositoryInterface[]): RepositoryInterface[] {
+export function cloned(repos: Repository[]): Repository[] {
   return repos.filter(repo => repo.localPath && repo.localPath.length);
 }
 

@@ -1,8 +1,8 @@
 import { getOctokitErrorMessage } from "./aux";
 import { octokit } from "../octokit";
-import { UserInterface, OrgInterface } from "../../store/types";
+import { User, Org } from "../../store/types";
 
-export async function getUser(): Promise<UserInterface> {
+export async function getUser(): Promise<User> {
   try {
     const userData = (await octokit.graphql(
       `query getUser ($after: String) {

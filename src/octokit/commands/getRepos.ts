@@ -1,8 +1,8 @@
 import { octokit } from "../octokit";
-import { RepositoryInterface } from '../../store/types';
+import { Repository } from '../../store/types';
 import { getOctokitErrorMessage } from "./aux";
 
-export function extractRepositoryFromData(node: any): RepositoryInterface {
+export function extractRepositoryFromData(node: any): Repository {
   return {
     name: node.name,
     description: node.description,
@@ -25,9 +25,9 @@ export function extractRepositoryFromData(node: any): RepositoryInterface {
 }
 
 
-export async function getOrgRepos(login: string): Promise<RepositoryInterface[]> {
+export async function getOrgRepos(login: string): Promise<Repository[]> {
   try {
-    const repos: RepositoryInterface[] = [];
+    const repos: Repository[] = [];
 
     let endCursor: string | null = null;
     let hasNextPage = false;
@@ -57,10 +57,10 @@ export async function getOrgRepos(login: string): Promise<RepositoryInterface[]>
   }
 }
 
-export async function getRepos(): Promise<RepositoryInterface[]> {
+export async function getRepos(): Promise<Repository[]> {
   try {
 
-    const repos: RepositoryInterface[] = [];
+    const repos: Repository[] = [];
 
     // For pagination (if user has more repos than the query results (current max per query is 100))
     let endCursor: string | null = null;

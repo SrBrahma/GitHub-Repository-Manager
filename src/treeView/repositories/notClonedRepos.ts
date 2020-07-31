@@ -1,7 +1,7 @@
 import { TreeItem } from "../base";
 import { RepoItem } from "./repoItem";
 import DataStore, { notCloned } from "../../store";
-import { UserStatus, RepositoryInterface } from "../../store/types";
+import { UserStatus, Repository } from "../../store/types";
 import { commands } from "vscode";
 import { uiCloneTo } from "../../uiCommands/uiCloneTo";
 import vscode from 'vscode';
@@ -12,7 +12,7 @@ export function activateNotClonedRepos() {
     ({ repo }: RepoItem) => uiCloneTo(repo));
 }
 
-function parseOrgRepos(repositories: RepositoryInterface[]): RepoItem[] {
+function parseOrgRepos(repositories: Repository[]): RepoItem[] {
   return repositories.map(repo => new RepoItem({
     repo,
     contextValue: 'githubRepoMgr.context.notClonedRepo',
@@ -23,7 +23,7 @@ function parseOrgRepos(repositories: RepositoryInterface[]): RepoItem[] {
   }));
 }
 
-export function getNotClonedTreeItem(notClonedRepos: RepositoryInterface[]): TreeItem | undefined {
+export function getNotClonedTreeItem(notClonedRepos: Repository[]): TreeItem | undefined {
   const user = DataStore.getState();
 
   if (user.status === UserStatus.logged) {
