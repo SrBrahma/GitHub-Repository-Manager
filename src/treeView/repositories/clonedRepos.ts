@@ -1,6 +1,7 @@
 import { commands, Uri, env, workspace, ThemeIcon } from 'vscode';
 import { RepoItem } from './repoItem';
-import UserStore, { cloned } from '../../store';
+import UserStore from '../../store';
+import { cloned } from "../../store/helpers";
 import { UserStatus, Repository } from '../../store/types';
 import { TreeItem } from '../base';
 

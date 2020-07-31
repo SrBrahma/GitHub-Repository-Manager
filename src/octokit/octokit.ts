@@ -1,12 +1,10 @@
 import { Octokit } from "@octokit/rest";
-import { loadUser, loadRepos } from "../store";
+import { loadUser, loadRepos } from "../store/helpers";
 import { storage } from '../storage';
 import { configs } from '../configs';
 
 export let octokit: Octokit | null = null;
 export let token = '';
-
-
 
 /**
  * Automatically enters the token, if .env or stored token.

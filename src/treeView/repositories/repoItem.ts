@@ -6,10 +6,6 @@ import { stringInsert } from "../../aux";
 
 // https://code.visualstudio.com/api/references/icons-in-labels
 
-
-
-
-
 // TODO: Use GitHub icons (must resize them)
 // we may use repo-cloned as icon for template.
 function getIcon(repo: Repository) {

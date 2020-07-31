@@ -1,7 +1,8 @@
 import vscode from 'vscode';
 import { BaseTreeDataProvider } from '../base';
 import { Repository } from '../../store/types';
-import DataStore, { reloadRepos } from '../../store';
+import DataStore from '../../store';
+import { reloadRepos } from "../../store/helpers";
 import { RepoItem } from './repoItem';
 import { getClonedTreeItem, activateClonedRepos } from './clonedRepos';
 import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
