@@ -1,5 +1,6 @@
 import { workspace, window, Uri, commands } from 'vscode';
 import { Repository } from '../store/types';
+import { reloadRepos } from '../store/helpers';
 import { cloneRepo } from "../octokit/commands/cloneRepo";
 import path from 'path';
 import { configs } from '../configs';
@@ -63,7 +64,7 @@ export async function uiCloneTo(repo: Repository) {
     return;
   }
 
-  // repositories.loadRepos();
+  reloadRepos();
 
   const action = await window.showInformationMessage(`Cloned ${repo.name} to ${repoPath}!`,
     openStr, openInNewWindowStr, addToWorkspaceStr);

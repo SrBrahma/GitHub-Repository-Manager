@@ -8,7 +8,6 @@ export async function loadUser() {
     const user = await getUser();
     dataStore.dispatch({ type: 'UPDATE_USER', value: { ...user, status: UserStatus.logged } });
 }
-;
 
 export async function loadRepos() {
     try {

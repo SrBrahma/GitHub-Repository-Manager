@@ -1,4 +1,5 @@
 import { create } from "../octokit/commands/createRepo";
+import { reloadRepos } from '../store/helpers';
 import { window } from "vscode";
 import { uiCloneTo } from "./uiCloneTo";
 
@@ -53,7 +54,9 @@ export async function uiCreateRepo() {
     const answer = await window.showInformationMessage(`Repository ${name} created successfully! Do you want to clone it?`, 'Yes', 'No');
 
     if (answer === 'Yes') {
-      uiCloneTo(newRepo); // uiCloneTo will call repositories.loadRepos() again on success.
+      uiCloneTo(newRepo);
+    } else {
+      reloadRepos();
     }
   }
 
