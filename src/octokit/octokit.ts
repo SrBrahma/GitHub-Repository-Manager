@@ -2,6 +2,7 @@ import { Octokit } from "@octokit/rest";
 import { loadUser, loadRepos, logout } from "../store/helpers";
 import { storage } from '../storage';
 import { configs } from '../configs';
+import vscode from 'vscode';
 
 export let octokit: Octokit | null = null;
 export let token = '';
@@ -33,6 +34,8 @@ export async function initOctokit(tokenArg: string): Promise<void> {
   }
 
   catch (err) {
+    vscode.window.showErrorMessage(err.message);
+    console.error('Octokit init error: ', err);
     octokit = null;
     return;
   }
