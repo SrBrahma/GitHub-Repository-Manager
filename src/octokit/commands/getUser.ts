@@ -31,7 +31,8 @@ export async function getUser(): Promise<User> {
   catch (err) {
     // Handle insufficient scope by logging user out
     if (err.errors.find((error: any) => error.type === 'INSUFFICIENT_SCOPES')) {
-      throw new Error('Insufficient Access, please login to GitHub Repository Manager');
+      console.log(err);
+      throw new Error('Insufficient access permitions! Just re-OAuth again, or if using Personal Access Token, have "repo" and "read:org" (new!) permissions checked!');
     }
 
     throw new Error(getOctokitErrorMessage(err));
