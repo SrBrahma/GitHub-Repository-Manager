@@ -65,6 +65,7 @@ async function getDirsWithDotGit(currentPath: string, availableDepth: number, di
   return results;
 }
 
+
 interface StartingSearchPaths {
   path: string,
   availableDepth: number,
@@ -91,7 +92,7 @@ export enum SearchClonedReposStatus {
 
 // TODO: Add custom dirs
 // This method returns all found git folders in the search location regardless if they are in the users Github or not
-export async function searchLocalReposAndSetRepoPath(): Promise<DirWithGitUrl[]> {
+export async function getLocalReposPathAndUrl(): Promise<DirWithGitUrl[]> {
   // If the user don't have any repository in GitHub
 
   // Get starting search paths.
@@ -110,8 +111,6 @@ export async function searchLocalReposAndSetRepoPath(): Promise<DirWithGitUrl[]>
       dirsToSkip)
     ));
 
-  // Get the repositories remotes (git url) and compare with the user repositories url,
-  // and set the repo.localPath.
   return await getGitUrls(repositoriesPaths);
 }
 

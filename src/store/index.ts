@@ -1,5 +1,5 @@
 import { createStore } from 'redux';
-import { User, UserStatus, Org, OrgStatus } from './types';
+import { User, Org, OrgStatus, UserStatus } from './types';
 import { initialUser } from './helpers';
 
 // We create a default org for the user for repositories they own directly to go into
@@ -23,6 +23,9 @@ function addOrgMetaData(org: any) {
 
 function data(state: User = initialUser(), action: any) {
   switch (action.type) {
+    case 'USER_LOADING':
+      state.status = UserStatus.logging;
+      break;
     case 'UPDATE_USER':
       state = {
         ...state,

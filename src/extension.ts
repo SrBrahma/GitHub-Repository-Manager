@@ -2,7 +2,7 @@ import { envPath } from './consts';
 import dotenv from 'dotenv';
 dotenv.config({ path: envPath }); // Path was wrong, without manually setting it.
 
-import * as vscode from 'vscode';
+import vscode from 'vscode';
 import { storage } from './storage';
 import { activateTreeViewAccount } from './treeView/account/account';
 import { activateTreeViewRepositories } from './treeView/repositories/repositories';

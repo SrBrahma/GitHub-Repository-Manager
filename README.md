@@ -37,6 +37,7 @@ Uses Vercel to handle the OAuth token generation (https://github.com/SrBrahma/mi
 
 If this method is not working, you may try the method below.
 
+
 <h2><b>Login with Personal access token</b></h2>
 
 To login using a Personal access token, go to your GitHub web page, Settings, Developer settings, Personal access tokens, mark the **repo** and **read:org** options, click on the **Generate token** button, and your token will show up. You may now enter it on **Personal access token**, under **Login with**.

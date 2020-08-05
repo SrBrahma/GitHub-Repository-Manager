@@ -1,6 +1,6 @@
 import { TreeItem } from "../base";
 import { RepoItem } from "./repoItem";
-import DataStore from "../../store";
+import UserStore from "../../store";
 import { notCloned } from "../../store/helpers";
 import { UserStatus, Repository } from "../../store/types";
 import { commands } from "vscode";
@@ -19,20 +19,21 @@ function parseOrgRepos(repositories: Repository[]): RepoItem[] {
     contextValue: 'githubRepoMgr.context.notClonedRepo',
     command: {
       // We wrap the repo in {} because we may call the cloneTo from the right click, and it passes the RepoItem.
-      command: 'githubRepoMgr.commands.notClonedRepos.cloneTo', arguments: [{ repo }]
+      command: 'githubRepoMgr.commands.notClonedRepos.cloneTo',
+      arguments: [{ repo }]
     },
   }));
 }
 
-export function getNotClonedTreeItem(notClonedRepos: Repository[]): TreeItem | undefined {
-  const user = DataStore.getState();
+export function getNotClonedTreeItem(): TreeItem | undefined {
+  const user = UserStore.getState();
 
   if (user.status === UserStatus.logged) {
     const orgs: TreeItem[] = user.organizations.map((org) => {
       const repos = notCloned(org.repositories);
       return new TreeItem({
         label: `${org.name}`,
-        children: org.repositories.length ? parseOrgRepos(notCloned(org.repositories)) : [new TreeItem({
+        children: org.repositories.length ? parseOrgRepos(repos) : [new TreeItem({
           label: org.status,
         })],
         collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,

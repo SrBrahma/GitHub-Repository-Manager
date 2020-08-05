@@ -80,14 +80,6 @@
           "default": false,
           "description": "By default, when closing the VSCode, your token (OAuth or Personal access token) is forgotten, and on each VSCode opening, you will need to login again to use this extension functionalities. This setting saves the token (OAuth or Personal access token) in an internal file. You must be careful while using this option, as malicious extensions and applications can retrieve the stored token and read and write to your repositories (but not delete). The stored token is removed from the disk when \"Logout and forget token\" is clicked when logged. You can also delete at any time your Personal access token on GitHub website > Settings > Developer settings > Personal access token, and your OAuth under GitHub website > Settings > Applications > Authorized OAuth Apps."
         },
-        "githubRepositoryManager.oauthCallbackPort": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 65535,
-          "default": 0,
-          "multipleOf": 1,
-          "description": "Which port the OAuth should use on successful authentication. \"0\" will use a random port. You usually won't have to change this."
-        },
         "githubRepositoryManager.showRepositoryCommandsIcons": {
           "type": "boolean",
           "default": true,

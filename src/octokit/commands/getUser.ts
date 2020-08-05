@@ -1,6 +1,6 @@
 import { getOctokitErrorMessage } from "./aux";
 import { octokit } from "../octokit";
-import { User, Org } from "../../store/types";
+import { User } from "../../store/types";
 
 export async function getUser(): Promise<User> {
   try {

@@ -4,6 +4,7 @@ import UserStore from '../../store';
 import { cloned } from "../../store/helpers";
 import { UserStatus, Repository } from '../../store/types';
 import { TreeItem } from '../base';
+import vscode from 'vscode';
 
 export async function activateClonedRepos() {
 
@@ -30,7 +31,7 @@ export async function activateClonedRepos() {
   });
 }
 
-function parseChildren(clonedRepos: Repository[]): TreeItem | TreeItem[] {
+function parseOrgRepos(clonedRepos: Repository[]): TreeItem | TreeItem[] {
   return clonedRepos.map(repo => new RepoItem({
     repo,
     contextValue: 'githubRepoMgr.context.clonedRepo',
@@ -39,17 +40,27 @@ function parseChildren(clonedRepos: Repository[]): TreeItem | TreeItem[] {
       command: 'githubRepoMgr.commands.clonedRepos.open',
       arguments: [{ repo }]
     },
-  }, true));
+  }));
 }
 
-export function getClonedTreeItem(clonedRepos: Repository[]): TreeItem | undefined {
+export function getClonedTreeItem(): TreeItem | undefined {
   const user = UserStore.getState();
   // TODO: Add remember cloned repos when not logged option?
   if (user.status === UserStatus.logged) {
+    const orgs: TreeItem[] = user.organizations.map((org) => {
+      const repos = cloned(org.repositories);
+      return new TreeItem({
+        label: `${org.name}`,
+        children: org.repositories.length ? parseOrgRepos(repos) : [new TreeItem({
+          label: org.status,
+        })],
+        collapsibleState: vscode.TreeItemCollapsibleState.Expanded,
+      });
+    });
+
     return new TreeItem({
       label: 'Cloned',
-      children: parseChildren(user.organizations.map(org => cloned(org.repositories)).flat())
+      children: orgs
     });
   }
-
 }
