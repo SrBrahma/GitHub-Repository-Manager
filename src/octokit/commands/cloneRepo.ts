@@ -25,7 +25,8 @@
 // After those two, the pulled repo don't have a remote (github link). So we add it.
 
 
-import { Repository } from "../../Repository/Repository";
+
+import { Repository } from '../../store/types';
 import { exec } from 'mz/child_process';
 import path from 'path';
 import fs from 'fs';

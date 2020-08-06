@@ -1,6 +1,6 @@
 import { create } from "../octokit/commands/createRepo";
+import { reloadRepos } from '../store/helpers';
 import { window } from "vscode";
-import { repositories } from "../Repository/Repository";
 import { uiCloneTo } from "./uiCloneTo";
 
 // Those are here so if we have an error, so the user doesn't have to fill again.
@@ -50,11 +50,13 @@ export async function uiCreateRepo() {
     name = ''; // Clears the fields, as we successfully created the repo.
     description = '';
 
-    repositories.loadRepos();
+    // repositories.loadRepos();
     const answer = await window.showInformationMessage(`Repository ${name} created successfully! Do you want to clone it?`, 'Yes', 'No');
 
     if (answer === 'Yes') {
-      uiCloneTo(newRepo); // uiCloneTo will call repositories.loadRepos() again on success.
+      uiCloneTo(newRepo);
+    } else {
+      reloadRepos();
     }
   }
 

@@ -1,6 +1,6 @@
 import { octokit } from '../octokit';
 import { extractRepositoryFromData } from './getRepos';
-import { Repository } from '../../Repository/Repository';
+import { Repository } from '../../store/types';
 
 interface CreateInterface {
   name: string;

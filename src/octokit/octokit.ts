@@ -1,17 +1,11 @@
 import { Octokit } from "@octokit/rest";
-import { repositories } from "../Repository/Repository";
-import { repositoriesTreeDataProvider } from "../treeView/repositories/repositories";
-import { user } from "../User/User";
-import { accountTreeDataProvider } from "../treeView/account/account";
+import { loadUser, loadRepos, logout, loadUserAndRepos } from "../store/helpers";
 import { storage } from '../storage';
 import { configs } from '../configs';
-
-
+import vscode from 'vscode';
 
 export let octokit: Octokit | null = null;
 export let token = '';
-
-
 
 /**
  * Automatically enters the token, if .env or stored token.
@@ -29,19 +23,18 @@ export function activateOctokit(): void {
     initOctokit(token);
 }
 
-
-
 export async function initOctokit(tokenArg: string): Promise<void> {
   octokit = new Octokit({
     auth: tokenArg,
   });
 
   try {
-    await user.loadUser();
-    await repositories.loadRepos();
+    await loadUserAndRepos();
   }
 
   catch (err) {
+    vscode.window.showErrorMessage(err.message);
+    console.error('Octokit init error: ', err);
     octokit = null;
     return;
   }
@@ -52,8 +45,5 @@ export async function initOctokit(tokenArg: string): Promise<void> {
 
 export function logoutAndForgetToken(): void {
   storage.removeToken();
-  user.status = user.Status.notLogged;
-  repositories.clearRepositories();
-  accountTreeDataProvider.refresh();
-  repositoriesTreeDataProvider.refresh();
+  logout();
 }

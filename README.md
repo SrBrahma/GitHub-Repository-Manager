@@ -3,7 +3,7 @@
 </h1>
 
 <h3 align="center">
-Lists your GitHub repositories, allowing you to clone them and creating new ones, directly from your VS Code
+Lists your personal and organizations GitHub repositories, allowing you to clone them and creating new ones, directly from your VS Code
 </h3>
 
 <div align="center">
@@ -37,9 +37,10 @@ Uses Vercel to handle the OAuth token generation (https://github.com/SrBrahma/mi
 
 If this method is not working, you may try the method below.
 
+
 <h2><b>Login with Personal access token</b></h2>
 
-To login using a Personal access token, go to your GitHub web page, Settings, Developer settings, Personal access tokens, mark the bold **repo** option, click on the **Generate token** button, and your token will show up. You may now enter it on **Personal access token**, under **Login with**.
+To login using a Personal access token, go to your GitHub web page, Settings, Developer settings, Personal access tokens, mark the **repo** and **read:org** options, click on the **Generate token** button, and your token will show up. You may now enter it on **Personal access token**, under **Login with**.
 
 <img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/README_md/personalAccessToken.png" alt="Personal access token" width="60%" >
 

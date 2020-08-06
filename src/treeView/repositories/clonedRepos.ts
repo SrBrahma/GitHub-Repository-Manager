@@ -1,7 +1,8 @@
-import { commands, Uri, env, workspace, ThemeIcon } from 'vscode';
+import { commands, Uri, env, workspace } from 'vscode';
 import { RepoItem } from './repoItem';
-import { user } from '../../User/User';
-import { repositories, Repository } from '../../Repository/Repository';
+import UserStore from '../../store';
+import { cloned } from "../../store/helpers";
+import { UserStatus, Repository } from '../../store/types';
 import { TreeItem } from '../base';
 
 export async function activateClonedRepos() {
@@ -29,49 +30,49 @@ export async function activateClonedRepos() {
   });
 }
 
-
-// Just to use switch with return.
-function getChildren(clonedRepos: Repository[]): TreeItem | TreeItem[] {
-  switch (repositories.searchLocalReposStatus) {
-    case repositories.SearchLocalReposStatus.searching:
-      return new TreeItem({
-        label: 'Searching for cloned repositories...',
-        iconPath: new ThemeIcon('kebab-horizontal')
-      });
-
-    case repositories.SearchLocalReposStatus.noStartingSearchDirs:
-      return new TreeItem({
-        label: 'No directories to search found, please review your settings',
-        iconPath: new ThemeIcon('x')
-      });
-
-    case repositories.SearchLocalReposStatus.noClonedReposFound:
-      return new TreeItem({
-        label: 'No cloned repositories found',
-      });
-
-    default:
-    case repositories.SearchLocalReposStatus.ok:
-      return clonedRepos.map(repo => new RepoItem({
-        repo,
-        contextValue: 'githubRepoMgr.context.clonedRepo',
-        command: {
-          // We wrap the repo in {} because we may call the cloneTo from the right click, and it passes the RepoItem.
-          command: 'githubRepoMgr.commands.clonedRepos.open',
-          arguments: [{ repo }]
-        },
-      }));
-  }
+function parseChildren(clonedRepos: Repository[], userLogin: string): TreeItem | TreeItem[] {
+  return clonedRepos.map(repo => new RepoItem({
+    repo,
+    contextValue: 'githubRepoMgr.context.clonedRepo',
+    command: {
+      // We wrap the repo in {} because we may call the cloneTo from the right click, and it passes the RepoItem.
+      command: 'githubRepoMgr.commands.clonedRepos.open',
+      arguments: [{ repo }]
+    },
+    includeOwner: repo.ownerLogin !== userLogin
+  }));
 }
 
-export function getClonedTreeItem(clonedRepos: Repository[]): TreeItem | undefined {
-  // TODO: Add remember cloned repos when not logged option?
-  if (user.status === user.Status.logged) {
-    let children = getChildren(clonedRepos);
+function sortClonedRepos(clonedRepos: Repository[], userLogin: string): Repository[] {
+  return clonedRepos.sort((a, b) => {
 
+    // User repos comes first
+    if (a.ownerLogin === userLogin && b.ownerLogin !== userLogin)
+      return -1;
+    if (a.ownerLogin !== userLogin && b.ownerLogin === userLogin)
+      return 1;
+
+    // Different Authors are sorted (ownerLogin === userLogin doesn't enter this block)
+    if (a.ownerLogin !== b.ownerLogin)
+      return (a.ownerLogin.toLocaleUpperCase() < b.ownerLogin.toLocaleUpperCase())
+        ? -1 : 1;
+
+    // If same owner login, repos are sorted by name.
+    return (a.name.toLocaleUpperCase() < b.name.toLocaleUpperCase())
+      ? -1 : 1;
+  });
+}
+
+export function getClonedTreeItem(): TreeItem | undefined {
+  const user = UserStore.getState();
+  if (user.status === UserStatus.logged) {
+    const clonedRepos = user.organizations.map(org => cloned(org.repositories)).flat();
+    const sortedClonedRepos = sortClonedRepos(clonedRepos, user.login);
+
+    // TODO: Add remember cloned repos when not logged option?
     return new TreeItem({
       label: 'Cloned',
-      children
+      children: parseChildren(sortedClonedRepos, user.login)
     });
   }
 }

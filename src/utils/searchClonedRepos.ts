@@ -2,7 +2,6 @@ import { configs } from "../configs";
 import { readdir } from 'mz/fs';
 import path from 'path';
 import { exec } from 'mz/child_process';
-import { Repository } from "./Repository";
 import GitUrlParse from "git-url-parse";
 
 // mz lib is a little old but does the job.
@@ -15,7 +14,6 @@ interface DirWithGitUrl {
 async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
   const dirsWithGitUrl: DirWithGitUrl[] = [];
 
-  // console.log(dirsPath);
   // forEach would call all execs 'at the same time', as it doesnt wait await.
   for (const dirPath of dirsPath) {
     try {
@@ -29,7 +27,6 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
       // This will get every non whitespace char to the left and right of github uri.
       const regex = result.match(/\S+github.com\S+/);
 
-      // console.log([dirPath, result, regex]);
       if (regex) {
         // Parse the git URL into a repository URL
         let gitUrl = GitUrlParse(regex[0]).toString("https").replace('.git', '');
@@ -68,6 +65,7 @@ async function getDirsWithDotGit(currentPath: string, availableDepth: number, di
   return results;
 }
 
+
 interface StartingSearchPaths {
   path: string,
   availableDepth: number,
@@ -91,16 +89,17 @@ function getStartingSearchPaths(): StartingSearchPaths[] {
 export enum SearchClonedReposStatus {
   ok, searching, noStartingSearchDirs, noClonedReposFound
 }
+
 // TODO: Add custom dirs
-export async function searchLocalReposAndSetRepoPath(repos: Repository[]): Promise<SearchClonedReposStatus> {
+// This method returns all found git folders in the search location regardless if they are in the users Github or not
+export async function getLocalReposPathAndUrl(): Promise<DirWithGitUrl[]> {
   // If the user don't have any repository in GitHub
-  if (!repos.length)
-    return SearchClonedReposStatus.ok; // This will display nothing under Cloned tree.
 
   // Get starting search paths.
   const startingSearchPaths = getStartingSearchPaths();
-  if (startingSearchPaths.length === 0)
-    return SearchClonedReposStatus.noStartingSearchDirs;
+  if (startingSearchPaths.length === 0) {
+    throw new Error('Starting search path length is zero');
+  }
 
   // Get local repositories paths.
   const repositoriesPaths: string[] = [];
@@ -112,18 +111,6 @@ export async function searchLocalReposAndSetRepoPath(repos: Repository[]): Promi
       dirsToSkip)
     ));
 
-
-  // Get the repositories remotes (git url) and compare with the user repositories url,
-  // and set the repo.localPath.
-  const dirsWithGitUrl = await getGitUrls(repositoriesPaths);
-
-  for (const repo of repos) {
-    const index = dirsWithGitUrl.findIndex(dirWithGitUrl => dirWithGitUrl.gitUrl === repo.url);
-    if (index !== -1) {
-      repo.localPath = dirsWithGitUrl[index].dirPath;
-      dirsWithGitUrl.splice(index, 1);
-    }
-  }
-  return SearchClonedReposStatus.ok;
+  return await getGitUrls(repositoriesPaths);
 }
 

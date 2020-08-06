@@ -1,6 +1,7 @@
 import vscode from 'vscode';
 import { BaseTreeDataProvider } from '../base';
-import { Repository, repositories } from '../../Repository/Repository';
+import DataStore from '../../store';
+import { reloadRepos } from "../../store/helpers";
 import { RepoItem } from './repoItem';
 import { getClonedTreeItem, activateClonedRepos } from './clonedRepos';
 import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
@@ -11,6 +12,8 @@ export let repositoriesTreeDataProvider: TreeDataProvider;
 
 export function activateTreeViewRepositories() {
   repositoriesTreeDataProvider = new TreeDataProvider();
+
+  DataStore.subscribe(() => { repositoriesTreeDataProvider.refresh(); });
 
   vscode.window.registerTreeDataProvider('githubRepoMgr.views.repositories',
     repositoriesTreeDataProvider);
@@ -25,7 +28,7 @@ export function activateTreeViewRepositories() {
 
   // Reload repos
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.reload', () =>
-    repositories.loadRepos());
+    reloadRepos());
 
   // Create Repo
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.createRepo', () =>
@@ -45,14 +48,7 @@ class TreeDataProvider extends BaseTreeDataProvider {
   }
 
   protected makeData() {
-    const clonedRepos: Repository[] = [];
-    const notClonedRepos: Repository[] = [];
-
-    repositories.repos.forEach(repo => {
-      (repo.localPath ? clonedRepos : notClonedRepos).push(repo);
-    });
-
-    this.data = [getClonedTreeItem(clonedRepos), getNotClonedTreeItem(notClonedRepos)];
+    this.data = [getClonedTreeItem(), getNotClonedTreeItem()];
   }
 }
 

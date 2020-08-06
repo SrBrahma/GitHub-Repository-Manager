@@ -3,6 +3,8 @@ import { upperCaseFirstLetter } from "../../aux";
 
 
 // We change a little the default error octokit outputs.
+// TODO: As we are using Graphql (doesn't have error.status as the v3 REST API),
+// this function is partially deprecated, needs to be updated
 export function getOctokitErrorMessage(error: any) {
   function defaultErrorMsg() {
     // name + code + : + message Ex: Http Error 500: Bla bla bla

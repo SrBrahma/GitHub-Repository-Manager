@@ -1,13 +1,10 @@
-import { Repository } from "../../Repository/Repository";
+
+import { Repository } from "../../store/types";
 import vscode from 'vscode';
 import { TreeItem, TreeItemConstructor } from "../base";
 import { stringInsert } from "../../aux";
 
 // https://code.visualstudio.com/api/references/icons-in-labels
-
-
-
-
 
 // TODO: Use GitHub icons (must resize them)
 // we may use repo-cloned as icon for template.
@@ -47,14 +44,15 @@ function getTooltip(repo: Repository) {
 
 interface RepoItemConstructor extends TreeItemConstructor {
   repo: Repository;
+  includeOwner?: boolean;
 }
 
 export class RepoItem extends TreeItem {
   repo: Repository;
 
-  constructor({ repo, command, ...rest }: RepoItemConstructor) {
+  constructor({ repo, command, includeOwner, ...rest }: RepoItemConstructor) {
     super({
-      label: repo.name,
+      label: includeOwner ? `${repo.ownerLogin} / ${repo.name}` : repo.name,
       tooltip: getTooltip(repo),
       command,
       iconPath: getIcon(repo),

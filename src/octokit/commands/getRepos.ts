@@ -1,9 +1,9 @@
 import { octokit } from "../octokit";
-import { Repository } from "../../Repository/Repository";
+import { Repository } from '../../store/types';
 import { getOctokitErrorMessage } from "./aux";
 
-export function extractRepositoryFromData(node: any) {
-  return new Repository({
+export function extractRepositoryFromData(node: any): Repository {
+  return {
     name: node.name,
     description: node.description,
     ownerLogin: node.owner.login,
@@ -21,9 +21,41 @@ export function extractRepositoryFromData(node: any) {
 
     createdAt: new Date(node.createdAt),
     updatedAt: new Date(node.updatedAt)
-  });
+  };
 }
 
+
+export async function getOrgRepos(login: string): Promise<Repository[]> {
+  try {
+    const repos: Repository[] = [];
+
+    let endCursor: string | null = null;
+    let hasNextPage = false;
+
+    do {
+      // https://github.com/octokit/graphql.js/#variables
+      const response = (await octokit.graphql(orgRepoQuery, {
+        after: endCursor,
+        org: login
+      }) as any);
+
+      if (response.viewer.organization === null) {
+        return repos;
+      }
+
+      const { nodes, pageInfo } = response.viewer.organization.repositories;
+
+      ({ endCursor, hasNextPage } = pageInfo);
+
+      repos.push(...nodes.map((node: any) => extractRepositoryFromData(node)));
+    } while (hasNextPage);
+
+    return repos;
+  }
+  catch (err) { // Octokit has a patter for errors, which we display properly at octokitErrorDisplay().
+    throw new Error(getOctokitErrorMessage(err));
+  }
+}
 
 export async function getRepos(): Promise<Repository[]> {
   try {
@@ -58,7 +90,12 @@ export async function getRepos(): Promise<Repository[]> {
 const query = `
 query getRepos ($after: String) {
   viewer {
-    repositories(first: 100, orderBy: {field: NAME, direction: ASC}, after: $after) {
+    repositories(
+      first: 100,
+      affiliations: [OWNER], ownerAffiliations:[OWNER],
+      orderBy: {field: NAME, direction: ASC}, after: $after
+    ) {
+
       pageInfo {
         endCursor
         hasNextPage
@@ -77,17 +114,56 @@ query getRepos ($after: String) {
         isPrivate
         isFork
         isTemplate
-        viewerCanAdminister
+
         parent {
           name
           owner {
             login
           }
         }
+
         createdAt
         updatedAt
       }
     }
   }
-}
-`;
+}`;
+
+
+const orgRepoQuery = `
+query getOrgRepos ($after: String, $org: String!) {
+  viewer {
+    organization(login: $org) {
+      repositories(isFork: false, first: 100, after: $after) {
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+        nodes {
+          name
+          description
+          owner {
+            login
+          }
+          primaryLanguage {
+            name
+          }
+          url
+
+          isPrivate
+          isFork
+          isTemplate
+          viewerCanAdminister
+          parent {
+            name
+            owner {
+              login
+            }
+          }
+          createdAt
+          updatedAt
+        }
+      }
+    }
+  }
+}`;

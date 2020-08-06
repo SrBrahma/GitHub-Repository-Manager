@@ -1,9 +1,11 @@
 import { TreeItem } from "../base";
-import { Repository } from "../../Repository/Repository";
 import { RepoItem } from "./repoItem";
-import { user } from "../../User/User";
+import UserStore from "../../store";
+import { notCloned } from "../../store/helpers";
+import { UserStatus, Repository } from "../../store/types";
 import { commands } from "vscode";
 import { uiCloneTo } from "../../uiCommands/uiCloneTo";
+import vscode from 'vscode';
 
 export function activateNotClonedRepos() {
   // Clone repo to [open select repo location]. You must pass the repo as arg.
@@ -11,20 +13,38 @@ export function activateNotClonedRepos() {
     ({ repo }: RepoItem) => uiCloneTo(repo));
 }
 
-export function getNotClonedTreeItem(notClonedRepos: Repository[]): TreeItem | undefined {
-  if (user.status === user.Status.logged) {
-    const repoItems = notClonedRepos.map(repo => new RepoItem({
-      repo,
-      contextValue: 'githubRepoMgr.context.notClonedRepo',
-      command: {
-        // We wrap the repo in {} because we may call the cloneTo from the right click, and it passes the RepoItem.
-        command: 'githubRepoMgr.commands.notClonedRepos.cloneTo', arguments: [{ repo }]
-      },
-    }));
+function parseOrgRepos(repositories: Repository[]): RepoItem[] {
+  return repositories.map(repo => new RepoItem({
+    repo,
+    contextValue: 'githubRepoMgr.context.notClonedRepo',
+    command: {
+      // We wrap the repo in {} because we may call the cloneTo from the right click, and it passes the RepoItem.
+      command: 'githubRepoMgr.commands.notClonedRepos.cloneTo',
+      arguments: [{ repo }]
+    },
+  }));
+}
+
+export function getNotClonedTreeItem(): TreeItem | undefined {
+  const user = UserStore.getState();
+
+  if (user.status === UserStatus.logged) {
+    const orgs: TreeItem[] = user.organizations.map((org) => {
+      const repos = notCloned(org.repositories);
+      return new TreeItem({
+        label: `${org.name}`,
+        children: org.repositories.length ? parseOrgRepos(repos) : [new TreeItem({
+          label: org.status,
+        })],
+        collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
+      });
+    });
 
     return new TreeItem({
       label: 'Not Cloned',
-      children: repoItems
+      children: orgs
     });
   }
+
+  return undefined;
 }
