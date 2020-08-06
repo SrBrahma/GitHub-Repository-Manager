@@ -1,10 +1,9 @@
-import { commands, Uri, env, workspace, ThemeIcon } from 'vscode';
+import { commands, Uri, env, workspace } from 'vscode';
 import { RepoItem } from './repoItem';
 import UserStore from '../../store';
 import { cloned } from "../../store/helpers";
 import { UserStatus, Repository } from '../../store/types';
 import { TreeItem } from '../base';
-import vscode from 'vscode';
 
 export async function activateClonedRepos() {
 
@@ -31,7 +30,7 @@ export async function activateClonedRepos() {
   });
 }
 
-function parseOrgRepos(clonedRepos: Repository[]): TreeItem | TreeItem[] {
+function parseChildren(clonedRepos: Repository[], userLogin: string): TreeItem | TreeItem[] {
   return clonedRepos.map(repo => new RepoItem({
     repo,
     contextValue: 'githubRepoMgr.context.clonedRepo',
@@ -40,27 +39,40 @@ function parseOrgRepos(clonedRepos: Repository[]): TreeItem | TreeItem[] {
       command: 'githubRepoMgr.commands.clonedRepos.open',
       arguments: [{ repo }]
     },
+    includeOwner: repo.ownerLogin !== userLogin
   }));
+}
+
+function sortClonedRepos(clonedRepos: Repository[], userLogin: string): Repository[] {
+  return clonedRepos.sort((a, b) => {
+
+    // User repos comes first
+    if (a.ownerLogin === userLogin && b.ownerLogin !== userLogin)
+      return -1;
+    if (a.ownerLogin !== userLogin && b.ownerLogin === userLogin)
+      return 1;
+
+    // Different Authors are sorted (ownerLogin === userLogin doesn't enter this block)
+    if (a.ownerLogin !== b.ownerLogin)
+      return (a.ownerLogin.toLocaleUpperCase() < b.ownerLogin.toLocaleUpperCase())
+        ? -1 : 1;
+
+    // If same owner login, repos are sorted by name.
+    return (a.name.toLocaleUpperCase() < b.name.toLocaleUpperCase())
+      ? -1 : 1;
+  });
 }
 
 export function getClonedTreeItem(): TreeItem | undefined {
   const user = UserStore.getState();
-  // TODO: Add remember cloned repos when not logged option?
   if (user.status === UserStatus.logged) {
-    const orgs: TreeItem[] = user.organizations.map((org) => {
-      const repos = cloned(org.repositories);
-      return new TreeItem({
-        label: `${org.name}`,
-        children: org.repositories.length ? parseOrgRepos(repos) : [new TreeItem({
-          label: org.status,
-        })],
-        collapsibleState: vscode.TreeItemCollapsibleState.Expanded,
-      });
-    });
+    const clonedRepos = user.organizations.map(org => cloned(org.repositories)).flat();
+    const sortedClonedRepos = sortClonedRepos(clonedRepos, user.login);
 
+    // TODO: Add remember cloned repos when not logged option?
     return new TreeItem({
       label: 'Cloned',
-      children: orgs
+      children: parseChildren(sortedClonedRepos, user.login)
     });
   }
 }

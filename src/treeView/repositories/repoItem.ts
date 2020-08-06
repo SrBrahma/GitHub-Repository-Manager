@@ -44,14 +44,15 @@ function getTooltip(repo: Repository) {
 
 interface RepoItemConstructor extends TreeItemConstructor {
   repo: Repository;
+  includeOwner?: boolean;
 }
 
 export class RepoItem extends TreeItem {
   repo: Repository;
 
-  constructor({ repo, command, ...rest }: RepoItemConstructor, includeOwner = false) {
+  constructor({ repo, command, includeOwner, ...rest }: RepoItemConstructor) {
     super({
-      label: includeOwner ? `${repo.ownerLogin}/${repo.name}` : repo.name,
+      label: includeOwner ? `${repo.ownerLogin} / ${repo.name}` : repo.name,
       tooltip: getTooltip(repo),
       command,
       iconPath: getIcon(repo),
