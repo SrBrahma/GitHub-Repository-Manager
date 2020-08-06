@@ -123,17 +123,9 @@ At the current (v0.2.0), cloned repositories may only be found using this option
 
 - Add other paths than git.defaultCloneDirectory to local cloned repositories search
 
-- Optional READ<span>ME.m</span>d on repository creation
-
-- Templates better support
-
 - Search and clone public repositories
 
 - Message when this extension updates to a new major version
-
-- Default behavior on Cloned Repository left-click setting. Currently, it opens the repository in the current window.
-
-- Clone to default directory
 
 - Only show Repository creation icon when logged
 

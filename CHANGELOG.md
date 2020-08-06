@@ -1,6 +1,6 @@
 # Change Log : GitHub Repository Manager
 
-## 0.5.0 - Aug 04, 2020
+## 0.5.0 - Aug 06, 2020
 
 Added support to organizations repositories ([#10](https://github.com/SrBrahma/GitHub-Repository-Manager/pull/10))! You will need to re-OAuth again or add the 'org:read' to your Personal Acess Token permissions.
 
