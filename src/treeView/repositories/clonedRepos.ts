@@ -23,7 +23,7 @@ export async function activateClonedRepos() {
   // Open Containing Folder
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.openContainingFolder', ({ repo }: RepoItem) =>
     // revealFileInOS always open the parent path, that's why we pass the '/a', just a filler. Doesn't need to exist.
-    commands.executeCommand('revealFileInOS', Uri.parse(repo.localPath + '/a')));
+    commands.executeCommand('revealFileInOS', Uri.file(repo.localPath + '/a')));
 
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.copyPath', ({ repo }: RepoItem) => {
     env.clipboard.writeText(repo.localPath);
