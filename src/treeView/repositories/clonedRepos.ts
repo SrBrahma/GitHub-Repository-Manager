@@ -5,25 +5,28 @@ import { cloned } from "../../store/helpers";
 import { UserStatus, Repository } from '../../store/types';
 import { TreeItem } from '../base';
 
+import path from 'path';
+import { noLocalSearchPaths } from '../../utils/searchClonedRepos';
+
 export async function activateClonedRepos() {
 
   // Open
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.open', ({ repo }: RepoItem) =>
-    commands.executeCommand('vscode.openFolder', Uri.parse(repo.localPath)));
+    commands.executeCommand('vscode.openFolder', Uri.file(repo.localPath)));
 
   // Open in New Window
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.openInNewWindow', ({ repo }: RepoItem) =>
-    commands.executeCommand('vscode.openFolder', Uri.parse(repo.localPath), true));
+    commands.executeCommand('vscode.openFolder', Uri.file(repo.localPath), true));
 
   // Add to Workspace
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.addToWorkspace', ({ repo }: RepoItem) =>
-    workspace.updateWorkspaceFolders(workspace.workspaceFolders!.length, 0, { uri: Uri.parse(repo.localPath) }));
+    workspace.updateWorkspaceFolders(workspace.workspaceFolders!.length, 0, { uri: Uri.file(repo.localPath) }));
 
 
   // Open Containing Folder
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.openContainingFolder', ({ repo }: RepoItem) =>
-    // revealFileInOS always open the parent path, that's why we pass the '/a', just a filler. Doesn't need to exist.
-    commands.executeCommand('revealFileInOS', Uri.file(repo.localPath + '/a')));
+    // revealFileInOS always open the parent path. So, to open the repo dir in fact, we pass the
+    commands.executeCommand('revealFileInOS', Uri.file(path.resolve(repo.localPath, '.git'))));
 
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.copyPath', ({ repo }: RepoItem) => {
     env.clipboard.writeText(repo.localPath);
@@ -72,7 +75,9 @@ export function getClonedTreeItem(): TreeItem | undefined {
     // TODO: Add remember cloned repos when not logged option?
     return new TreeItem({
       label: 'Cloned',
-      children: parseChildren(sortedClonedRepos, user.login)
+      children: noLocalSearchPaths
+        ? [new TreeItem({ label: '"git.defaultCloneDirectory" is not set! Read the extension README!' })]
+        : parseChildren(sortedClonedRepos, user.login)
     });
   }
 }

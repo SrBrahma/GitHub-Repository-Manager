@@ -1,5 +1,20 @@
 # Change Log : GitHub Repository Manager
 
+
+## 0.6.0 - Aug 29, 2020
+
+- Fixed breaking bug in Windows. It was not allowing opening the cloned repos. (in [#13](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/13), but isn't actually the original error in #13. #13 looks a VsCode bug in revealFileInOs using the current focused file instead of the provided file path (https://github.com/microsoft/vscode/issues/87804).)
+
+Sorry, Windows users. It scares me when I think about how much time it has been happening. I will also fix the ugly repository tooltip spacing.
+
+- Removed the cloned repository "Open Containing Directory" icon for now until VsCode fixes the API (https://github.com/microsoft/vscode/issues/105666). It can still be accessed with the right-click menu.
+
+- Renamed aux.ts files to utils.ts. Windows doesn't allow 'aux' files.
+
+- Fixed infinite 'Loading...' on error ([#12](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/12)). Also, if "git.defaultCloneDirectory" is not set, a message will be displayed under Cloned tree view.
+
+- Fixed some other minor stuff
+
 ## 0.5.0 - Aug 06, 2020
 
 Added support to organizations repositories ([#10](https://github.com/SrBrahma/GitHub-Repository-Manager/pull/10))! You will need to re-OAuth again or add the 'org:read' to your Personal Acess Token permissions.

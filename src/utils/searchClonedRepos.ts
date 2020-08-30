@@ -65,6 +65,8 @@ async function getDirsWithDotGit(currentPath: string, availableDepth: number, di
   return results;
 }
 
+export let noLocalSearchPaths: boolean = false;
+
 
 interface StartingSearchPaths {
   path: string,
@@ -98,8 +100,11 @@ export async function getLocalReposPathAndUrl(): Promise<DirWithGitUrl[]> {
   // Get starting search paths.
   const startingSearchPaths = getStartingSearchPaths();
   if (startingSearchPaths.length === 0) {
-    throw new Error('Starting search path length is zero');
+    noLocalSearchPaths = true;
+    return [];
   }
+
+  noLocalSearchPaths = false; // Reset it if was true
 
   // Get local repositories paths.
   const repositoriesPaths: string[] = [];

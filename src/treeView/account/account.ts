@@ -26,6 +26,7 @@ class TreeDataProvider extends BaseTreeDataProvider {
     const user = userStore.getState();
     switch (user.status) {
       case UserStatus.errorLogging: // TODO: Bad when token already stored and we have a connection error
+      // If going to change it, beware it is also being used in helpers.loadUser().
       case UserStatus.notLogged:
         this.data = getNotLoggedTreeData(); break;
       case UserStatus.logging:

@@ -2,7 +2,7 @@ import { TreeItem } from "../base";
 import { RepoItem } from "./repoItem";
 import UserStore from "../../store";
 import { notCloned } from "../../store/helpers";
-import { UserStatus, Repository } from "../../store/types";
+import { UserStatus, Repository, OrgStatus } from "../../store/types";
 import { commands } from "vscode";
 import { uiCloneTo } from "../../uiCommands/uiCloneTo";
 import vscode from 'vscode';
@@ -25,6 +25,18 @@ function parseOrgRepos(repositories: Repository[]): RepoItem[] {
   }));
 }
 
+function getEmptyOrgLabel(status: OrgStatus): string {
+  switch (status) {
+    case OrgStatus.errorLoading:
+      return 'Error loading';
+    case OrgStatus.notLoaded: // Same as loading.
+    case OrgStatus.loading:
+      return 'Loading...';
+    case OrgStatus.loaded:
+      return 'Empty';
+  }
+}
+
 export function getNotClonedTreeItem(): TreeItem | undefined {
   const user = UserStore.getState();
 
@@ -33,9 +45,9 @@ export function getNotClonedTreeItem(): TreeItem | undefined {
       const repos = notCloned(org.repositories);
       return new TreeItem({
         label: `${org.name}`,
-        children: org.repositories.length ? parseOrgRepos(repos) : [new TreeItem({
-          label: org.status,
-        })],
+        children: (org.repositories.length
+          ? parseOrgRepos(repos)
+          : [new TreeItem({ label: getEmptyOrgLabel(org.status) })]),
         collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
       });
     });

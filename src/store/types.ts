@@ -1,5 +1,8 @@
 export enum UserStatus {
-  notLogged, logging, errorLogging, logged
+  notLogged,
+  logging,
+  errorLogging,
+  logged
 }
 
 export interface User {
@@ -12,9 +15,10 @@ export interface User {
 }
 
 export enum OrgStatus {
-  notLoaded = "Loading...", // Show as loading
-  loading = "Loading...",
-  loaded = "Loaded"
+  notLoaded,
+  loading,
+  errorLoading,
+  loaded
 }
 
 export interface Org {

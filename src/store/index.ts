@@ -26,6 +26,9 @@ function data(state: User = initialUser(), action: any) {
     case 'USER_LOADING':
       state.status = UserStatus.logging;
       break;
+    case 'USER_ERROR':
+      state.status = UserStatus.errorLogging;
+      break;
     case 'UPDATE_USER':
       state = {
         ...state,
@@ -38,10 +41,15 @@ function data(state: User = initialUser(), action: any) {
       break;
     case 'ORG_LOADING':
       state.organizations = state.organizations.map((org) => {
-        if (action.value.id === org.id) {
+        if (action.value.id === org.id)
           org.status = OrgStatus.loading;
-        }
-
+        return org;
+      });
+      break;
+    case 'ORG_ERROR':
+      state.organizations = state.organizations.map((org) => {
+        if (action.value.id === org.id)
+          org.status = OrgStatus.errorLoading;
         return org;
       });
       break;
@@ -49,9 +57,8 @@ function data(state: User = initialUser(), action: any) {
       state.organizations = state.organizations.map((org) => {
         if (action.value.id === org.id) {
           return action.value;
-        } else {
+        } else
           return org;
-        }
       });
       break;
     case 'ATTACH_LOCAL_REPOS':

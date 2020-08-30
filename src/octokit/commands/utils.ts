@@ -1,4 +1,4 @@
-import { upperCaseFirstLetter } from "../../aux";
+import { upperCaseFirstLetter } from "../../utils";
 
 
 

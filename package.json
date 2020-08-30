@@ -11,7 +11,17 @@
     "url": "https://github.com/SrBrahma/GitHub-Repository-Manager"
   },
   "icon": "images/logo/logo128.png",
-  "version": "0.5.1",
+  "version": "0.6.0",
+  "scripts": {
+    "vscode:prepublish": "webpack --config webpack/webpack.config.prod.js",
+    "publish": "vsce publish",
+    "deploy": "npm run publish",
+    "webpack": "webpack --config webpack/webpack.config.dev.js",
+    "webpack-dev": "webpack --config webpack/webpack.config.dev.js --watch",
+    "test-compile": "tsc -p ./",
+    "watch": "npm run webpack-dev",
+    "start": "npm run webpack-dev"
+  },
   "main": "./dist/extension.js",
   "engines": {
     "vscode": "^1.46.0"
@@ -31,15 +41,6 @@
     "init",
     "oauth"
   ],
-  "scripts": {
-    "vscode:prepublish": "webpack --config webpack/webpack.config.prod.js",
-    "publish": "vsce publish",
-    "webpack": "webpack --config webpack/webpack.config.dev.js",
-    "webpack-dev": "webpack --config webpack/webpack.config.dev.js --watch",
-    "test-compile": "tsc -p ./",
-    "watch": "npm run webpack-dev",
-    "start": "npm run webpack-dev"
-  },
   "dependencies": {
     "@octokit/auth-oauth-app": "^3.0.4",
     "@octokit/core": "^2.5.4",

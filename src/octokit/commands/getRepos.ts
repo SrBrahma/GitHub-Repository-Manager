@@ -1,6 +1,6 @@
 import { octokit } from "../octokit";
 import { Repository } from '../../store/types';
-import { getOctokitErrorMessage } from "./aux";
+import { getOctokitErrorMessage } from "./utils";
 
 export function extractRepositoryFromData(node: any): Repository {
   return {
@@ -57,7 +57,7 @@ export async function getOrgRepos(login: string): Promise<Repository[]> {
   }
 }
 
-export async function getRepos(): Promise<Repository[]> {
+export async function getUserRepos(): Promise<Repository[]> {
   try {
 
     const repos: Repository[] = [];
