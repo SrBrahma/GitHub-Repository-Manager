@@ -159,7 +159,7 @@ At the current (v0.2.0), cloned repositories may only be found using this option
 <h1 align="center"> Donation </h1>
 
 <h3 align="center">
-  Help me to keep and improve this project!
+  Help me to keep and improve this project! Greater functionalities are coming!
   </br></br>
 </h3>
 
