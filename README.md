@@ -121,6 +121,8 @@ At the current (v0.2.0), cloned repositories may only be found using this option
 <br/>
 <h1 align="center"> Roadmap </h1>
 
+- Resolve current issues
+
 - Add other paths than git.defaultCloneDirectory to local cloned repositories search
 
 - Search and clone public repositories
@@ -134,6 +136,20 @@ At the current (v0.2.0), cloned repositories may only be found using this option
 - Git not installed message
 
 - Other repositories found by the Cloned Repository Searcher. Useful for quickly opening a repository you don't own.
+
+- Default action on clone (ask, open, new window, workspace)
+
+- Visualize without cloning (useful for getting some value or checking something from some repository)
+
+- "Order by" (alphabetically, stars, your open frequency, created on, updated on) in top menu
+
+- Search repo
+
+- "Group by number of repos" - showing 20 cloned repos is a little distractive. Would work nice with "Order by" and only show those 5 repos you usually work on.
+
+- Add color to those repos icons
+
+- Remove cloned from local if it isn't dirty (= not locally diff from github) (add icon to dirty repos)
 
 <br/>
 <h2 align="center"> Feel free to open an issue for features requests, problems or questions! </h2>
