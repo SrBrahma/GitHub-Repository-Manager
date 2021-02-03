@@ -18,18 +18,18 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
   for (const dirPath of dirsPath) {
     try {
       // https://stackoverflow.com/a/23682620/10247962
-      // Using 'git remote -v', as the other commands may not work on specific cases. It retuns in this format:
-      // origin    https://github.com/torvalds/linux.git (fetch)
-      // origin    https://github.com/torvalds/linux.git (push)
-      // We are goint to just take the first URI. If you have a non desired result with it, open an issue! :)
-      let [result] = await exec('git remote -v', { cwd: dirPath });
+      // was using git remote -v, but git ls-remote --get-url seems to also do the job with a single output.
+      let [result] = await exec('git ls-remote --get-url', { cwd: dirPath });
 
-      // This will get every non whitespace char to the left and right of github uri.
-      const regex = result.match(/\S+github.com\S+/);
 
-      if (regex) {
-        // Parse the git URL into a repository URL
-        let gitUrl = GitUrlParse(regex[0]).toString("https").replace('.git', '');
+      // Remove whitespaces chars.
+      const url = result.trim();
+
+      if (url) {
+        // Parse the git URL into a repository URL, as it could be the git@github.com:author/reponame url pattern.
+        // This changes any known kind to the https://github.com/author/reponame pattern.
+        let gitUrl = GitUrlParse(url).toString("https").replace(/\.git$/, ''); // remove final .git
+        // console.log('gitUrl and dirPath:', gitUrl, dirPath);
         dirsWithGitUrl.push({ gitUrl, dirPath });
       }
     }

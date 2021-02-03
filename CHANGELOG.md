@@ -1,5 +1,10 @@
 # Change Log : GitHub Repository Manager
 
+## 0.6.1 - Feb 03, 2020
+
+- Fixed [#15](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/15).
+- Fixed [#21](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/21). Thanks for the issue, [xCONFLiCTiONx](https://github.com/xCONFLiCTiONx)!
+- Updated dependency packages.
 
 ## 0.6.0 - Aug 29, 2020
 

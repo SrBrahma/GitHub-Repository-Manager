@@ -56,10 +56,12 @@ async function loadOrgRepos(org: Org) {
     const { login, localRepos } = dataStore.getState();
     dataStore.dispatch({ type: 'ORG_LOADING', value: { ...org } });
 
-    const repositories = (login === org.name) ? await getUserRepos() : await getOrgRepos(org.login);
+    const repos = (login === org.name) ? await getUserRepos() : await getOrgRepos(org.login);
+
+    // console.log('repos: ', repos);
 
     // We want to append the local path to any repositories so we know where to find them on disc
-    const reposWithLocalPath = repositories.map((repo) => {
+    const reposWithLocalPath = repos.map((repo) => {
       for (let i = 0; i < localRepos.length; i++) {
         const localRepo: LocalRepository = localRepos[i];
 

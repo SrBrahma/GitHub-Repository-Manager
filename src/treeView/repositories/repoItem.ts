@@ -21,23 +21,23 @@ function getIcon(repo: Repository) {
 
 
 function getTooltip(repo: Repository) {
-  let tooltip = ''
-    + `\r\Name              :  ${repo.name}`
+  // the | &nbsp; | adds a little more spacing.
+  let tooltip = new vscode.MarkdownString(`
+  |     |     |     |
+  | --- | --- | --- |
+  **Name** | &nbsp; | ${repo.name}
+  **Description** | &nbsp; | ${repo.description ? repo.description : 'No description'}
+  **Author** | &nbsp; | ${repo.ownerLogin}
+  **Visibility** | &nbsp; | ${repo.isPrivate ? 'Private' : 'Public'}`
+    // // + (repo.isTemplate ? ' | Template' : '') //TODO
 
-    + `\r\nDescription :  ${repo.description ? repo.description : 'No description'}`
+    + (repo.languageName ? `\r\n**Language** | &nbsp; |${repo.languageName}` : '')
 
-    + `\r\nAuthor           :  ${repo.ownerLogin}`
-
-    + `\r\nVisibility        :  ${repo.isPrivate ? 'Private' : 'Public'}`
-    // + (repo.isTemplate ? ' | Template' : '') //TODO
-
-    + (repo.languageName ? `\r\nLanguage     :  ${repo.languageName}` : '')
-
-    + (repo.isFork ? `\r\nFork of           :  ${repo.parentRepoOwnerLogin} / ${repo.parentRepoName}` : '')
-    + `\r\nUpdated at  :  ${repo.updatedAt.toLocaleString()}`
-    + `\r\nCreated at    :  ${repo.createdAt.toLocaleString()}`
-
-    ;
+    + (repo.isFork ? `\r\nFork of | &nbsp; | ${repo.parentRepoOwnerLogin} / ${repo.parentRepoName}` : '')
+    + `\r\n**Updated at** | &nbsp; | ${repo.updatedAt.toLocaleString()}`
+    + `\r\n**Created at** | &nbsp; | ${repo.createdAt.toLocaleString()}`
+  );
+  // ;
   return tooltip;
 }
 
