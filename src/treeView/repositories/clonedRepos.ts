@@ -1,14 +1,14 @@
 import { commands, Uri, env, workspace } from 'vscode';
 import { RepoItem } from './repoItem';
-import UserStore from '../../store';
-import { cloned } from "../../store/helpers";
+import { dataStore } from '../../store';
+import { cloned } from '../../store/helpers';
 import { UserStatus, Repository } from '../../store/types';
 import { TreeItem } from '../base';
 
 import path from 'path';
 import { noLocalSearchPaths } from '../../utils/searchClonedRepos';
 
-export async function activateClonedRepos() {
+export function activateClonedRepos() {
 
   // Open
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.open', ({ repo }: RepoItem) =>
@@ -20,7 +20,7 @@ export async function activateClonedRepos() {
 
   // Add to Workspace
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.addToWorkspace', ({ repo }: RepoItem) =>
-    workspace.updateWorkspaceFolders(workspace.workspaceFolders!.length, 0, { uri: Uri.file(repo.localPath) }));
+    workspace.updateWorkspaceFolders(workspace.workspaceFolders.length, 0, { uri: Uri.file(repo.localPath) }));
 
 
   // Open Containing Folder
@@ -67,7 +67,7 @@ function sortClonedRepos(clonedRepos: Repository[], userLogin: string): Reposito
 }
 
 export function getClonedTreeItem(): TreeItem | undefined {
-  const user = UserStore.getState();
+  const user = dataStore.getState();
   if (user.status === UserStatus.logged) {
     const clonedRepos = user.organizations.map(org => cloned(org.repositories)).flat();
     const sortedClonedRepos = sortClonedRepos(clonedRepos, user.login);

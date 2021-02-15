@@ -3,16 +3,26 @@ import { getOrgRepos, getUserRepos } from '../octokit/commands/getRepos';
 import { UserStatus, Org, OrgStatus, Repository, LocalRepository, User } from './types';
 import { getLocalReposPathAndUrl } from '../utils/searchClonedRepos';
 import { dataStore } from './index';
+import { isGitDirty } from '../utils/isGitDirty';
 
+/** Only on startup */
 export function initialUser(): User {
   return {
     login: '',
     profileUri: '',
     organizations: [],
-    status: UserStatus.notLogged,
+    status: UserStatus.init,
     localRepos: []
   };
 }
+
+export function notLoggedUser(): User {
+  return {
+    ...initialUser(),
+    status: UserStatus.notLogged,
+  };
+}
+
 
 export async function loadUser() {
   try {
@@ -45,6 +55,7 @@ export async function loadRepos() {
   await Promise.all(notLoggedInOrgs.map(loadOrgRepos));
 }
 
+
 async function loadLocalRepos() {
   const localRepos = await getLocalReposPathAndUrl();
   dataStore.dispatch({ type: 'ATTACH_LOCAL_REPOS', value: localRepos });
@@ -61,18 +72,19 @@ async function loadOrgRepos(org: Org) {
     // console.log('repos: ', repos);
 
     // We want to append the local path to any repositories so we know where to find them on disc
-    const reposWithLocalPath = repos.map((repo) => {
+    const reposWithLocalPath: Repository[] = await Promise.all(repos.map(async (repo) => {
       for (let i = 0; i < localRepos.length; i++) {
         const localRepo: LocalRepository = localRepos[i];
 
         if (repo.url === localRepo.gitUrl) {
           repo.localPath = localRepo.dirPath;
+          repo.dirty = await isGitDirty(repo.localPath);
           break;
         }
       }
 
       return repo;
-    });
+    }));
 
     dataStore.dispatch({ type: 'ATTACH_REPOS', value: { ...org, repositories: reposWithLocalPath, status: OrgStatus.loaded } });
   }
@@ -90,16 +102,7 @@ export function cloned(repos: Repository[]): Repository[] {
   return repos.filter(repo => repo.localPath);
 }
 
-
-export async function loadUserAndRepos() {
+export async function reloadRepos() {
   await Promise.all([loadUser(), loadLocalRepos()]); // Simultaneously to improve the performance by a bit
   await loadRepos();
-}
-
-export async function reloadRepos() {
-  await loadUserAndRepos();
-}
-
-export async function logout() {
-  dataStore.dispatch({ type: 'UPDATE_USER', value: initialUser() });
 }

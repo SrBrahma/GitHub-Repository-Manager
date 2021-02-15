@@ -67,14 +67,6 @@ To make your GitHub cloned repositories show up in the **Cloned** tree on the **
 
 <h2><b> General </b></h2>
 
-- ## Save Token
-##### _"githubRepositoryManager.saveToken"_
-By default, when closing the VSCode, your token (OAuth or Personal access token) is forgotten, and on each VSCode opening, you will need to login again to use this extension functionalities. This setting saves the token (OAuth or Personal access token) in an internal file. You must be careful while using this option, as malicious extensions and applications can retrieve the stored token and read and write to your repositories (but not delete). The stored token is removed from the disk when "Logout and forget token" is clicked when logged. You can also delete at any time your Personal access token on GitHub website > Settings > Developer settings > Personal access token, and your OAuth under GitHub website > Settings > Applications > Authorized OAuth Apps.
-
-But, while the GitHub Repository Manager is an uknown extension, you surely won't have problems using this option. Will be improved in future versions.
-##### Default: false
-
-
 - ## Show Repository Commands Icons
 ##### _"githubRepositoryManager.showRepositoryCommandsIcons"_
 When hovering a repository in the tree view, shows some common commands icons for quick use. You may also call them via the right-click menu, being this setting enabled or not. Requires restart after changing to take effect.
@@ -107,7 +99,7 @@ Directories names to not search for repositories in them.
 ##### "githubRepositoryManager.clonedRepositoriesSearch.searchOnDefaultCloneDirectory"_
 Search for cloned repos on the "git.defaultCloneDirectory" path setting. Only applies if 'git.defaultCloneDirectory' is set.
 
-At the current (v0.2.0), cloned repositories may only be found using this option.
+Currently, cloned repositories may only be found using this option.
 ##### Default: true
 
 
@@ -121,8 +113,6 @@ At the current (v0.2.0), cloned repositories may only be found using this option
 <br/>
 <h1 align="center"> Roadmap </h1>
 
-- Resolve current issues
-
 - Add other paths than git.defaultCloneDirectory to local cloned repositories search
 
 - Search and clone public repositories
@@ -130,8 +120,6 @@ At the current (v0.2.0), cloned repositories may only be found using this option
 - Message when this extension updates to a new major version
 
 - Only show Repository creation icon when logged
-
-- Extension Settings description using markdown
 
 - Git not installed message
 

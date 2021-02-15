@@ -1,7 +1,7 @@
-import { create } from "../octokit/commands/createRepo";
+import { create } from '../octokit/commands/createRepo';
 import { reloadRepos } from '../store/helpers';
-import { window } from "vscode";
-import { uiCloneTo } from "./uiCloneTo";
+import { window } from 'vscode';
+import { uiCloneTo } from './uiCloneTo';
 
 // Those are here so if we have an error, so the user doesn't have to fill again.
 let name = '';
@@ -35,10 +35,10 @@ export async function uiCreateRepo() {
     return;
   description.trim(); // Removes the '\r\n' and other whitespace.
 
-  const visibility = await window.showQuickPick(
-    ['Private', 'Public'], { // Private is first so if the user creates the repo by mistake (Enter-enter-enter),
-    // he won't 'feel too much bad' for publishing trash to his GitHub page, like I did lol.
-  });
+
+  // Private is first so if the user creates the repo by mistake (Enter-enter-enter),
+  // he won't 'feel too much bad' for publishing trash to his GitHub, like I did lol.
+  const visibility = await window.showQuickPick(['Private', 'Public']);
 
   if (visibility === undefined) // If user pressed Esc
     return;

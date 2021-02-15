@@ -1,8 +1,8 @@
-import { configs } from "../configs";
+import { configs } from '../configs';
 import { readdir } from 'mz/fs';
 import path from 'path';
 import { exec } from 'mz/child_process';
-import GitUrlParse from "git-url-parse";
+import GitUrlParse from 'git-url-parse';
 
 // mz lib is a little old but does the job.
 // https://stackoverflow.com/a/37532027/10247962
@@ -19,7 +19,7 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
     try {
       // https://stackoverflow.com/a/23682620/10247962
       // was using git remote -v, but git ls-remote --get-url seems to also do the job with a single output.
-      let [result] = await exec('git ls-remote --get-url', { cwd: dirPath });
+      const [result] = await exec('git ls-remote --get-url', { cwd: dirPath });
 
 
       // Remove whitespaces chars.
@@ -28,7 +28,7 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
       if (url) {
         // Parse the git URL into a repository URL, as it could be the git@github.com:author/reponame url pattern.
         // This changes any known kind to the https://github.com/author/reponame pattern.
-        let gitUrl = GitUrlParse(url).toString("https").replace(/\.git$/, ''); // remove final .git
+        const gitUrl = GitUrlParse(url).toString('https').replace(/\.git$/, ''); // remove final .git
         // console.log('gitUrl and dirPath:', gitUrl, dirPath);
         dirsWithGitUrl.push({ gitUrl, dirPath });
       }
@@ -37,7 +37,7 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
       // If error, it's because there isn't a remote. No need to manage it, may be left empty.
       // console.log(dirPath, error); // Uncomment to debug.
     }
-  };
+  }
   return dirsWithGitUrl;
 }
 

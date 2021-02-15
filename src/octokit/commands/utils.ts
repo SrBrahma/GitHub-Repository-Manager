@@ -1,4 +1,4 @@
-import { upperCaseFirstLetter } from "../../utils";
+import { upperCaseFirstLetter } from '../../utils';
 
 
 
@@ -16,12 +16,12 @@ export function getOctokitErrorMessage(error: any) {
 
   let errorMessage = '';
   switch (error.status) {
-    case 401:
-      errorMessage = customErrorMsg('The entered or stored token is wrong, has expired or has been revoked! If you want, authenticate again!'); break;
-    case 500:
-      errorMessage = customErrorMsg('Looks like your internet is off!'); break;
-    default:
-      errorMessage = defaultErrorMsg();
+  case 401:
+    errorMessage = customErrorMsg('The entered or stored token is wrong, has expired or has been revoked! If you want, authenticate again!'); break;
+  case 500:
+    errorMessage = customErrorMsg('Looks like your internet is off!'); break;
+  default:
+    errorMessage = defaultErrorMsg();
   }
   return errorMessage;
 }

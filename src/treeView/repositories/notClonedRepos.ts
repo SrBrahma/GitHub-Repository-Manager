@@ -1,10 +1,10 @@
-import { TreeItem } from "../base";
-import { RepoItem } from "./repoItem";
-import UserStore from "../../store";
-import { notCloned } from "../../store/helpers";
-import { UserStatus, Repository, OrgStatus } from "../../store/types";
-import { commands } from "vscode";
-import { uiCloneTo } from "../../uiCommands/uiCloneTo";
+import { TreeItem } from '../base';
+import { RepoItem } from './repoItem';
+import { dataStore } from '../../store';
+import { notCloned } from '../../store/helpers';
+import { UserStatus, Repository, OrgStatus } from '../../store/types';
+import { commands } from 'vscode';
+import { uiCloneTo } from '../../uiCommands/uiCloneTo';
 import vscode from 'vscode';
 
 export function activateNotClonedRepos() {
@@ -27,18 +27,18 @@ function parseOrgRepos(repositories: Repository[]): RepoItem[] {
 
 function getEmptyOrgLabel(status: OrgStatus): string {
   switch (status) {
-    case OrgStatus.errorLoading:
-      return 'Error loading';
-    case OrgStatus.notLoaded: // Same as loading.
-    case OrgStatus.loading:
-      return 'Loading...';
-    case OrgStatus.loaded:
-      return 'Empty';
+  case OrgStatus.errorLoading:
+    return 'Error loading';
+  case OrgStatus.notLoaded: // Same as loading.
+  case OrgStatus.loading:
+    return 'Loading...';
+  case OrgStatus.loaded:
+    return 'Empty';
   }
 }
 
 export function getNotClonedTreeItem(): TreeItem | undefined {
-  const user = UserStore.getState();
+  const user = dataStore.getState();
 
   if (user.status === UserStatus.logged) {
     const orgs: TreeItem[] = user.organizations.map((org) => {

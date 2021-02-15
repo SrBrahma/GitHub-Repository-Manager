@@ -1,8 +1,12 @@
+import { IsGitDirty as Dirty } from '../utils/isGitDirty';
+
+// named for better communication with package.json
 export enum UserStatus {
-  notLogged,
-  logging,
-  errorLogging,
-  logged
+  init = 'init',
+  notLogged = 'notLogged',
+  logging = 'logging',
+  errorLogging = 'errorLogging',
+  logged = 'logged'
 }
 
 export interface User {
@@ -30,27 +34,28 @@ export interface Org {
 }
 
 export interface Repository {
-  name: string,
-  description: string | null,
-  ownerLogin: string,
-  languageName?: string,  // "C++" etc
-  url: string,
+  name: string;
+  description: string | null;
+  ownerLogin: string;
+  languageName?: string;  // "C++" etc
+  url: string;
 
-  isPrivate: boolean,
-  isTemplate: boolean,
-  isFork: boolean,
+  isPrivate: boolean;
+  isTemplate: boolean;
+  isFork: boolean;
 
-  userIsAdmin: boolean,
+  userIsAdmin: boolean;
 
-  parentRepoName?: string,
-  parentRepoOwnerLogin?: string,
+  parentRepoName?: string;
+  parentRepoOwnerLogin?: string;
 
-  createdAt: Date,
-  updatedAt: Date,
+  createdAt: Date;
+  updatedAt: Date;
   localPath?: string;
+  dirty?: Dirty;
 }
 
 export interface LocalRepository {
-  dirPath: string,
-  gitUrl: string,
+  dirPath: string;
+  gitUrl: string;
 }

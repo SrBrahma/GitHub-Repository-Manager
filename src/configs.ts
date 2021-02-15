@@ -1,4 +1,4 @@
-import { workspace } from "vscode";
+import { workspace } from 'vscode';
 import os from 'os';
 
 
@@ -17,8 +17,6 @@ class Configs {
   get defaultCloneToDir(): string {
     return this.defaultCloneDir || os.homedir();
   }
-
-  get saveToken() { return getConfig<boolean>('saveToken'); }
 
   clonedReposSearch = clonedReposSearch;
 }

@@ -1,6 +1,18 @@
 # Change Log : GitHub Repository Manager
 
-## 0.6.1 - Feb 03, 2020
+
+# 1.0.0 - Feb 04, 2021
+
+- Added the new VS Code GitHub Authentication. (!)
+- Added dirty repository indicator ([#16](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/16)). Being ok, later I will add a 'Delete' context menu option to non-dirty cloned repos. Heh, do you see that the boundaries are getting thinner? :D
+- Removed the OAuth login system.
+- Removed the manual token login system.
+- Removed the save token setting as it is no longer used.
+- Fixed the Account tree view displaying a "not logged" view at the initial credentials load. Now shows a "Loading...", as happens while logging in.
+- Fixed 'Fork of' in repository tooltip not being bold.
+
+
+## 0.6.1 - Feb 03, 2021
 
 - Fixed [#15](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/15).
 - Fixed [#21](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/21). Thanks for the issue, [xCONFLiCTiONx](https://github.com/xCONFLiCTiONx)!

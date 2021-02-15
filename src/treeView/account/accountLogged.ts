@@ -1,13 +1,13 @@
 import vscode, { ThemeIcon } from 'vscode';
-import { TreeItem } from "../base";
-import userStore from "../../store";
-import { logoutAndForgetToken } from "../../octokit/octokit";
+import { TreeItem } from '../base';
+import { dataStore } from '../../store';
+import { logoutAndForgetToken } from '../../octokit/octokit';
 
 export function activateLogged() {
   // Open user profile page
   vscode.commands.registerCommand('githubRepoMgr.commands.user.openProfilePage', () => {
-    const user = userStore.getState();
-    vscode.commands.executeCommand("vscode.open", vscode.Uri.parse(user.profileUri));
+    const user = dataStore.getState();
+    vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(user.profileUri));
   });
 
   // Logout
@@ -16,7 +16,7 @@ export function activateLogged() {
 }
 
 export function getLoggedTreeData() {
-  const user = userStore.getState();
+  const user = dataStore.getState();
   return [
     new TreeItem({
       label: `Hi, ${user.login}!`,
@@ -29,9 +29,8 @@ export function getLoggedTreeData() {
           iconPath: new ThemeIcon('github')
         }),
         new TreeItem({
-          label: ' Logout and forget token',
+          label: ' Logout',
           command: 'githubRepoMgr.commands.auth.logout',
-          tooltip: 'Logouts and forgets the token, if stored.',
           iconPath: new ThemeIcon('log-out')
         }),
       ]

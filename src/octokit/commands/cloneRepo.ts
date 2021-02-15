@@ -30,7 +30,7 @@ import { Repository } from '../../store/types';
 import { exec } from 'mz/child_process';
 import path from 'path';
 import fs from 'fs';
-import { token } from "../octokit";
+import { token } from '../octokit';
 import rimraf from 'rimraf';
 /**
  *
@@ -65,11 +65,11 @@ export async function cloneRepo(repo: Repository, parentPath: string) {
   }
   catch (err) {
     // This will happen if the repository never had a push. As we know it really exists, isn't a problem at all.
-    if ((err.message as string).includes("couldn't find remote ref master"))
+    if ((err.message as string).includes('couldn\'t find remote ref master'))
       return;
 
     // Removes the repo dir if error. For some reason rimraf needs this empty callback.
-    rimraf(repoPath, () => { });
+    rimraf(repoPath, () => null);
 
     // Removes the token from the error message
     const censoredMsg = (err.message as string).replace(token, '[tokenHidden]');

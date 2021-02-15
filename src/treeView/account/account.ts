@@ -1,6 +1,6 @@
 import vscode from 'vscode';
 import { TreeItem, BaseTreeDataProvider } from '../base';
-import userStore from '../../store';
+import { dataStore } from '../../store';
 import { UserStatus } from '../../store/types';
 import { getLoggedTreeData, activateLogged } from './accountLogged';
 import { getNotLoggedTreeData, activateNotLogged } from './accountNotLogged';
@@ -11,7 +11,7 @@ export function activateTreeViewAccount() {
   accountTreeDataProvider = new TreeDataProvider();
   vscode.window.registerTreeDataProvider('githubRepoMgr.views.account', accountTreeDataProvider);
 
-  userStore.subscribe(() => { accountTreeDataProvider.refresh(); });
+  dataStore.subscribe(() => { accountTreeDataProvider.refresh(); });
   activateLogged();
   activateNotLogged();
 }
@@ -23,18 +23,21 @@ class TreeDataProvider extends BaseTreeDataProvider {
   constructor() { super(); }
 
   protected makeData() {
-    const user = userStore.getState();
+    const user = dataStore.getState();
+    console.log(user.status);
     switch (user.status) {
-      case UserStatus.errorLogging: // TODO: Bad when token already stored and we have a connection error
-      // If going to change it, beware it is also being used in helpers.loadUser().
-      case UserStatus.notLogged:
-        this.data = getNotLoggedTreeData(); break;
-      case UserStatus.logging:
-        this.data = [new TreeItem({
-          label: 'Loading...'
-        })]; break;
-      case UserStatus.logged:
-        this.data = getLoggedTreeData(); break;
+    case UserStatus.errorLogging: // TODO: Bad when token already stored and we have a connection error
+    case UserStatus.notLogged: // If going to change it, beware it is also being used in helpers.loadUser().
+      this.data = getNotLoggedTreeData();
+      break;
+    case UserStatus.init:
+    case UserStatus.logging:
+      this.data = [new TreeItem({
+        label: 'Loading...'
+      })]; break;
+    case UserStatus.logged:
+      this.data = getLoggedTreeData();
+      break;
     }
   }
 }

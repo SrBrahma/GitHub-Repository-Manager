@@ -1,8 +1,7 @@
 
-import { Repository } from "../../store/types";
+import { Repository } from '../../store/types';
 import vscode from 'vscode';
-import { TreeItem, TreeItemConstructor } from "../base";
-import { stringInsert } from "../../utils";
+import { TreeItem, TreeItemConstructor } from '../base';
 
 // https://code.visualstudio.com/api/references/icons-in-labels
 
@@ -20,24 +19,24 @@ function getIcon(repo: Repository) {
 }
 
 
+// + (repo.isTemplate ? ' | Template' : '') //TODO
 function getTooltip(repo: Repository) {
   // the | &nbsp; | adds a little more spacing.
-  let tooltip = new vscode.MarkdownString(`
+  const tooltip = new vscode.MarkdownString(`
   |     |     |     |
   | --- | --- | --- |
   **Name** | &nbsp; | ${repo.name}
   **Description** | &nbsp; | ${repo.description ? repo.description : 'No description'}
   **Author** | &nbsp; | ${repo.ownerLogin}
   **Visibility** | &nbsp; | ${repo.isPrivate ? 'Private' : 'Public'}`
-    // // + (repo.isTemplate ? ' | Template' : '') //TODO
 
     + (repo.languageName ? `\r\n**Language** | &nbsp; |${repo.languageName}` : '')
 
-    + (repo.isFork ? `\r\nFork of | &nbsp; | ${repo.parentRepoOwnerLogin} / ${repo.parentRepoName}` : '')
+    + (repo.isFork ? `\r\n**Fork of** | &nbsp; | ${repo.parentRepoOwnerLogin} / ${repo.parentRepoName}` : '')
     + `\r\n**Updated at** | &nbsp; | ${repo.updatedAt.toLocaleString()}`
     + `\r\n**Created at** | &nbsp; | ${repo.createdAt.toLocaleString()}`
+    + (repo.dirty === 'dirty' ? `\r\n**Dirty** | &nbsp; | This repository has local changes` : '')
   );
-  // ;
   return tooltip;
 }
 
@@ -51,8 +50,16 @@ export class RepoItem extends TreeItem {
   repo: Repository;
 
   constructor({ repo, command, includeOwner, ...rest }: RepoItemConstructor) {
+    const isCloned = !!repo.localPath;
+
+    const repoName = includeOwner ? `${repo.ownerLogin} / ${repo.name}` : repo.name;
+    let label = repoName;
+    if (isCloned) {
+      if (repo.dirty === 'dirty')
+        label += ' *';
+    }
     super({
-      label: includeOwner ? `${repo.ownerLogin} / ${repo.name}` : repo.name,
+      label: label,
       tooltip: getTooltip(repo),
       command,
       iconPath: getIcon(repo),
@@ -61,35 +68,3 @@ export class RepoItem extends TreeItem {
     this.repo = repo;
   }
 }
-
-
-// Not used. For > 2 lines, it breaks at different locations, as the font is not monospaced.
-// // Avoid too large tooltips by breaking lines
-// function formatText(string: string) {
-//   // return string;
-//   const maxCharsPerLine = 70;
-
-//   const preNewLine = '\r\n';
-//   const preNewLineDash = '-\r\n';
-
-//   const posNewLine = '  ';
-
-//   let i = maxCharsPerLine - 1;
-//   while (i < string.length) {
-//     if (string[i] !== ' ') {
-//       string = stringInsert(string, i, preNewLineDash);
-//       i += preNewLineDash.length;
-//     }
-//     else {
-//       string = stringInsert(string, i, preNewLine);
-//       i += preNewLine.length;
-//     }
-
-//     string = stringInsert(string, i, posNewLine);
-//     i += posNewLine.length;
-
-//     i += maxCharsPerLine;
-//   }
-
-//   return string;
-// }

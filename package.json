@@ -2,16 +2,24 @@
   "name": "github-repository-manager",
   "publisher": "henriqueBruno",
   "displayName": "GitHub Repository Manager",
-  "description": "Easily and quickly clone your GitHub repositories and create new ones.",
+  "description": "Easily and quickly clone and access your GitHub repositories and create new ones",
   "author": {
     "name": "Henrique Bruno",
     "email": "henrique.bruno.fa@gmail.com"
   },
+  "enableProposedApi": true,
+  "engines": {
+    "vscode": "^1.53.0"
+  },
   "repository": {
+    "type": "git",
     "url": "https://github.com/SrBrahma/GitHub-Repository-Manager"
   },
+  "bugs": {
+    "url": "https://github.com/SrBrahma/GitHub-Repository-Manager/issues"
+  },
   "icon": "images/logo/logo128.png",
-  "version": "0.6.1",
+  "version": "1.0.0",
   "scripts": {
     "vscode:prepublish": "webpack --config webpack/webpack.config.prod.js",
     "publish": "vsce publish",
@@ -23,15 +31,13 @@
     "start": "npm run webpack-dev"
   },
   "main": "./dist/extension.js",
-  "engines": {
-    "vscode": "^1.52.0"
-  },
+
   "categories": [
     "Other",
     "SCM Providers"
   ],
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "license": "MIT",
   "keywords": [
@@ -48,8 +54,10 @@
     "@octokit/rest": "^18.1.0",
     "@types/mz": "^2.7.3",
     "@types/rimraf": "^3.0.0",
+    "execa": "^5.0.0",
     "express": "^4.17.1",
     "git-url-parse": "^11.4.4",
+    "mobx": "^6.1.5",
     "mz": "^2.7.0",
     "redux": "^4.0.5",
     "rimraf": "^3.0.2"
@@ -65,7 +73,6 @@
     "dotenv": "^8.2.0",
     "eslint": "^7.19.0",
     "fork-ts-checker-webpack-plugin": "^6.1.0",
-    "prettier": "^2.2.1",
     "ts-loader": "^8.0.14",
     "typescript": "^4.1.3",
     "webpack": "^5.20.0",
@@ -76,11 +83,6 @@
     "configuration": {
       "title": "GitHub Repository Manager",
       "properties": {
-        "githubRepositoryManager.saveToken": {
-          "type": "boolean",
-          "default": false,
-          "description": "By default, when closing the VSCode, your token (OAuth or Personal access token) is forgotten, and on each VSCode opening, you will need to login again to use this extension functionalities. This setting saves the token (OAuth or Personal access token) in an internal file. You must be careful while using this option, as malicious extensions and applications can retrieve the stored token and read and write to your repositories (but not delete). The stored token is removed from the disk when \"Logout and forget token\" is clicked when logged. You can also delete at any time your Personal access token on GitHub website > Settings > Developer settings > Personal access token, and your OAuth under GitHub website > Settings > Applications > Authorized OAuth Apps."
-        },
         "githubRepositoryManager.showRepositoryCommandsIcons": {
           "type": "boolean",
           "default": true,
@@ -106,7 +108,8 @@
           "type": "array",
           "default": [
             "node_modules",
-            ".vscode"
+            ".vscode",
+            ".git"
           ],
           "description": "Directories names to not search for repositories in them."
         }
@@ -121,6 +124,13 @@
         }
       ]
     },
+    "viewsWelcome": [
+      {
+        "view": "githubRepoMgr.views.account",
+        "contents": "Login with your GitHub account \n[Login](command:githubRepoMgr.commands.auth.vscodeAuth)",
+        "when": "UserState == notLogged"
+      }
+    ],
     "views": {
       "githubRepoMgr": [
         {
