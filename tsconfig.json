@@ -2,17 +2,14 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES2018",
-    "outDir": "out",
+    "outDir": "dist",
     "lib": ["ES2020"],
     "sourceMap": true,
     "rootDir": "src",
+    "strict": true,
     "esModuleInterop": true,
     "noImplicitAny": true
-    // "noImplicitReturns": true /* Report error when not all code paths in function return a value. */
-    // "strict": true   /* enable all strict type-checking options */
-    /* Additional Checks */
-    // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
-    // "noUnusedParameters": true,  /* Report errors on unused parameters. */
   },
-  "exclude": ["node_modules", ".vscode-test"]
+  "exclude": ["node_modules", ".vscode-test"],
+  "include": ["src"]
 }

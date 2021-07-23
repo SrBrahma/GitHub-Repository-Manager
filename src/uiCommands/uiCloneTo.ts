@@ -1,9 +1,9 @@
 import { workspace, window, Uri, commands } from 'vscode';
-import { Repository } from '../store/types';
-import { reloadRepos } from '../store/helpers';
-import { cloneRepo } from '../octokit/commands/cloneRepo';
+import { cloneRepo } from '../octokit/cloneRepo';
 import path from 'path';
-import { configs } from '../configs';
+import { configs } from '../main/configs';
+import { Repository } from '../store/repository';
+import { User } from '../store/user';
 
 // Made to look similar to vscode clone command. Also, took some small pieces from it.
 // uses the git.defaultCloneDirectory setting, as, you know, the default clone directory.
@@ -22,7 +22,7 @@ const openInNewWindowStr = 'Open in New Window';
 const addToWorkspaceStr = 'Add to Workspace';
 
 // TODO: Add cancel button
-export async function uiCloneTo(repo: Repository) {
+export async function uiCloneTo(repo: Repository): Promise<void> {
   // Took this dir path code from vscode git clone code.
 
 
@@ -38,7 +38,7 @@ export async function uiCloneTo(repo: Repository) {
       openLabel: `Clone ${labelRepoName} here`,
       canSelectFiles: false,
       canSelectFolders: true,
-      canSelectMany: false
+      canSelectMany: false,
     });
 
     if (!thenable) // Cancel if quitted dialog
@@ -57,24 +57,27 @@ export async function uiCloneTo(repo: Repository) {
   try {
     await cloneRepo(repo, parentPath);
     statusBar.dispose();
-  }
-  catch (err) {
+  } catch (err) {
     statusBar.dispose();
-    window.showErrorMessage(err.message);
+    void window.showErrorMessage(err.message);
     return;
   }
 
-  reloadRepos();
+  await Promise.all([
+    User.reloadRepos(),
+    async () => {
+      const action = await window.showInformationMessage(`Cloned ${repo.name} to ${repoPath}!`,
+        openStr, openInNewWindowStr, addToWorkspaceStr);
 
-  const action = await window.showInformationMessage(`Cloned ${repo.name} to ${repoPath}!`,
-    openStr, openInNewWindowStr, addToWorkspaceStr);
+      switch (action) {
+        case openStr:
+          void commands.executeCommand('vscode.openFolder', uri); break;
+        case openInNewWindowStr:
+          void commands.executeCommand('vscode.openFolder', uri, true); break;
+        case addToWorkspaceStr:
+          workspace.updateWorkspaceFolders(workspace.workspaceFolders?.length ?? 0, 0, { uri }); break;
+      }
+    },
+  ]);
 
-  switch (action) {
-  case openStr:
-    commands.executeCommand('vscode.openFolder', uri); break;
-  case openInNewWindowStr:
-    commands.executeCommand('vscode.openFolder', uri, true); break;
-  case addToWorkspaceStr:
-    workspace.updateWorkspaceFolders(workspace.workspaceFolders.length, 0, { uri }); break;
-  }
 }

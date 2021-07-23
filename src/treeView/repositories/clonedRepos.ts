@@ -1,35 +1,33 @@
 import { commands, Uri, env, workspace } from 'vscode';
-import { RepoItem } from './repoItem';
-import { dataStore } from '../../store';
-import { cloned } from '../../store/helpers';
-import { UserStatus, Repository } from '../../store/types';
-import { TreeItem } from '../base';
-
 import path from 'path';
+import { RepoItem } from './repoItem';
+import { TreeItem } from '../treeViewBase';
 import { noLocalSearchPaths } from '../../utils/searchClonedRepos';
+import { Repository } from '../../store/repository';
+import { User } from '../../store/user';
 
-export function activateClonedRepos() {
 
+export function activateClonedRepos(): void {
   // Open
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.open', ({ repo }: RepoItem) =>
-    commands.executeCommand('vscode.openFolder', Uri.file(repo.localPath)));
+    repo.localPath && commands.executeCommand('vscode.openFolder', Uri.file(repo.localPath)));
 
   // Open in New Window
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.openInNewWindow', ({ repo }: RepoItem) =>
-    commands.executeCommand('vscode.openFolder', Uri.file(repo.localPath), true));
+    repo.localPath && commands.executeCommand('vscode.openFolder', Uri.file(repo.localPath), true));
 
   // Add to Workspace
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.addToWorkspace', ({ repo }: RepoItem) =>
-    workspace.updateWorkspaceFolders(workspace.workspaceFolders.length, 0, { uri: Uri.file(repo.localPath) }));
-
+    repo.localPath && workspace.updateWorkspaceFolders(workspace.workspaceFolders?.length ?? 0, 0, { uri: Uri.file(repo.localPath) }));
 
   // Open Containing Folder
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.openContainingFolder', ({ repo }: RepoItem) =>
     // revealFileInOS always open the parent path. So, to open the repo dir in fact, we pass the
-    commands.executeCommand('revealFileInOS', Uri.file(path.resolve(repo.localPath, '.git'))));
+    repo.localPath && commands.executeCommand('revealFileInOS', Uri.file(path.resolve(repo.localPath, '.git'))));
 
+  // Copy local path to clipboard
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.copyPath', ({ repo }: RepoItem) => {
-    env.clipboard.writeText(repo.localPath);
+    repo.localPath && void env.clipboard.writeText(repo.localPath);
   });
 }
 
@@ -40,9 +38,9 @@ function parseChildren(clonedRepos: Repository[], userLogin: string): TreeItem |
     command: {
       // We wrap the repo in {} because we may call the cloneTo from the right click, and it passes the RepoItem.
       command: 'githubRepoMgr.commands.clonedRepos.open',
-      arguments: [{ repo }]
+      arguments: [{ repo }],
     },
-    includeOwner: repo.ownerLogin !== userLogin
+    includeOwner: repo.ownerLogin !== userLogin,
   }));
 }
 
@@ -66,18 +64,15 @@ function sortClonedRepos(clonedRepos: Repository[], userLogin: string): Reposito
   });
 }
 
-export function getClonedTreeItem(): TreeItem | undefined {
-  const user = dataStore.getState();
-  if (user.status === UserStatus.logged) {
-    const clonedRepos = user.organizations.map(org => cloned(org.repositories)).flat();
-    const sortedClonedRepos = sortClonedRepos(clonedRepos, user.login);
-
-    // TODO: Add remember cloned repos when not logged option?
-    return new TreeItem({
-      label: 'Cloned',
-      children: noLocalSearchPaths
-        ? [new TreeItem({ label: '"git.defaultCloneDirectory" is not set! Read the extension README!' })]
-        : parseChildren(sortedClonedRepos, user.login)
-    });
-  }
+// TODO: Add remember cloned repos when not logged option?
+export function getClonedTreeItem(): TreeItem {
+  if (!User.login)
+    throw new Error('User.login is not set!');
+  const sortedClonedRepos = sortClonedRepos(User.clonedRepos, User.login);
+  return new TreeItem({
+    label: 'Cloned', // I tried a +(${User.clonedRepos.length}), but it made me a little anxious. Better not having it.
+    children: noLocalSearchPaths
+      ? new TreeItem({ label: '"git.defaultCloneDirectory" is not set! Read the extension README!' })
+      : parseChildren(sortedClonedRepos, User.login),
+  });
 }

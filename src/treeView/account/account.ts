@@ -1,20 +1,23 @@
-import vscode from 'vscode';
-import { TreeItem, BaseTreeDataProvider } from '../base';
-import { dataStore } from '../../store';
-import { UserStatus } from '../../store/types';
-import { getLoggedTreeData, activateLogged } from './accountLogged';
-import { getNotLoggedTreeData, activateNotLogged } from './accountNotLogged';
+import vscode, { ThemeIcon } from 'vscode';
+import { TreeItem, BaseTreeDataProvider } from '../treeViewBase';
+import { User, UserState } from '../../store/user';
 
 export let accountTreeDataProvider: TreeDataProvider;
 
-export function activateTreeViewAccount() {
+export function activateTreeViewAccount(): void {
   accountTreeDataProvider = new TreeDataProvider();
   vscode.window.registerTreeDataProvider('githubRepoMgr.views.account', accountTreeDataProvider);
 
-  dataStore.subscribe(() => { accountTreeDataProvider.refresh(); });
-  activateLogged();
-  activateNotLogged();
+  User.subscribe('account', () => { accountTreeDataProvider.refresh(); });
+
+  // Open user profile page
+  vscode.commands.registerCommand('githubRepoMgr.commands.user.openProfilePage', async () => {
+    if (User.profileUri)
+      await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(User.profileUri));
+  });
+
 }
+
 
 // There is a TreeItem from vscode. Should I use it? But it would need a workaround to
 // avoid using title in command.
@@ -22,22 +25,40 @@ class TreeDataProvider extends BaseTreeDataProvider {
 
   constructor() { super(); }
 
-  protected makeData() {
-    const user = dataStore.getState();
-    console.log(user.status);
-    switch (user.status) {
-    case UserStatus.errorLogging: // TODO: Bad when token already stored and we have a connection error
-    case UserStatus.notLogged: // If going to change it, beware it is also being used in helpers.loadUser().
-      this.data = getNotLoggedTreeData();
-      break;
-    case UserStatus.init:
-    case UserStatus.logging:
-      this.data = [new TreeItem({
-        label: 'Loading...'
-      })]; break;
-    case UserStatus.logged:
-      this.data = getLoggedTreeData();
-      break;
+  getData() {
+    switch (User.state) {
+      case UserState.errorLogging: // TODO: Bad when token already stored and we have a connection error
+        return new TreeItem({ label: 'An error happened!' });
+      case UserState.notLogged: // If going to change it, beware it is also being used in helpers.loadUser().
+        return []; // Empty, do show nothing.
+      case UserState.init:
+      case UserState.logging:
+        return new TreeItem({ label: 'Loading...' });
+      case UserState.logged:
+        return getLoggedTreeData();
     }
   }
+
+  protected makeData() {
+    this.data = this.getData();
+  }
+
+}
+
+
+export function getLoggedTreeData(): TreeItem[] {
+  return [
+    new TreeItem({
+      label: `Hi, ${User.login}!`,
+      iconPath: new ThemeIcon('verified'),
+      children: [
+        // That space before the label improves readability (that the icon reduces, but they look cool!)
+        new TreeItem({
+          label: ' Open your GitHub page',
+          command: 'githubRepoMgr.commands.user.openProfilePage',
+          iconPath: new ThemeIcon('github'),
+        }),
+      ],
+    }),
+  ];
 }

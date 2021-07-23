@@ -1,15 +1,21 @@
 # Change Log : GitHub Repository Manager
 
 
-# 1.0.0 - Feb 04, 2021
+# 1.0.0 - 2021/07/23
 
 - Added the new VS Code GitHub Authentication. (!)
-- Added dirty repository indicator ([#16](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/16)). Being ok, later I will add a 'Delete' context menu option to non-dirty cloned repos. Heh, do you see that the boundaries are getting thinner? :D
+- Added dirty repository indicator ([#16](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/16)). Being ok and validated, later I will add a 'Delete' context menu option to non-dirty cloned repos. Please report errors.
+- Repositories in Tree View are now colored. There is a new option to turn that off and use the old monochromatic style.
+- Now using `main` instead of `master` [#18](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/18)
+- Fixed `Fork of` in repository tooltip not being bold.
+- Fixed the Account tree view displaying a "not logged" view at the initial credentials load. Now shows a "Loading...", as happens while logging in.
+- Now shows local path of the cloned repository in its tooltip.
+- Removed `showRepositoryCommandsIcons` option. If you used that, tell me!
 - Removed the OAuth login system.
 - Removed the manual token login system.
 - Removed the save token setting as it is no longer used.
-- Fixed the Account tree view displaying a "not logged" view at the initial credentials load. Now shows a "Loading...", as happens while logging in.
-- Fixed 'Fork of' in repository tooltip not being bold.
+- Code big rewrite.
+- Fixed some minor bugs / exceptions.
 
 
 ## 0.6.1 - Feb 03, 2021
@@ -52,7 +58,7 @@ Thanks to [jonathan-fielding](https://github.com/jonathan-fielding) for both pul
 
 Reworked the Repositories Tree View Item Tooltip. Looks better now. Unfortunatelly, the ":" aren't perfectly alignable, as the font is not monospaced. Yeah, it annoys me too. We have to accept it!!
 
-<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/CHANGELOG_md/0_3_6.png" alt="0.3.6">
+<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/changelog/0_3_6.png" alt="0.3.6">
 
 
 ## 0.3.5 - May 22, 2020
@@ -86,7 +92,7 @@ Fixed donate button centering in Visual Studio Marketplace web page.
 
 ## 0.3.0 - May 15, 2020
 
-<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/CHANGELOG_md/0_3_0.png" alt="0.3.0">
+<img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/changelog/0_3_0.png" alt="0.3.0">
 
 Added Show Repository Commands Icons and a setting for it. ([#3](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/3))
 

@@ -1,25 +1,23 @@
-import { envPath } from './consts';
-import dotenv from 'dotenv';
-dotenv.config({ path: envPath }); // Path was wrong without manually setting it.
-
 import vscode from 'vscode';
-import { Storage } from './storage';
 import { activateTreeViewAccount } from './treeView/account/account';
 import { activateTreeViewRepositories } from './treeView/repositories/repositories';
-import { activateOctokit } from './octokit/octokit';
+import { Storage } from './main/storage';
+import { User } from './store/user';
 
 
-// this method is called when your extension is activated
+// This method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function activate(context: vscode.ExtensionContext): void {
   Storage.activate(context);
+  void User.activate(); // No errors to catch.
   activateTreeViewAccount();
   activateTreeViewRepositories();
-  activateOctokit();
 }
 
 
 // this method is called when your extension is deactivated
-export function deactivate() {
+export function deactivate(): void {
   //
 }

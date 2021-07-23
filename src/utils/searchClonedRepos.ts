@@ -1,15 +1,15 @@
-import { configs } from '../configs';
+import { configs } from '../main/configs';
 import { readdir } from 'mz/fs';
 import path from 'path';
-import { exec } from 'mz/child_process';
+import execa from 'execa';
 import GitUrlParse from 'git-url-parse';
 
 // mz lib is a little old but does the job.
 // https://stackoverflow.com/a/37532027/10247962
 
 interface DirWithGitUrl {
-  dirPath: string,
-  gitUrl: string,
+  dirPath: string;
+  gitUrl: string;
 }
 async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
   const dirsWithGitUrl: DirWithGitUrl[] = [];
@@ -19,7 +19,7 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
     try {
       // https://stackoverflow.com/a/23682620/10247962
       // was using git remote -v, but git ls-remote --get-url seems to also do the job with a single output.
-      const [result] = await exec('git ls-remote --get-url', { cwd: dirPath });
+      const { stdout: result } = await execa('git', ['ls-remote', '--get-url'], { cwd: dirPath });
 
 
       // Remove whitespaces chars.
@@ -29,11 +29,9 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
         // Parse the git URL into a repository URL, as it could be the git@github.com:author/reponame url pattern.
         // This changes any known kind to the https://github.com/author/reponame pattern.
         const gitUrl = GitUrlParse(url).toString('https').replace(/\.git$/, ''); // remove final .git
-        // console.log('gitUrl and dirPath:', gitUrl, dirPath);
         dirsWithGitUrl.push({ gitUrl, dirPath });
       }
-    }
-    catch (err) {
+    } catch (err) {
       // If error, it's because there isn't a remote. No need to manage it, may be left empty.
       // console.log(dirPath, error); // Uncomment to debug.
     }
@@ -69,28 +67,21 @@ export let noLocalSearchPaths: boolean = false;
 
 
 interface StartingSearchPaths {
-  path: string,
-  availableDepth: number,
+  path: string;
+  availableDepth: number;
 }
 function getStartingSearchPaths(): StartingSearchPaths[] {
   const searchPaths: StartingSearchPaths[] = [];
 
-  // Adds the git.defaultCloneDirectory, if it exists and if the settings allows using it.
-  if (configs.clonedReposSearch.searchOnDefaultCloneDir && configs.defaultCloneDir)
+  if (configs.defaultCloneDir)
     searchPaths.push({
       path: configs.defaultCloneDir,
-      availableDepth: configs.clonedReposSearch.defaultCloneDirMaxDepth
+      availableDepth: configs.clonedReposSearch.defaultCloneDirMaxDepth,
     });
 
   return searchPaths;
 }
 
-
-
-// Searching is used by Repositories.
-export enum SearchClonedReposStatus {
-  ok, searching, noStartingSearchDirs, noClonedReposFound
-}
 
 // TODO: Add custom dirs
 // This method returns all found git folders in the search location regardless if they are in the users Github or not
@@ -118,4 +109,3 @@ export async function getLocalReposPathAndUrl(): Promise<DirWithGitUrl[]> {
 
   return await getGitUrls(repositoriesPaths);
 }
-

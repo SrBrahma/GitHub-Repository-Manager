@@ -1,8 +1,15 @@
-import { getOctokitErrorMessage } from './utils';
-import { octokit } from '../octokit';
-import { User } from '../../store/types';
+import { octokit } from '../store/user';
+import { getOctokitErrorMessage } from './getErrorMessage';
 
-export async function getUser(): Promise<User> {
+type GetUser = {
+  login: string;
+  profileUri: string;
+  organizations: any;
+};
+
+export async function getUser(): Promise<GetUser> {
+  if (!octokit)
+    throw new Error('Octokit not set up!');
   try {
     const userData = (await octokit.graphql(
       `query getUser ($after: String) {
@@ -24,11 +31,9 @@ export async function getUser(): Promise<User> {
     return {
       login: userData.login,
       profileUri: userData.url,
-      organizations: userData.organizations.edges.map((org: any) => org.node)
+      organizations: userData.organizations.edges.map((org: any) => org.node),
     };
-  }
-  // Octokit has a pattern for errors, which we display properly at octokitErrorDisplay().
-  catch (err) {
+  } catch (err) { // Octokit has a pattern for errors, which we display properly at octokitErrorDisplay().
     // Handle insufficient scope by logging user out
     if (err.errors?.find((error: any) => error.type === 'INSUFFICIENT_SCOPES')) {
       console.error(err);

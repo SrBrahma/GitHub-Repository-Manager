@@ -1,24 +1,18 @@
-// Tree view base
-
 import vscode from 'vscode';
-import { BaseTreeDataProvider } from '../base';
-import { dataStore } from '../../store';
-import { reloadRepos } from '../../store/helpers';
+import { BaseTreeDataProvider, TreeItem } from '../treeViewBase';
 import { RepoItem } from './repoItem';
 import { getClonedTreeItem, activateClonedRepos } from './clonedRepos';
 import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
 import { uiCreateRepo } from '../../uiCommands/uiCreateRepo';
+import { RepositoriesState, User } from '../../store/user';
 
 
-export let repositoriesTreeDataProvider: TreeDataProvider;
-
-export function activateTreeViewRepositories() {
-  repositoriesTreeDataProvider = new TreeDataProvider();
-
-  dataStore.subscribe(() => { repositoriesTreeDataProvider.refresh(); });
+export function activateTreeViewRepositories(): void {
+  const repositoriesTreeDataProvider = new TreeDataProvider();
 
   vscode.window.registerTreeDataProvider('githubRepoMgr.views.repositories',
     repositoriesTreeDataProvider);
+  User.subscribe('repos', () => { repositoriesTreeDataProvider.refresh(); });
 
   // Access GitHub Web Page
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.openWebPage', ({ repo }: RepoItem) =>
@@ -30,7 +24,7 @@ export function activateTreeViewRepositories() {
 
   // Reload repos
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.reload', () =>
-    reloadRepos());
+    User.reloadRepos());
 
   // Create Repo
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.createRepo', () =>
@@ -41,19 +35,23 @@ export function activateTreeViewRepositories() {
 }
 
 
-// There is a TreeItem from vscode. Should I use it? But it would need a workaround to
-// avoid using title in command.
+
 class TreeDataProvider extends BaseTreeDataProvider {
-
-  constructor() {
-    super();
+  constructor() { super(); }
+  getData() {
+    switch (User.repositoriesState) {
+      case RepositoriesState.none:
+        return []; // So on not logged user it won't be 'Loading...' for ever.
+      case RepositoriesState.fetching:
+        return new TreeItem({
+          label: 'Loading...',
+        });
+      case RepositoriesState.partial:
+      case RepositoriesState.fullyLoaded:
+        return [getClonedTreeItem(), getNotClonedTreeItem()];
+    }
   }
-
   protected makeData() {
-    this.data = [getClonedTreeItem(), getNotClonedTreeItem()];
+    this.data = this.getData();
   }
 }
-
-
-
-

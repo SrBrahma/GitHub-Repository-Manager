@@ -26,12 +26,12 @@
 
 
 
-import { Repository } from '../../store/types';
 import { exec } from 'mz/child_process';
 import path from 'path';
 import fs from 'fs';
-import { token } from '../octokit';
 import rimraf from 'rimraf';
+import { Repository } from '../store/repository';
+import { User } from '../store/user';
 /**
  *
  *
@@ -39,8 +39,11 @@ import rimraf from 'rimraf';
  * @param {Repository} repo
  * @param {string} parentPath The path which will contain the new repository directory
  */
-export async function cloneRepo(repo: Repository, parentPath: string) {
+export async function cloneRepo(repo: Repository, parentPath: string): Promise<void> {
   const repoPath = path.resolve(parentPath, repo.name);
+
+  if (!User.token)
+    throw new Error("Can't clone, as token is not set!");
 
   if (fs.existsSync(repoPath))
     throw new Error(`There is already a directory named ${repo.name} in ${parentPath}!`);
@@ -50,29 +53,28 @@ export async function cloneRepo(repo: Repository, parentPath: string) {
       { cwd: parentPath });
     await exec(`git remote add origin https://github.com/${repo.ownerLogin}/${repo.name}.git`,
       { cwd: repoPath });
-    await exec(`git pull https://${token}@github.com/${repo.ownerLogin}/${repo.name}.git master`,
+    await exec(`git pull https://${User.token}@github.com/${repo.ownerLogin}/${repo.name}.git main`,
       { cwd: repoPath });
 
     // I didn't find a way to automatically set the push destination.
-    // The usual way is by doing "git push -u origin master", however, it requires the user being
+    // The usual way is by doing "git push -u origin main", however, it requires the user being
     // logged, which isn't always true (and we actually didn't in previous steps)
 
     fs.appendFileSync(path.resolve(parentPath, repo.name, '.git', 'config'),
-      `[branch "master"]
+      `[branch "main"]
 \tremote = origin
-\tmerge = refs/heads/master`);
+\tmerge = refs/heads/main`);
 
-  }
-  catch (err) {
+  } catch (err) {
     // This will happen if the repository never had a push. As we know it really exists, isn't a problem at all.
-    if ((err.message as string).includes('couldn\'t find remote ref master'))
+    if ((err.message as string).includes('couldn\'t find remote ref main'))
       return;
 
     // Removes the repo dir if error. For some reason rimraf needs this empty callback.
     rimraf(repoPath, () => null);
 
     // Removes the token from the error message
-    const censoredMsg = (err.message as string).replace(token, '[tokenHidden]');
+    const censoredMsg = (err.message as string).replace(User.token, '[tokenHidden]');
     throw new Error(censoredMsg);
   }
 }
