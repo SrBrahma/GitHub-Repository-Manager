@@ -22,7 +22,7 @@ VS Code extension that lists your personal and organizations GitHub repositories
 </div>
 <br/>
 
-_This gif is a little old! We are now using the VS Code GitHub login system and the extension is prettier! The gif will be eventually updated!_
+_This gif is a little old! We are now using the VS Code integrated GitHub login system and the extension is prettier! The gif will be eventually updated!_
 
 
 <h1 align="center">
