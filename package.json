@@ -1,6 +1,6 @@
 {
   "name": "github-repository-manager",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "henriqueBruno",
   "displayName": "GitHub Repository Manager",
   "description": "Easily and quickly clone and access your GitHub repositories and create new ones",
@@ -41,13 +41,9 @@
   "keywords": [
     "github",
     "repository",
-    "clone",
-    "repo",
-    "git",
-    "create",
     "manager",
-    "org",
-    "init"
+    "repo",
+    "git"
   ],
   "dependencies": {
     "@octokit/auth-oauth-app": "^4.3.0",
@@ -117,13 +113,13 @@
           "default": false,
           "description": "Always clone to the directory specified in \"git.defaultCloneDirectory\"."
         },
-        "githubRepositoryManager.clonedRepositoriesSearch.defaultCloneDirectoryMaximumDepth": {
+        "githubRepositoryManager.defaultCloneDirectoryMaximumDepth": {
           "minimum": 0,
           "default": 3,
           "type": "integer",
           "description": "How deep on \"git.defaultCloneDirectory\" the cloned repositories will be searched. A depth of 0 means it will only search in the directory itself, a depth of 3 means it will search up to 3 directories below."
         },
-        "githubRepositoryManager.clonedRepositoriesSearch.directoriesToIgnore": {
+        "githubRepositoryManager.directoriesToIgnore": {
           "type": "array",
           "default": [
             "node_modules",

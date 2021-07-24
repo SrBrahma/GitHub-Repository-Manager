@@ -1,7 +1,7 @@
 import vscode, { ThemeColor } from 'vscode';
 import os from 'os';
 import { TreeItem, TreeItemConstructor } from '../treeViewBase';
-import { configs } from '../../main/configs';
+import { Configs } from '../../main/configs';
 import { Repository } from '../../store/repository';
 import { IsGitDirty } from '../../utils/isGitDirty';
 
@@ -20,7 +20,7 @@ function getIcon(repo: Repository) {
   })();
   return new vscode.ThemeIcon(
     args[0],
-    (configs.coloredIcons && args[1]) ? new ThemeColor(args[1]) : undefined,
+    (Configs.coloredIcons && args[1]) ? new ThemeColor(args[1]) : undefined,
   );
 }
 

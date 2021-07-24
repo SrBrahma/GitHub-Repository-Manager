@@ -1,7 +1,7 @@
 import { workspace, window, Uri, commands } from 'vscode';
 import { cloneRepo } from '../octokit/cloneRepo';
 import path from 'path';
-import { configs } from '../main/configs';
+import { Configs } from '../main/configs';
 import { Repository } from '../store/repository';
 import { User } from '../store/user';
 
@@ -32,9 +32,9 @@ export async function uiCloneTo(repo: Repository): Promise<void> {
 
   let parentPath: string = '';
 
-  if (!configs.alwaysCloneToDefaultDirectory) {
+  if (!Configs.alwaysCloneToDefaultDirectory) {
     const thenable = await window.showOpenDialog({
-      defaultUri: Uri.file(configs.defaultCloneToDir),
+      defaultUri: Uri.file(Configs.defaultCloneToDir),
       openLabel: `Clone ${labelRepoName} here`,
       canSelectFiles: false,
       canSelectFolders: true,
@@ -46,7 +46,7 @@ export async function uiCloneTo(repo: Repository): Promise<void> {
 
     parentPath = thenable[0].fsPath;
   } else {
-    parentPath = configs.defaultCloneToDir;
+    parentPath = Configs.defaultCloneToDir;
   }
 
   const repoPath = path.resolve(parentPath, repo.name);

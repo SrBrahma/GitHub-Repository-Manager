@@ -1,5 +1,12 @@
 # Change Log : GitHub Repository Manager
 
+## 1.0.1 - 2021/07/23
+
+- Fixed `directoriesToIgnore` setting not working.
+- Removed `"clonedRepositoriesSearch."` section from `"githubRepositoryManager.clonedRepositoriesSearch.defaultCloneDirectoryMaximumDepth"` and `"githubRepositoryManager.clonedRepositoriesSearch.directoriesToIgnore"` settings.
+
+- Removed excess keywords in package.json
+
 
 # 1.0.0 - 2021/07/23
 

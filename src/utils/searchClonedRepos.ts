@@ -1,4 +1,4 @@
-import { configs } from '../main/configs';
+import { Configs } from '../main/configs';
 import { readdir } from 'mz/fs';
 import path from 'path';
 import execa from 'execa';
@@ -73,10 +73,10 @@ interface StartingSearchPaths {
 function getStartingSearchPaths(): StartingSearchPaths[] {
   const searchPaths: StartingSearchPaths[] = [];
 
-  if (configs.defaultCloneDir)
+  if (Configs.gitDefaultCloneDir)
     searchPaths.push({
-      path: configs.defaultCloneDir,
-      availableDepth: configs.clonedReposSearch.defaultCloneDirMaxDepth,
+      path: Configs.gitDefaultCloneDir,
+      availableDepth: Configs.defaultCloneDirectoryMaximumDepth,
     });
 
   return searchPaths;
@@ -99,7 +99,7 @@ export async function getLocalReposPathAndUrl(): Promise<DirWithGitUrl[]> {
 
   // Get local repositories paths.
   const repositoriesPaths: string[] = [];
-  const dirsToSkip = configs.clonedReposSearch.dirsToSkip || [];
+  const dirsToSkip = Configs.directoriesToIgnore;
   for (const startingSearchPath of startingSearchPaths)
     repositoriesPaths.push(...(await getDirsWithDotGit(
       startingSearchPath.path,

@@ -61,7 +61,6 @@ class UserClass {
   /** Will also informSubscribers('account') */
   setUserState(state: UserState) {
     (this.state as any) = state; // as any to override readonly
-    console.log('newUserState:', state);
     void vscode.commands.executeCommand('setContext', 'UserState', state);
     this.informSubscribers('account');
   }

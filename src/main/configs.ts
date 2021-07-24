@@ -3,37 +3,28 @@ import os from 'os';
 
 
 // Outside of class to call without `this.`.
-function getConfig<T>(section: string) {
-  return workspace.getConfiguration('githubRepositoryManager').get<T>(section);
+function getConfig<T>(section: string, defaultVal: T): T {
+  // Is this default needed? Or settings.json will always use its default value?
+  // because get() has `undefined` on its type.
+  return workspace.getConfiguration('githubRepositoryManager').get<T>(section) ?? defaultVal;
 }
 
 
-class Configs {
-  get alwaysCloneToDefaultDirectory() { return getConfig<boolean>('alwaysCloneToDefaultDirectory'); }
-  get coloredIcons() { return getConfig<boolean>('coloredIcons');}
-  get defaultCloneDir(): string | undefined {
+class ConfigsClass {
+  get alwaysCloneToDefaultDirectory() { return getConfig<boolean>('alwaysCloneToDefaultDirectory', false); }
+  get defaultCloneDirectoryMaximumDepth() {return getConfig<number>('defaultCloneDirectoryMaximumDepth', 3);}
+  get coloredIcons() { return getConfig<boolean>('coloredIcons', true);}
+  get directoriesToIgnore() { return getConfig<string[]>('directoriesToIgnore', ['.vscode', '.git', 'node_modules']);}
+
+  get gitDefaultCloneDir(): string | undefined {
     let path = workspace.getConfiguration('git').get<string>('defaultCloneDirectory');
     if (path)
       path = path.replace(/^~/, os.homedir());
     return path;
   }
 
-  get defaultCloneToDir(): string { return this.defaultCloneDir || os.homedir(); }
-
-  clonedReposSearch = clonedReposSearch;
+  get defaultCloneToDir(): string { return this.gitDefaultCloneDir || os.homedir(); }
 }
 
 
-
-
-
-function _clonedReposSearch<T>(section: string) { return getConfig<T>('clonedRepositoriesSearch.' + section); }
-const clonedReposSearch = {
-  get defaultCloneDirMaxDepth() { return _clonedReposSearch<number>('defaultCloneDirectoryMaximumDepth') ?? 3;},
-  get dirsToSkip() { return _clonedReposSearch<string[]>('directoriesToSkip'); },
-};
-
-
-
-
-export const configs = new Configs();
+export const Configs = new ConfigsClass();
