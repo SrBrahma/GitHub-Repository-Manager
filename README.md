@@ -74,6 +74,8 @@ Colors the repositories icons.
 
 ![](images/readme/config/coloredIconsTrue.png) ![](images/readme/config/coloredIconsFalse.png)
 
+_Those `*` means that the repository is **dirty**! It means that it has local changes that weren't yet commited! Please, report errors with it! I will soon add an option to Delete non-dirty repositories!_
+
 
 - ## Default Clone Directory Maximum Depth
 ##### _"githubRepositoryManager.clonedRepositoriesSearch.defaultCloneDirectoryMaximumDepth"_
