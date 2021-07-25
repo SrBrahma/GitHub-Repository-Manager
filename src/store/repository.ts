@@ -1,4 +1,4 @@
-import { IsGitDirty as Dirty } from '../utils/isGitDirty';
+import { IsGitDirty as Dirty } from '../commands/utils/isGitDirty/isGitDirty';
 
 
 export type Repository = {

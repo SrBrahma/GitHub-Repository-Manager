@@ -2,9 +2,9 @@ import { commands, Uri, env, workspace } from 'vscode';
 import path from 'path';
 import { RepoItem } from './repoItem';
 import { TreeItem } from '../treeViewBase';
-import { noLocalSearchPaths } from '../../utils/searchClonedRepos';
 import { Repository } from '../../store/repository';
 import { User } from '../../store/user';
+import { noLocalSearchPaths } from '../../commands/utils/searchClonesRepos/searchClonedRepos';
 
 
 export function activateClonedRepos(): void {

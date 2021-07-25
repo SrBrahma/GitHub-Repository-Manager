@@ -1,8 +1,8 @@
-import { Configs } from '../main/configs';
 import fse from 'fs-extra';
 import path from 'path';
 import execa from 'execa';
 import GitUrlParse from 'git-url-parse';
+import { Configs } from '../../../main/configs';
 
 // mz lib is a little old but does the job.
 // https://stackoverflow.com/a/37532027/10247962

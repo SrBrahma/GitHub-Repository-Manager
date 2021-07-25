@@ -1,9 +1,9 @@
 import vscode from 'vscode';
 import { Octokit } from '@octokit/rest';
-import { getLocalReposPathAndUrl } from '../utils/searchClonedRepos';
 import { Organization } from './organization';
 import { LocalRepository, Repository } from './repository';
 import { getUser } from '../commands/getUserData';
+import { getLocalReposPathAndUrl } from '../commands/utils/searchClonesRepos/searchClonedRepos';
 
 
 const AUTH_PROVIDER_ID = 'github';
