@@ -3,7 +3,7 @@ import { Octokit } from '@octokit/rest';
 import { getLocalReposPathAndUrl } from '../utils/searchClonedRepos';
 import { Organization } from './organization';
 import { LocalRepository, Repository } from './repository';
-import { getUser } from '../octokit/getUserData';
+import { getUser } from '../commands/getUserData';
 
 
 const AUTH_PROVIDER_ID = 'github';

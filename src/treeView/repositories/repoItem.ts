@@ -28,7 +28,7 @@ function getIcon(repo: Repository) {
 const dirtyToMessage: Record<IsGitDirty, string> = {
   clean: '',
   dirty: 'This repository has local changes',
-  // error: 'An error has happened!',
+  error: 'An error has happened while getting dirtiness state! Read extension Output!',
   unknown: 'Checking if it\'s dirty...',
 
 };
@@ -67,7 +67,7 @@ type RepoItemConstructor = Omit<TreeItemConstructor, 'label'> & {
 const dirtyToChar: Record<IsGitDirty, string> = {
   clean: '',
   dirty: '*',
-  // error: 'E',
+  error: 'E',
   unknown: '?',
 };
 

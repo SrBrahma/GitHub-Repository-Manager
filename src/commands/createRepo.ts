@@ -17,10 +17,12 @@ type CreateArgs = {
 export async function create({ name, description, isPrivate }: CreateArgs): Promise<Repository> {
   if (!octokit)
     throw new Error('Octokit not set up!');
+
   const { data } = await octokit.repos.createForAuthenticatedUser({
     name,
     description,
     private: isPrivate, // Can't use 'private' in param destructuring
   });
+
   return extractRepositoryFromData(data);
 }

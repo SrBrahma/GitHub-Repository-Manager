@@ -1,5 +1,5 @@
 import { workspace, window, Uri, commands } from 'vscode';
-import { cloneRepo } from '../octokit/cloneRepo';
+import { cloneRepo } from '../commands/cloneRepository/cloneRepository';
 import path from 'path';
 import { Configs } from '../main/configs';
 import { Repository } from '../store/repository';
@@ -25,6 +25,8 @@ const addToWorkspaceStr = 'Add to Workspace';
 export async function uiCloneTo(repo: Repository): Promise<void> {
   // Took this dir path code from vscode git clone code.
 
+  if (!User.token)
+    throw new Error('User token is not set!');
 
   let labelRepoName = `/${repo.name}`;
   if (labelRepoName.length >= 15)
@@ -55,7 +57,7 @@ export async function uiCloneTo(repo: Repository): Promise<void> {
   // Will leave it as status bar until we have a cancel button.
   const statusBar = window.setStatusBarMessage(`Cloning ${repo.name} to ${repoPath}...`);
   try {
-    await cloneRepo(repo, parentPath);
+    await cloneRepo({ repository: repo, parentPath, token: User.token });
     statusBar.dispose();
   } catch (err) {
     statusBar.dispose();

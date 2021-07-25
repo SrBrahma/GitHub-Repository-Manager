@@ -1,5 +1,5 @@
 import { Configs } from '../main/configs';
-import { readdir } from 'mz/fs';
+import fse from 'fs-extra';
 import path from 'path';
 import execa from 'execa';
 import GitUrlParse from 'git-url-parse';
@@ -43,8 +43,10 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
 
 // Recursive function to find directories with .git dir.
 async function getDirsWithDotGit(currentPath: string, availableDepth: number, dirsToSkip: string[]): Promise<string[]> {
-  const dirsName = (await readdir(currentPath, { withFileTypes: true }))
-    .filter(file => file.isDirectory()).map(dir => dir.name);
+
+  const dirsName = (await fse.readdir(currentPath, { withFileTypes: true }))
+    .filter(file => file.isDirectory())
+    .map(dir => dir.name);
 
   // If current dir is a repository
   if (dirsName.find(dir => dir === '.git'))

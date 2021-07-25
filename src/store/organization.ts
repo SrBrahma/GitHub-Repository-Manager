@@ -1,5 +1,5 @@
-import { getOrgRepos } from '../octokit/getOrgRepos';
-import { getUserRepos } from '../octokit/getUserRepos';
+import { getOrgRepos } from '../commands/getOrgRepos';
+import { getUserRepos } from '../commands/getUserRepos';
 import { isGitDirty } from '../utils/isGitDirty';
 import { LocalRepository, Repository } from './repository';
 

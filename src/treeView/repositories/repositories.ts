@@ -3,7 +3,7 @@ import { BaseTreeDataProvider, TreeItem } from '../treeViewBase';
 import { RepoItem } from './repoItem';
 import { getClonedTreeItem, activateClonedRepos } from './clonedRepos';
 import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
-import { uiCreateRepo } from '../../uiCommands/uiCreateRepo';
+import { uiCreateRepo } from '../../commandsUi/uiCreateRepo';
 import { RepositoriesState, User } from '../../store/user';
 
 

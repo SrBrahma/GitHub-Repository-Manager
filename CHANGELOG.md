@@ -1,5 +1,15 @@
 # Change Log : GitHub Repository Manager
 
+## 1.1.0 - 2021/07/25
+
+- Fixed repositories without remote HEAD (new repositories, empty) being marked as dirty.
+- Dirtiness may now be marked as `E`, for errors.
+- Fixed master/main issue.
+- Fixed [#22](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/22)
+- Refactor: Removed mz and rimraf packages. Added fs-extra and execa.
+
+
+
 ## 1.0.1 - 2021/07/23
 
 - Fixed `directoriesToIgnore` setting not working.

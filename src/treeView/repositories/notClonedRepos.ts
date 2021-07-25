@@ -1,7 +1,7 @@
 import { TreeItem } from '../treeViewBase';
 import { RepoItem } from './repoItem';
 import { commands } from 'vscode';
-import { uiCloneTo } from '../../uiCommands/uiCloneTo';
+import { uiCloneTo } from '../../commandsUi/uiCloneTo';
 import vscode from 'vscode';
 import { OrgStatus } from '../../store/organization';
 import { User } from '../../store/user';

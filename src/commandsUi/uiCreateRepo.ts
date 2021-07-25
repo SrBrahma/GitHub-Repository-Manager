@@ -1,5 +1,5 @@
 import { window } from 'vscode';
-import { create } from '../octokit/createRepo';
+import { create } from '../commands/createRepo';
 import { User } from '../store/user';
 import { uiCloneTo } from './uiCloneTo';
 
