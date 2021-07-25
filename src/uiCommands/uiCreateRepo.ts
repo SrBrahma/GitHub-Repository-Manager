@@ -6,7 +6,7 @@ import { uiCloneTo } from './uiCloneTo';
 // Those are here so if we have an error, so the user doesn't have to fill again.
 let name = '';
 let description = '';
-let privateRepo = false;
+let isPrivate = false;
 
 export async function uiCreateRepo(): Promise<void> {
 
@@ -44,10 +44,10 @@ export async function uiCreateRepo(): Promise<void> {
   if (visibility === undefined) // If user pressed Esc
     return;
 
-  privateRepo = visibility === 'Private';
+  isPrivate = visibility === 'Private';
 
   try {
-    const newRepo = await create({ name, description, privateRepo });
+    const newRepo = await create({ name, description, isPrivate });
     name = ''; // Clears the fields, as we successfully created the repo.
     description = '';
 
