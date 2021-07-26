@@ -30,60 +30,10 @@ export function activateTreeViewRepositories(): void {
   // Create Repo
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.createRepo', () => uiCreateRepo());
 
-  type State = 'noGit' | 'gitNoRemote' | 'gitWithRemote';
-  type Special = {
-    workspaceFolder: vscode.WorkspaceFolder;
-    state: State;
-    disposable: () => void;
-  };
-  let workspaceFolderSpecial: Special[] = [];
 
-  async function checkState(path: string): Promise<State> {
-    const containsGit = await pathHasGit(path);
-    if (!containsGit)
-      return 'noGit';
-    return 'gitWithRemote'; // TODO;
-  }
-
-  function updated() {
-    const containsNoGit = workspaceFolderSpecial.find(w => w.state === 'noGit');
-    const containsGitNoRemote = workspaceFolderSpecial.find(w => w.state === 'gitNoRemote');
-    void vscode.commands.executeCommand('setContext', 'containsNoGit', containsNoGit);
-    void vscode.commands.executeCommand('setContext', 'containsGitNoRemote', containsGitNoRemote);
-    console.log(workspaceFolderSpecial);
-  }
-
-  async function resetGitWatcher() {
-    workspaceFolderSpecial.forEach(w => w.disposable()); // dispose all
-    workspaceFolderSpecial = []; // Reset
-    const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
-    workspaceFolderSpecial = await Promise.all(workspaceFolders?.map(async workspaceFolder => {
-      const watcher = vscode.workspace.createFileSystemWatcher(`${workspaceFolder.uri.path}/.git/**`);
-      const newSpecial: Special = {
-        workspaceFolder,
-        disposable: watcher.dispose,
-        state: await checkState(workspaceFolder.uri.fsPath),
-      };
-      const fun = async () => {
-        newSpecial.state = await checkState(workspaceFolder.uri.fsPath);
-        updated();
-      };
-      watcher.onDidChange(() => fun());
-      watcher.onDidCreate(() => fun());
-      watcher.onDidDelete(() => fun());
-      return newSpecial;
-    }));
-    updated();
-  }
-  void resetGitWatcher(); // Run on start
-  vscode.workspace.onDidChangeWorkspaceFolders(() => {
-    void resetGitWatcher(); // Run on changes
-  });
 
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.createRepoWithCurrentFiles', () => {
     // vscode.window.showQuickPick()
-    // console.log(vscode.workspace.workspaceFolders);
-    // resetGitWatcher();
   },
   );
 
