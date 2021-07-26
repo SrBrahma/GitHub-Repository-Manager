@@ -33,7 +33,6 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
       }
     } catch (err) {
       // If error, it's because there isn't a remote. No need to manage it, may be left empty.
-      // console.log(dirPath, error); // Uncomment to debug.
     }
   }
   return dirsWithGitUrl;

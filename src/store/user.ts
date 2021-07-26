@@ -3,7 +3,7 @@ import { Octokit } from '@octokit/rest';
 import { Organization } from './organization';
 import { LocalRepository, Repository } from './repository';
 import { getUser } from '../commands/getUserData';
-import { getLocalReposPathAndUrl } from '../commands/utils/searchClonesRepos/searchClonedRepos';
+import { getLocalReposPathAndUrl } from '../commands/utils/searchClonedRepos/searchClonedRepos';
 
 
 const AUTH_PROVIDER_ID = 'github';
@@ -107,7 +107,7 @@ class UserClass {
       }
     });
     try {
-      // vscode.authentication.onDidChangeSessions(e => console.log(e)); // It doesn't get the logout.
+      // vscode.authentication.onDidChangeSessions(e => ...); // It doesn't get the logout.
       /** Stored token */
       const token = (await vscode.authentication.getSession(AUTH_PROVIDER_ID, SCOPES, { createIfNone: false }))
         ?.accessToken;
