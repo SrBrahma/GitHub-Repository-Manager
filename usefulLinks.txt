@@ -2,4 +2,4 @@ icons
 https://code.visualstudio.com/api/references/icons-in-labels
 
 "when" conditionals
-https://code.visualstudio.com/docs/getstarted/keybindings#_when-clause-contexts
+https://code.visualstudio.com/api/references/when-clause-contexts
