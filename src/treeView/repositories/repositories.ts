@@ -5,8 +5,6 @@ import { getClonedTreeItem, activateClonedRepos } from './clonedRepos';
 import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
 import { uiCreateRepo } from '../../commandsUi/uiCreateRepo';
 import { RepositoriesState, User } from '../../store/user';
-import path from 'path';
-import { pathHasGit } from '../../commands/utils/pathHasGit/pathHasGit';
 
 
 export function activateTreeViewRepositories(): void {
