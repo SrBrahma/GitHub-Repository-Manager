@@ -52,7 +52,7 @@ async function getDirsWithDotGit(currentPath: string, availableDepth: number, di
   if (dirsName.find(dir => dir === '.git'))
     return [currentPath];
 
-  // If this was the last depth and we didn't find a .gir dir, return empty array;
+  // If this was the last depth and we didn't find a .git dir, return empty array;
   if (availableDepth === 0)
     return [];
 

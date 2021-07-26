@@ -166,6 +166,16 @@
         "icon": "$(repo-create)"
       },
       {
+        "title": "Create Repository with Current Files",
+        "command": "githubRepoMgr.commands.repos.createRepoWithCurrentFiles",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "title": "Create Repository with Current Git",
+        "command": "githubRepoMgr.commands.repos.createRepoWithCurrentGit",
+        "icon": "$(repo-push)"
+      },
+      {
         "title": "Reload Repositories",
         "command": "githubRepoMgr.commands.repos.reload",
         "icon": "$(refresh)"
@@ -219,14 +229,24 @@
     "menus": {
       "view/title": [
         {
+          "command": "githubRepoMgr.commands.repos.createRepoWithCurrentFiles",
+          "when": "view == githubRepoMgr.views.repositories && containsNoGit == true",
+          "group": "navigation@0"
+        },
+        {
+          "command": "githubRepoMgr.commands.repos.createRepoWithCurrentGit",
+          "when": "view == githubRepoMgr.views.repositories && false",
+          "group": "navigation@1"
+        },
+        {
           "command": "githubRepoMgr.commands.repos.createRepo",
           "when": "view == githubRepoMgr.views.repositories",
-          "group": "navigation"
+          "group": "navigation@2"
         },
         {
           "command": "githubRepoMgr.commands.repos.reload",
           "when": "view == githubRepoMgr.views.repositories",
-          "group": "navigation"
+          "group": "navigation@3"
         }
       ],
       "view/item/context": [
