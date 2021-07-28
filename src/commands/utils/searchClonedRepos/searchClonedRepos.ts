@@ -4,8 +4,6 @@ import execa from 'execa';
 import GitUrlParse from 'git-url-parse';
 import { Configs } from '../../../main/configs';
 
-// mz lib is a little old but does the job.
-// https://stackoverflow.com/a/37532027/10247962
 
 interface DirWithGitUrl {
   dirPath: string;
@@ -20,7 +18,6 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
       // https://stackoverflow.com/a/23682620/10247962
       // was using git remote -v, but git ls-remote --get-url seems to also do the job with a single output.
       const { stdout: result } = await execa('git', ['ls-remote', '--get-url'], { cwd: dirPath });
-
 
       // Remove whitespaces chars.
       const url = result.trim();
