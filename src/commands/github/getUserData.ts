@@ -1,5 +1,5 @@
-import { octokit } from '../store/user';
-import { getOctokitErrorMessage } from './getErrorMessage';
+import { octokit } from '../../store/user';
+import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 
 type GetUser = {
   login: string;

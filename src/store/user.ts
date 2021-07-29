@@ -2,8 +2,8 @@ import vscode from 'vscode';
 import { Octokit } from '@octokit/rest';
 import { Organization } from './organization';
 import { LocalRepository, Repository } from './repository';
-import { getUser } from '../commands/getUserData';
-import { getLocalReposPathAndUrl } from '../commands/utils/searchClonedRepos/searchClonedRepos';
+import { getUser } from '../commands/github/getUserData';
+import { getLocalReposPathAndUrl } from '../commands/searchClonedRepos/searchClonedRepos';
 
 
 const AUTH_PROVIDER_ID = 'github';
@@ -36,12 +36,15 @@ export enum RepositoriesState {
   fullyLoaded,
 }
 
+// TODO refactor state management. It's quite non intuictive right now. State changing maybe should
+// be all in reloadRepos().
+
 class UserClass {
   /** The User current status. */
   readonly state: UserState = UserState.init;
   /** Used by cloneRepo() */
   token: string | undefined;
-  /** The user pretty name. */
+  /** The user raw name, e.g 'SrBrahma' (not the pretty customizable one). */
   login: string | undefined;
   /** The user GitHub url/uri. */
   profileUri: string | undefined;

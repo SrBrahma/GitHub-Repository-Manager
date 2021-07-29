@@ -2,7 +2,7 @@ import fse from 'fs-extra';
 import path from 'path';
 import execa from 'execa';
 import GitUrlParse from 'git-url-parse';
-import { Configs } from '../../../main/configs';
+import { Configs } from '../../main/configs';
 
 
 interface DirWithGitUrl {

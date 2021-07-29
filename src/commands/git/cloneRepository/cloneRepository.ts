@@ -2,7 +2,7 @@
 //
 // Writing this simple function took me more than a day. Here are the main whys:
 //
-// 1) If we used `git clone https://${user.token}@github.com/${repo.ownerLogin}/${repo.name}`,
+// 1) If we used `git clone https://${user.token}@github.com/${owner}/${repositoryName}`,
 // it would save the token in the .git.config.
 //
 // 2) If we used git clone with only the username (so, it wouldn't save the password / token
@@ -27,27 +27,30 @@
 import execa from 'execa';
 import path from 'path';
 import fse from 'fs-extra';
-import { Repository } from '../../store/repository';
-import { getRemoteHead as getRemoteHeadBranch } from '../utils/getRemoteHeadBranch/getRemoteHeadBranch';
+import { getRemoteHead as getRemoteHeadBranch } from '../getRemoteHeadBranch/getRemoteHeadBranch';
+import { getRepositoryGitUrl } from '../getRepositoryGitUrl';
 
 
 
 export async function cloneRepo(options: {
-  repository: Repository; parentPath: string; token: string;
+  repositoryName: string;
+  owner: string;
+  parentPath: string;
+  token: string;
 }): Promise<void> {
 
-  const { repository: repo, parentPath, token } = options;
+  const { owner, repositoryName, parentPath, token } = options;
 
-  const repositoryPath = path.join(parentPath, repo.name);
+  const repositoryPath = path.join(parentPath, repositoryName);
 
   if (await fse.pathExists(repositoryPath))
-    throw new Error(`There is already a directory named '${repo.name}' at '${parentPath}'!`);
+    throw new Error(`There is already a directory named '${repositoryName}' at '${parentPath}'!`);
 
-  const remoteUrl = `https://github.com/${repo.ownerLogin}/${repo.name}.git`;
-  const remoteUrlTokenized = `https://${token}@github.com/${repo.ownerLogin}/${repo.name}.git`;
+  const remoteUrl = getRepositoryGitUrl({ owner, repositoryName });
+  const remoteUrlTokenized = getRepositoryGitUrl({ owner, repositoryName, token });
 
   try {
-    await execa('git', ['init', repo.name], { cwd: parentPath });
+    await execa('git', ['init', repositoryName], { cwd: parentPath });
 
     const headBranchRaw = await getRemoteHeadBranch({ remoteUrl: remoteUrlTokenized, repositoryPath });
     const repositoryIsEmpty = !headBranchRaw;
@@ -70,7 +73,7 @@ export async function cloneRepo(options: {
     /** I didn't find a way to automatically set the push destination.
      * The usual way is by doing "git push -u origin main", however, it requires the user being
      * logged, which isn't always true (and we actually didn't in previous steps). #22. */
-    await fse.appendFile(path.resolve(repositoryPath, '.git', 'config'),
+    await fse.appendFile(path.join(repositoryPath, '.git', 'config'),
       `[branch "${headBranch}"]
 \tremote = origin
 \tmerge = refs/heads/${headBranch}`);

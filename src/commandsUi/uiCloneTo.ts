@@ -1,14 +1,11 @@
 import { workspace, window, Uri, commands } from 'vscode';
-import { cloneRepo } from '../commands/cloneRepository/cloneRepository';
+import { cloneRepo } from '../commands/git/cloneRepository/cloneRepository';
 import path from 'path';
 import { Configs } from '../main/configs';
-import { Repository } from '../store/repository';
 import { User } from '../store/user';
 
 // Made to look similar to vscode clone command. Also, took some small pieces from it.
 // uses the git.defaultCloneDirectory setting, as, you know, the default clone directory.
-
-
 
 // VsCode clone openLabel : 'Select repository location'
 // Our Label with same len: 'Clone /12345678901... Here', as I don't know the max label length.
@@ -22,13 +19,20 @@ const openInNewWindowStr = 'Open in New Window';
 const addToWorkspaceStr = 'Add to Workspace';
 
 // TODO: Add cancel button
-export async function uiCloneTo(repo: Repository): Promise<void> {
-  // Took this dir path code from vscode git clone code.
+/** Doesn't throw errors. */
+export async function uiCloneTo({ ownerLogin, name, reloadRepos }: {
+  /** The repository name */
+  name: string;
+  /** The owner login */
+  ownerLogin: string;
+  /** If should reloadRepos() on clone success. */
+  reloadRepos: boolean;
+}): Promise<void> {
 
   if (!User.token)
     throw new Error('User token is not set!');
 
-  let labelRepoName = `/${repo.name}`;
+  let labelRepoName = `/${name}`;
   if (labelRepoName.length >= 15)
     labelRepoName = `${labelRepoName.substr(0, 12)}...`;
 
@@ -46,18 +50,18 @@ export async function uiCloneTo(repo: Repository): Promise<void> {
     if (!thenable) // Cancel if quitted dialog
       return;
 
-    parentPath = thenable[0].fsPath;
+    parentPath = thenable[0]!.fsPath;
   } else {
     parentPath = Configs.defaultCloneToDir;
   }
 
-  const repoPath = path.resolve(parentPath, repo.name);
+  const repoPath = path.join(parentPath, name);
   const uri = Uri.file(repoPath);
 
   // Will leave it as status bar until we have a cancel button.
-  const statusBar = window.setStatusBarMessage(`Cloning ${repo.name} to ${repoPath}...`);
+  const statusBar = window.setStatusBarMessage(`Cloning ${name} to ${repoPath}...`);
   try {
-    await cloneRepo({ repository: repo, parentPath, token: User.token });
+    await cloneRepo({ owner: ownerLogin, repositoryName: name, parentPath, token: User.token });
     statusBar.dispose();
   } catch (err) {
     statusBar.dispose();
@@ -66,9 +70,9 @@ export async function uiCloneTo(repo: Repository): Promise<void> {
   }
 
   await Promise.all([
-    User.reloadRepos(),
+    reloadRepos ? User.reloadRepos() : undefined,
     async () => {
-      const action = await window.showInformationMessage(`Cloned ${repo.name} to ${repoPath}!`,
+      const action = await window.showInformationMessage(`Cloned ${name} to ${repoPath}!`,
         openStr, openInNewWindowStr, addToWorkspaceStr);
 
       switch (action) {

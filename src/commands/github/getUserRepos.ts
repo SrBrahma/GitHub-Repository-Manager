@@ -1,7 +1,7 @@
 import { extractRepositoryFromData } from './getOrgRepos';
-import { getOctokitErrorMessage } from './getErrorMessage';
-import { Repository } from '../store/repository';
-import { octokit } from '../store/user';
+import { getOctokitErrorMessage } from './getOctokitErrorMessage';
+import type { Repository } from '../../store/repository';
+import { octokit } from '../../store/user';
 
 
 

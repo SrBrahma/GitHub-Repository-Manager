@@ -4,7 +4,7 @@ import { RepoItem } from './repoItem';
 import { TreeItem } from '../treeViewBase';
 import { Repository } from '../../store/repository';
 import { User } from '../../store/user';
-import { noLocalSearchPaths } from '../../commands/utils/searchClonedRepos/searchClonedRepos';
+import { noLocalSearchPaths } from '../../commands/searchClonedRepos/searchClonedRepos';
 
 
 export function activateClonedRepos(): void {

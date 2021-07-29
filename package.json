@@ -63,7 +63,7 @@
     "@typescript-eslint/parser": "4.28.4",
     "clean-webpack-plugin": "^3.0.0",
     "eslint": "7.31.0",
-    "eslint-config-gev": "2.6.0",
+    "eslint-config-gev": "2.6.2",
     "fork-ts-checker-webpack-plugin": "^6.2.13",
     "ts-loader": "^9.2.4",
     "typescript": "^4.3.5",
@@ -235,7 +235,7 @@
         },
         {
           "command": "githubRepoMgr.commands.repos.createRepoWithCurrentGit",
-          "when": "view == githubRepoMgr.views.repositories && false",
+          "when": "view == githubRepoMgr.views.repositories && containsGitWithoutRemote == true",
           "group": "navigation@1"
         },
         {

@@ -1,6 +1,6 @@
-import { Repository } from '../store/repository';
-import { octokit } from '../store/user';
-import { getOctokitErrorMessage } from './getErrorMessage';
+import { Repository } from '../../store/repository';
+import { octokit } from '../../store/user';
+import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 
 export function extractRepositoryFromData(data: any): Repository {
   return {

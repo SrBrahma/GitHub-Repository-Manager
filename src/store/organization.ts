@@ -1,6 +1,6 @@
-import { getOrgRepos } from '../commands/getOrgRepos';
-import { getUserRepos } from '../commands/getUserRepos';
-import { isGitDirty } from '../commands/utils/isGitDirty/isGitDirty';
+import { getOrgRepos } from '../commands/github/getOrgRepos';
+import { getUserRepos } from '../commands/github/getUserRepos';
+import { isGitDirty } from '../commands/git/isGitDirty/isGitDirty';
 import { LocalRepository, Repository } from './repository';
 
 export enum OrgStatus {
@@ -11,7 +11,9 @@ export enum OrgStatus {
 }
 
 type OrganizationConstructor = {
+  /** Organization raw name, e.g 'srbrahmaTest' */
   login: string;
+  /** Organization pretty name, e.g 'SrBrahma Test' */
   name: string;
   isUserOrg: boolean;
 };
@@ -31,6 +33,7 @@ export class Organization {
     this.name = args.name;
     this.isUserOrg = args.isUserOrg;
     this.status = OrgStatus.notLoaded;
+    console.log(this.login, this.name);
   }
 
   /** Callback is called for every local repo dirtiness checked. */

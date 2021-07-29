@@ -3,7 +3,7 @@ import os from 'os';
 import { TreeItem, TreeItemConstructor } from '../treeViewBase';
 import { Configs } from '../../main/configs';
 import { Repository } from '../../store/repository';
-import { IsGitDirty } from '../../commands/utils/isGitDirty/isGitDirty';
+import { IsGitDirty } from '../../commands/git/isGitDirty/isGitDirty';
 
 // https://code.visualstudio.com/api/references/icons-in-labels
 

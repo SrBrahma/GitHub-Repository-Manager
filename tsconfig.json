@@ -8,7 +8,8 @@
     "rootDir": "src",
     "strict": true,
     "esModuleInterop": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "noUncheckedIndexedAccess": true
   },
   "exclude": ["node_modules", ".vscode-test"],
   "include": ["src"]

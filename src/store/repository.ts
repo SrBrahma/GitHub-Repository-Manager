@@ -1,4 +1,4 @@
-import { IsGitDirty as Dirty } from '../commands/utils/isGitDirty/isGitDirty';
+import { IsGitDirty as Dirty } from '../commands/git/isGitDirty/isGitDirty';
 
 
 export type Repository = {
@@ -6,7 +6,10 @@ export type Repository = {
   description: string | null;
   ownerLogin: string;
   languageName?: string; // "C++" etc
+  /** GitHub project url. */
   url: string;
+  /** GitHub project url, with .git on end. */
+  // gitUrl: string;
 
   isPrivate: boolean;
   isTemplate: boolean;

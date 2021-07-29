@@ -1,25 +1,27 @@
 import vscode from 'vscode';
-import { pathHasGit } from '../commands/utils/pathHasGit/pathHasGit';
+import { gitHasRemote } from '../commands/git/gitHasRemote/gitHasRemote';
 
 
-type State = 'noGit' | 'gitNoRemote' | 'gitWithRemote';
-type Special = {
+export type WorkspaceFolderState = 'noGit' | 'gitWithoutRemote' | 'gitWithRemote';
+type WorkspaceFolderSpecial = {
   workspaceFolder: vscode.WorkspaceFolder;
-  state: State;
+  state: WorkspaceFolderState;
   disposable: () => void;
 };
 
 
-async function checkState(path: string): Promise<State> {
-  const containsGit = await pathHasGit(path);
-  if (!containsGit)
+async function checkState(path: string): Promise<WorkspaceFolderState> {
+  try {
+    const hasRemote = await gitHasRemote(path);
+    return hasRemote ? 'gitWithRemote' : 'gitWithoutRemote';
+  } catch (err) { // gitHasRemote throws error if path has no git.
     return 'noGit';
-  return 'gitWithRemote'; // TODO;
+  }
 }
 
 
 class WorkspaceClass {
-  private workspaceFolderSpecial: Special[] = [];
+  workspaceFolderSpecial: WorkspaceFolderSpecial[] = [];
 
   activate() {
     const fun = () => {
@@ -27,7 +29,7 @@ class WorkspaceClass {
     };
 
     fun(); // Run on start
-    vscode.workspace.onDidChangeWorkspaceFolders(() => { fun(); }); // Run on changes
+    vscode.workspace.onDidChangeWorkspaceFolders(() => fun()); // Run on changes
   }
 
   deactivate() {
@@ -37,9 +39,9 @@ class WorkspaceClass {
 
   private updated() {
     const containsNoGit = this.workspaceFolderSpecial.find(w => w.state === 'noGit');
-    const containsGitNoRemote = this.workspaceFolderSpecial.find(w => w.state === 'gitNoRemote');
+    const containsGitWithoutRemote = this.workspaceFolderSpecial.find(w => w.state === 'gitWithoutRemote');
     void vscode.commands.executeCommand('setContext', 'containsNoGit', containsNoGit);
-    void vscode.commands.executeCommand('setContext', 'containsGitNoRemote', containsGitNoRemote);
+    void vscode.commands.executeCommand('setContext', 'containsGitWithoutRemote', containsGitWithoutRemote);
   }
 
   private async resetGitWatcher() {
@@ -47,8 +49,8 @@ class WorkspaceClass {
     this.workspaceFolderSpecial = []; // Reset
     const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
     this.workspaceFolderSpecial = await Promise.all(workspaceFolders?.map(async workspaceFolder => {
-      const watcher = vscode.workspace.createFileSystemWatcher(`${workspaceFolder.uri.path}/.git/**`);
-      const newSpecial: Special = {
+      const watcher = vscode.workspace.createFileSystemWatcher(`${workspaceFolder.uri.path}/.git/config`);
+      const newSpecial: WorkspaceFolderSpecial = {
         workspaceFolder,
         disposable: watcher.dispose,
         state: await checkState(workspaceFolder.uri.fsPath),
@@ -61,11 +63,11 @@ class WorkspaceClass {
       watcher.onDidCreate(() => fun());
       watcher.onDidDelete(() => fun());
       return newSpecial;
-    }));
-    this.updated();
-  }
+    })); // End of Promise.all;
+    this.updated(); // update after setting the new array.
+  } // End of resetGitWatcher;
 
-}
+} // End of WorkspaceClass;
 
 
 

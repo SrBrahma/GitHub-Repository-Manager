@@ -5,6 +5,8 @@ import { getClonedTreeItem, activateClonedRepos } from './clonedRepos';
 import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
 import { uiCreateRepo } from '../../commandsUi/uiCreateRepo';
 import { RepositoriesState, User } from '../../store/user';
+import { Workspace } from '../../store/workspace';
+import { uiCreateRepoNoGit } from '../../commandsUi/uiCreateRepoNoGit';
 
 
 export function activateTreeViewRepositories(): void {
@@ -30,10 +32,10 @@ export function activateTreeViewRepositories(): void {
 
 
 
-  vscode.commands.registerCommand('githubRepoMgr.commands.repos.createRepoWithCurrentFiles', () => {
-    // vscode.window.showQuickPick()
-  },
-  );
+  vscode.commands.registerCommand('githubRepoMgr.commands.repos.createRepoWithCurrentFiles', async () => {
+
+
+  });
 
   activateClonedRepos();
   activateNotClonedRepos();

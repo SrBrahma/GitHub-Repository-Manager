@@ -1,8 +1,7 @@
 import { TreeItem } from '../treeViewBase';
 import { RepoItem } from './repoItem';
-import { commands } from 'vscode';
+import vscode, { commands } from 'vscode';
 import { uiCloneTo } from '../../commandsUi/uiCloneTo';
-import vscode from 'vscode';
 import { OrgStatus } from '../../store/organization';
 import { User } from '../../store/user';
 
@@ -10,7 +9,9 @@ import { User } from '../../store/user';
 export function activateNotClonedRepos(): void {
   // Clone repo to [open select repo location]. You must pass the repo as arg.
   commands.registerCommand('githubRepoMgr.commands.notClonedRepos.cloneTo',
-    ({ repo }: RepoItem) => uiCloneTo(repo));
+    ({ repo }: RepoItem) => uiCloneTo({
+      name: repo.name, ownerLogin: repo.ownerLogin, reloadRepos: true,
+    }));
 }
 
 // Much like unused right now. Orgs will always be loaded here.
