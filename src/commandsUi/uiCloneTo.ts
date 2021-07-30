@@ -71,7 +71,7 @@ export async function uiCloneTo({ ownerLogin, name, reloadRepos }: {
 
   await Promise.all([
     reloadRepos ? User.reloadRepos() : undefined,
-    async () => {
+    (async () => {
       const action = await window.showInformationMessage(`Cloned ${name} to ${repoPath}!`,
         openStr, openInNewWindowStr, addToWorkspaceStr);
 
@@ -83,7 +83,7 @@ export async function uiCloneTo({ ownerLogin, name, reloadRepos }: {
         case addToWorkspaceStr:
           workspace.updateWorkspaceFolders(workspace.workspaceFolders?.length ?? 0, 0, { uri }); break;
       }
-    },
+    })(),
   ]);
 
 }
