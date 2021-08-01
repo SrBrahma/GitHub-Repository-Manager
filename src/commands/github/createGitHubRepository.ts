@@ -14,13 +14,13 @@ type Options = {
 
 type Fun = Octokit['repos']['createForAuthenticatedUser'];
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
-type Data = ThenArg<ReturnType<Fun>>['data'];
+export type CreateGitHubRepositoryReturn = ThenArg<ReturnType<Fun>>['data'];
 
 // https://octokit.github.io/rest.js/v17#repos-create-for-authenticated-user
 // TODO: Create new repo with README.md and other optional stuff (user config.)
 
 /** @returns the data result of the octokit function. */
-export async function createGitHubRepository({ name, description, isPrivate }: Options): Promise<Data> {
+export async function createGitHubRepository({ name, description, isPrivate }: Options): Promise<CreateGitHubRepositoryReturn> {
   if (!octokit)
     throw new Error('Octokit not set up!');
 
