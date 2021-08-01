@@ -175,15 +175,14 @@ class UserClass {
 
     const callback = () => {
       localReposDirtyCheckedCount++;
-      // If last localRepo to check dirtiness, remove existing timeout and informSubscribers now.
-      if (localReposDirtyCheckedCount === this.clonedRepos.length) {
+      const checkedAll = localReposDirtyCheckedCount === this.clonedRepos.length;
+      if (checkedAll) {
         clearTimeout(timeout as any); // no prob as any here, just to make code shorter.
         this.setRepositoriesState(RepositoriesState.fullyLoaded);
       } else if (!timeout)
         timeout = setTimeout(() => { this.informSubscribers('repos'); }, 1000);
     };
 
-    // Those three are run before the dirtiness callback, as they are sync.
     if (this.clonedRepos.length) {
       this.setRepositoriesState(RepositoriesState.partial); // To show unknown dirtiness or at least the not-cloned repos, if none is cloned.
       this.organizations.forEach(org => org.checkLocalReposDirtiness(callback));

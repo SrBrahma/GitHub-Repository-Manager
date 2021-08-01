@@ -1,4 +1,4 @@
-import { IsGitDirty as Dirty } from '../commands/git/isGitDirty/isGitDirty';
+import { Dirtiness } from '../commands/git/isGitDirty/isGitDirty';
 
 
 export type Repository = {
@@ -24,7 +24,7 @@ export type Repository = {
   updatedAt: Date;
 
   localPath?: string;
-  dirty?: Dirty;
+  dirty?: Dirtiness;
   isFavorited?: boolean;
 };
 

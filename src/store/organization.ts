@@ -1,6 +1,6 @@
 import { getOrgRepos } from '../commands/github/getOrgRepos';
 import { getUserRepos } from '../commands/github/getUserRepos';
-import { isGitDirty } from '../commands/git/isGitDirty/isGitDirty';
+import { getDirtiness } from '../commands/git/isGitDirty/isGitDirty';
 import { LocalRepository, Repository } from './repository';
 
 export enum OrgStatus {
@@ -33,13 +33,12 @@ export class Organization {
     this.name = args.name;
     this.isUserOrg = args.isUserOrg;
     this.status = OrgStatus.notLoaded;
-    console.log(this.login, this.name);
   }
 
   /** Callback is called for every local repo dirtiness checked. */
   async checkLocalReposDirtiness(callback: () => void): Promise<void> {
     await Promise.all(this.clonedRepos.map(async localRepo => {
-      localRepo.dirty = await isGitDirty(localRepo.localPath!);
+      localRepo.dirty = await getDirtiness(localRepo.localPath!);
       callback();
     }));
   }
