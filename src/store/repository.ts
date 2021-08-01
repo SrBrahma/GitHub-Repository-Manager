@@ -1,4 +1,4 @@
-import { Dirtiness } from '../commands/git/isGitDirty/isGitDirty';
+import { Dirtiness } from '../commands/git/dirtiness/dirtiness';
 
 
 export type Repository = {

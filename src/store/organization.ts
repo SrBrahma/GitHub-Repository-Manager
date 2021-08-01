@@ -1,6 +1,6 @@
 import { getOrgRepos } from '../commands/github/getOrgRepos';
 import { getUserRepos } from '../commands/github/getUserRepos';
-import { getDirtiness } from '../commands/git/isGitDirty/isGitDirty';
+import { getDirtiness } from '../commands/git/dirtiness/dirtiness';
 import { LocalRepository, Repository } from './repository';
 
 export enum OrgStatus {
