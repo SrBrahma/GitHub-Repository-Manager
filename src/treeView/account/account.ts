@@ -16,6 +16,12 @@ export function activateTreeViewAccount(): void {
       await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(User.profileUri));
   });
 
+  // Open Extension README
+  // vscode.commands.registerCommand('githubRepoMgr.commands.user.openReadme', async () => {
+  //   if (User.profileUri)
+  //     await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://github.com/SrBrahma/GitHub-Repository-Manager#github-repository-manager'));
+  // });
+
 }
 
 
@@ -58,6 +64,11 @@ export function getLoggedTreeData(): TreeItem[] {
           command: 'githubRepoMgr.commands.user.openProfilePage',
           iconPath: new ThemeIcon('github'),
         }),
+        // new TreeItem({
+        //   label: ' Open extension Readme',
+        //   command: 'githubRepoMgr.commands.user.openReadme',
+        //   iconPath: new ThemeIcon('notebook'),
+        // }), // TODO Looked awful, annoying. Find a better way to point to it.
       ],
     }),
   ];
