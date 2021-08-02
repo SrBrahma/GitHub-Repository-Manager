@@ -166,13 +166,8 @@
         "icon": "$(repo-create)"
       },
       {
-        "title": "Create Repository for Current Files",
-        "command": "githubRepoMgr.commands.repos.createRepoNoGit",
-        "icon": "$(cloud-upload)"
-      },
-      {
-        "title": "Create Repository for Current Git",
-        "command": "githubRepoMgr.commands.repos.createRepoWithCurrentGit",
+        "title": "Create Repository for Current Project",
+        "command": "githubRepoMgr.commands.repos.publish",
         "icon": "$(repo-push)"
       },
       {
@@ -229,13 +224,8 @@
     "menus": {
       "view/title": [
         {
-          "command": "githubRepoMgr.commands.repos.createRepoNoGit",
-          "when": "view == githubRepoMgr.views.repositories && containsNoGit == true",
-          "group": "navigation@0"
-        },
-        {
-          "command": "githubRepoMgr.commands.repos.createRepoWithCurrentGit",
-          "when": "view == githubRepoMgr.views.repositories && containsGitWithoutRemote == true",
+          "command": "githubRepoMgr.commands.repos.publish",
+          "when": "view == githubRepoMgr.views.repositories && canPublish == true",
           "group": "navigation@1"
         },
         {

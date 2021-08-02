@@ -4,8 +4,8 @@ import { User } from '../store/user';
 import { myQuickPick } from '../vscode/myQuickPick';
 import { uiCloneTo } from './uiCloneTo';
 
-
-export type OnRepositoryCreation = (newRepository: CreateGitHubRepositoryReturn) => Promise<void>;
+export type NewRepository = CreateGitHubRepositoryReturn;
+export type OnRepositoryCreation = (newRepository: NewRepository) => Promise<void>;
 
 /** To be used by the 3 repo creations UI functions.
  *
@@ -13,7 +13,7 @@ export type OnRepositoryCreation = (newRepository: CreateGitHubRepositoryReturn)
 export async function uiCreateRepoCore(options: {
   repositoryNamePrompt: string;
   repositoryNameInitialValue: string;
-  onRepositoryCreation: (newRepository: CreateGitHubRepositoryReturn) => Promise<void>;
+  onRepositoryCreation: OnRepositoryCreation;
 }): Promise<void> {
 
   try {

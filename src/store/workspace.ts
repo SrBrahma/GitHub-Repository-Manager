@@ -3,6 +3,7 @@ import { gitHasRemote } from '../commands/git/gitHasRemote/gitHasRemote';
 
 
 export type WorkspaceFolderState = 'noGit' | 'gitWithoutRemote' | 'gitWithRemote';
+export type PublishableFolderState = Exclude<WorkspaceFolderState, 'gitWithRemote'>;
 type WorkspaceFolderSpecial = {
   workspaceFolder: vscode.WorkspaceFolder;
   state: WorkspaceFolderState;
@@ -21,7 +22,22 @@ async function checkState(path: string): Promise<WorkspaceFolderState> {
 
 
 class WorkspaceClass {
-  workspaceFolderSpecial: WorkspaceFolderSpecial[] = [];
+
+  /** To be used inside this class */
+  private workspaceFolderSpecial: WorkspaceFolderSpecial[] = [];
+
+  /** To be used by Publish UI command */
+  public get foldersAndStates(): {state: WorkspaceFolderState; path: string; name: string}[] {
+    return this.workspaceFolderSpecial.map(w => ({
+      path: w.workspaceFolder.uri.fsPath,
+      state: w.state,
+      name: w.workspaceFolder.name,
+    }));
+  }
+
+  public get publishableFoldersAndStates(): {state: PublishableFolderState; path: string; name: string}[] {
+    return this.foldersAndStates.filter(w => w.state === 'gitWithoutRemote' || w.state === 'noGit') as any; // We are sure.
+  }
 
   activate() {
     const fun = () => {
@@ -40,8 +56,7 @@ class WorkspaceClass {
   private updated() {
     const containsNoGit = this.workspaceFolderSpecial.find(w => w.state === 'noGit');
     const containsGitWithoutRemote = this.workspaceFolderSpecial.find(w => w.state === 'gitWithoutRemote');
-    void vscode.commands.executeCommand('setContext', 'containsNoGit', containsNoGit);
-    void vscode.commands.executeCommand('setContext', 'containsGitWithoutRemote', containsGitWithoutRemote);
+    void vscode.commands.executeCommand('setContext', 'canPublish', containsNoGit || containsGitWithoutRemote);
   }
 
   private async resetGitWatcher() {
