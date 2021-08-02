@@ -64,19 +64,25 @@ class WorkspaceClass {
     this.workspaceFolderSpecial = []; // Reset
     const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
     this.workspaceFolderSpecial = await Promise.all(workspaceFolders?.map(async workspaceFolder => {
-      const watcher = vscode.workspace.createFileSystemWatcher(`${workspaceFolder.uri.path}/.git/config`);
+      const watcherDir = vscode.workspace.createFileSystemWatcher(`${workspaceFolder.uri.path}/.git`); // just watching config wouldn't catch ./git deletion.
+      const watcherFile = vscode.workspace.createFileSystemWatcher(`${workspaceFolder.uri.path}/.git/config`);
       const newSpecial: WorkspaceFolderSpecial = {
         workspaceFolder,
-        disposable: watcher.dispose,
+        disposable: () => { watcherDir.dispose(); watcherFile.dispose(); },
         state: await checkState(workspaceFolder.uri.fsPath),
       };
       const fun = async () => {
         newSpecial.state = await checkState(workspaceFolder.uri.fsPath);
         this.updated();
       };
-      watcher.onDidChange(() => fun());
-      watcher.onDidCreate(() => fun());
-      watcher.onDidDelete(() => fun());
+
+      watcherDir.onDidChange(() => fun());
+      watcherDir.onDidCreate(() => fun());
+      watcherDir.onDidDelete(() => fun());
+      watcherFile.onDidChange(() => fun());
+      watcherFile.onDidCreate(() => fun());
+      watcherFile.onDidDelete(() => fun());
+
       return newSpecial;
     })); // End of Promise.all;
     this.updated(); // update after setting the new array.
