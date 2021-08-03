@@ -4,13 +4,14 @@ import { Organization } from './organization';
 import { LocalRepository, Repository } from './repository';
 import { getUser } from '../commands/github/getUserData';
 import { getLocalReposPathAndUrl } from '../commands/searchClonedRepos/searchClonedRepos';
+import { myExtensionSetContext } from '../main/utils';
 
 
 const AUTH_PROVIDER_ID = 'github';
 const SCOPES = ['repo', 'read:org'];
 
 
-// Values are named for better communication with package.json and for debugging
+// Values are named as we use them to setContext and also for better debugging (console.log(user.state))
 export enum UserState {
   /** On extension start */
   init = 'init',
@@ -64,7 +65,7 @@ class UserClass {
   /** Will also informSubscribers('account') */
   setUserState(state: UserState) {
     (this.state as any) = state; // as any to override readonly
-    void vscode.commands.executeCommand('setContext', 'UserState', state);
+    void myExtensionSetContext('userState', state);
     this.informSubscribers('account');
   }
   /** Will also informSubscribers('repos') */
