@@ -14,6 +14,10 @@ export async function uiCreateRepoCore(options: {
   repositoryNamePrompt: string;
   repositoryNameInitialValue: string;
   onRepositoryCreation: OnRepositoryCreation;
+  /** Run after the repository info questions but before the creation itself.
+   *
+   * Return 'cancel' to cancel and exit the flow. */
+  preRepositoryCreation?: () => Promise<('cancel' | undefined)>;
 }): Promise<void> {
 
   try {
@@ -52,6 +56,10 @@ export async function uiCreateRepoCore(options: {
       return;
 
     const isPrivate = visibility === 'Private';
+
+    const preRepoCreationResult = await options.preRepositoryCreation?.();
+    if (preRepoCreationResult === 'cancel') // Quit if true
+      return;
 
     const newRepository = await createGitHubRepository({ name, description, isPrivate });
 

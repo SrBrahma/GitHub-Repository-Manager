@@ -5,7 +5,7 @@ import { Workspace } from '../../store/workspace';
 import { OnRepositoryCreation, uiCreateRepoCore } from '../uiCreateRepo';
 import { myQuickPick } from '../../vscode/myQuickPick';
 import { preNoGit, posNoGit } from './noGit';
-import { preNoRemote, posNoRemote } from './noRemote';
+import { preNoRemote, posNoRemote, preRepositoryCreateNoRemote as preRepositoryCreationNoRemote } from './noRemote';
 
 
 
@@ -67,12 +67,8 @@ export async function uiPublish(): Promise<void> {
 
     if (state === 'noGit')
       await preNoGit({ cwd });
-    else {
-      const result = await preNoRemote({ cwd });
-      if (!result)
-        return;
-      headBranch = result.headBranch;
-    }
+    else
+      await preNoRemote({ cwd });
 
 
     const onRepositoryCreation: OnRepositoryCreation = async (newRepository) => {
@@ -105,6 +101,14 @@ export async function uiPublish(): Promise<void> {
       repositoryNamePrompt: `Enter the new repository name for the chosen workspace folder`,
       repositoryNameInitialValue: path.basename(cwd),
       onRepositoryCreation,
+      preRepositoryCreation: async () => {
+        if (state === 'gitWithoutRemote') {
+          const result = await preRepositoryCreationNoRemote({ cwd });
+          if (!result)
+            return 'cancel';
+          headBranch = result.headBranch;
+        }
+      },
     });
 
   } catch (err) {

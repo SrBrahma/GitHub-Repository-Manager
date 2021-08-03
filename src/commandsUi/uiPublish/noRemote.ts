@@ -7,11 +7,14 @@ import { myQuickPick } from '../../vscode/myQuickPick';
 import { NewRepository } from '../uiCreateRepo';
 
 /** If returned undefined, do exit. */
-export async function preNoRemote({ cwd }: {cwd: string}): Promise<{headBranch: string} | undefined> {
-
+export async function preNoRemote({ cwd }: {cwd: string}): Promise<void> {
   if (await gitHasRemote(cwd))
     throw new Error('Project already contains git remote!');
+}
 
+export async function preRepositoryCreateNoRemote(
+  { cwd }: {cwd: string},
+): Promise<{headBranch: string} | undefined> {
   const originalHeadBranch = await getHeadBranch(cwd);
   let headBranch = originalHeadBranch;
 
