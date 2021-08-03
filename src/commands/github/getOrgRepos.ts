@@ -1,3 +1,5 @@
+// GitHub GraphQL API Explorer: https://docs.github.com/en/graphql/overview/explorer
+
 import { Repository } from '../../store/repository';
 import { octokit } from '../../store/user';
 import { getOctokitErrorMessage } from './getOctokitErrorMessage';
@@ -87,7 +89,10 @@ const query = `
 query getOrgRepos ($after: String, $org: String!) {
   viewer {
     organization(login: $org) {
-      repositories(isFork: false, first: 100, after: $after) {
+      repositories(
+        isFork: false, first: 100, after: $after
+        orderBy: { field: NAME, direction: ASC }
+      ) {
         pageInfo {
           endCursor
           hasNextPage
