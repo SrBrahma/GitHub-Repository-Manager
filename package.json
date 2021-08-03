@@ -144,7 +144,7 @@
       {
         "view": "githubRepoMgr.views.account",
         "contents": "You are not yet logged in\n[Login with your GitHub account](command:githubRepoMgr.commands.auth.vscodeAuth)",
-        "when": "githubRepoMgr.userState == notLogged"
+        "when": "githubRepoMgr.userState == 'notLogged'"
       }
     ],
     "views": {
@@ -225,17 +225,17 @@
       "view/title": [
         {
           "command": "githubRepoMgr.commands.repos.publish",
-          "when": "view == githubRepoMgr.views.repositories && githubRepoMgr.canPublish == true",
+          "when": "view == githubRepoMgr.views.repositories && githubRepoMgr.userState == 'logged' && githubRepoMgr.canPublish == true",
           "group": "navigation@1"
         },
         {
           "command": "githubRepoMgr.commands.repos.createRepo",
-          "when": "view == githubRepoMgr.views.repositories",
+          "when": "view == githubRepoMgr.views.repositories && githubRepoMgr.userState == 'logged'",
           "group": "navigation@2"
         },
         {
           "command": "githubRepoMgr.commands.repos.reload",
-          "when": "view == githubRepoMgr.views.repositories",
+          "when": "view == githubRepoMgr.views.repositories && githubRepoMgr.userState == 'logged'",
           "group": "navigation@3"
         }
       ],

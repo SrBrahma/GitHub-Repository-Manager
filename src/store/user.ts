@@ -160,6 +160,7 @@ class UserClass {
       })));
       this.setUserState(UserState.logged);
     } catch (err) {
+      void vscode.window.showErrorMessage(err.message);
       this.setUserState(UserState.errorLogging);
       throw new Error(err);
     }
@@ -203,6 +204,8 @@ class UserClass {
     if ([RepositoriesState.none, RepositoriesState.fullyLoaded].includes(this.repositoriesState)) {
       this.resetUser({ resetUserStatus: false, resetOctokit: false });
       this.resetRepos({ resetRepositoriesStatus: false });
+      if (!octokit) // Ignore if octokit not set up, after resetting above.
+        return;
       this.setRepositoriesState(RepositoriesState.fetching);
       const [, localRepos] = await Promise.all([this.loadUser(), getLocalReposPathAndUrl()]); // Simultaneously to improve the performance by a bit
       await this.loadRepos({ localRepos });
