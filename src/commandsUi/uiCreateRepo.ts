@@ -21,6 +21,37 @@ export async function uiCreateRepoCore(options: {
 }): Promise<void> {
 
   try {
+    /** If undefined, should create repository to the user */
+    let organizationLogin: string | undefined = undefined;
+
+    const orgsUserCanCreateRepo = User.organizationUserCanCreateRepositories;
+
+    if (orgsUserCanCreateRepo.length === 0)
+      return; // Just don't do nothing. The user just haven't loaded yet!
+      // throw new Error('There is nowhere to the user to publish!');
+
+    else if (orgsUserCanCreateRepo.length === 1) {
+      // Do nothing if user is the only available org.
+    } else { // Else, pick one!
+      const userDescription = 'Your personal account';
+      const pick = (await myQuickPick({
+        items: orgsUserCanCreateRepo.map(e => ({
+          label: (e.login === User.login) ? e.login : e.name,
+          description: (e.login === User.login) ? userDescription : e.login,
+        })),
+        ignoreFocusOut: false,
+        title: 'Should the new repository be created in your account or in an Organization?',
+      }));
+
+      if (!pick)
+        return;
+
+      const havePickedUser = pick.description === userDescription;
+
+      if (!havePickedUser)
+        organizationLogin = pick.description!;
+    }
+
     const name: string = (await vscode.window.showInputBox({
       prompt: options.repositoryNamePrompt,
       placeHolder: 'Repository name',
@@ -61,7 +92,7 @@ export async function uiCreateRepoCore(options: {
     if (preRepoCreationResult === 'cancel') // Quit if true
       return;
 
-    const newRepository = await createGitHubRepository({ name, description, isPrivate });
+    const newRepository = await createGitHubRepository({ name, description, isPrivate, organizationLogin });
 
     await options.onRepositoryCreation(newRepository);
 

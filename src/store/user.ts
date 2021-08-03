@@ -4,13 +4,14 @@ import { Organization } from './organization';
 import { LocalRepository, Repository } from './repository';
 import { getUser } from '../commands/github/getUserData';
 import { getLocalReposPathAndUrl } from '../commands/searchClonedRepos/searchClonedRepos';
+import { myExtensionSetContext } from '../main/utils';
 
 
 const AUTH_PROVIDER_ID = 'github';
 const SCOPES = ['repo', 'read:org'];
 
 
-// Values are named for better communication with package.json and for debugging
+// Values are named as we use them to setContext and also for better debugging (console.log(user.state))
 export enum UserState {
   /** On extension start */
   init = 'init',
@@ -49,12 +50,15 @@ class UserClass {
   /** The user GitHub url/uri. */
   profileUri: string | undefined;
   userOrganization: Organization | undefined;
-  /** Also includes userOrganization */
+  /** Also includes the user Organization */
   organizations: Organization[] = [];
   /** The User current status. */
   repositoriesState: RepositoriesState = RepositoriesState.none;
   clonedRepos: Repository[] = [];
 
+  /** Returns the orgs that the user can create new repositories.
+   * As it uses this.organizations, it includes the user Organization. */
+  get organizationUserCanCreateRepositories() { return this.organizations.filter(o => o.userCanCreateRepositories === true);}
 
   /** The ones listening for changes. */
   private subscribers: ['account' | 'repos', () => void][] = [];
@@ -64,7 +68,7 @@ class UserClass {
   /** Will also informSubscribers('account') */
   setUserState(state: UserState) {
     (this.state as any) = state; // as any to override readonly
-    void vscode.commands.executeCommand('setContext', 'UserState', state);
+    void myExtensionSetContext('userState', state);
     this.informSubscribers('account');
   }
   /** Will also informSubscribers('repos') */
@@ -144,13 +148,15 @@ class UserClass {
       const { login, organizations, profileUri } = await getUser();
       this.login = login;
       this.profileUri = profileUri;
-      this.userOrganization = new Organization({ login, name: login, isUserOrg: true });
+      // We set name as login. The user real name really isn't useful anywhere here and would be too personal, invasive.
+      this.userOrganization = new Organization({ login, name: login, isUserOrg: true, userCanCreateRepositories: true });
 
       this.organizations.push(this.userOrganization);
       this.organizations.push(...organizations.map((org: any) => new Organization({
         isUserOrg: false,
         login: org.login,
         name: org.name,
+        userCanCreateRepositories: org.viewerCanCreateRepositories,
       })));
       this.setUserState(UserState.logged);
     } catch (err) {

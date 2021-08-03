@@ -1,4 +1,6 @@
-import { extractRepositoryFromData } from './getOrgRepos';
+// GitHub GraphQL API Explorer: https://docs.github.com/en/graphql/overview/explorer
+
+import { extractRepositoryFromData, repoInfosQuery } from './getOrgRepos';
 import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 import type { Repository } from '../../store/repository';
 import { octokit } from '../../store/user';
@@ -40,39 +42,16 @@ const query = `
 query getRepos ($after: String) {
   viewer {
     repositories(
-      first: 100,
+      first: 100, after: $after
       affiliations: [OWNER], ownerAffiliations:[OWNER],
-      orderBy: {field: NAME, direction: ASC}, after: $after
+      orderBy: { field: NAME, direction: ASC }
     ) {
-
       pageInfo {
         endCursor
         hasNextPage
       }
       nodes {
-        name
-        description
-        owner {
-          login
-        }
-        primaryLanguage {
-          name
-        }
-        url
-
-        isPrivate
-        isFork
-        isTemplate
-
-        parent {
-          name
-          owner {
-            login
-          }
-        }
-
-        createdAt
-        updatedAt
+        ${repoInfosQuery}
       }
     }
   }

@@ -1,5 +1,10 @@
 # Change Log : GitHub Repository Manager
 
+## 1.3.0 - 2021/08/03
+
+- Added support to create repositories for organizations the user has permission to.
+- Organization repositories are now alphabetically ordered.
+
 ## 1.2.0 - 2021/08/03
 
 - Added "Create Repository for Current Files", our "Publish to GitHub". Finally, after more than a year, had the time, the will and the hacky ideas to have it working! [#2](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/2) Thanks [hediet](https://github.com/hediet) for the idea and the patience! 😅

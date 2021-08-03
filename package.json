@@ -1,6 +1,6 @@
 {
   "name": "github-repository-manager",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "publisher": "henriqueBruno",
   "displayName": "GitHub Repository Manager",
   "description": "Easily and quickly clone and access your GitHub repositories and create new ones",
@@ -144,7 +144,7 @@
       {
         "view": "githubRepoMgr.views.account",
         "contents": "You are not yet logged in\n[Login with your GitHub account](command:githubRepoMgr.commands.auth.vscodeAuth)",
-        "when": "UserState == notLogged"
+        "when": "githubRepoMgr.userState == notLogged"
       }
     ],
     "views": {
@@ -225,7 +225,7 @@
       "view/title": [
         {
           "command": "githubRepoMgr.commands.repos.publish",
-          "when": "view == githubRepoMgr.views.repositories && canPublish == true",
+          "when": "view == githubRepoMgr.views.repositories && githubRepoMgr.canPublish == true",
           "group": "navigation@1"
         },
         {

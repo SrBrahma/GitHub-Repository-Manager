@@ -15,8 +15,6 @@ export type Repository = {
   isTemplate: boolean;
   isFork: boolean;
 
-  userIsAdmin: boolean;
-
   parentRepoName?: string;
   parentRepoOwnerLogin?: string;
 

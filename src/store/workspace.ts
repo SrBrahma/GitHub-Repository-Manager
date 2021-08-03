@@ -1,5 +1,6 @@
 import vscode from 'vscode';
 import { gitHasRemote } from '../commands/git/gitHasRemote/gitHasRemote';
+import { myExtensionSetContext } from '../main/utils';
 
 
 export type WorkspaceFolderState = 'noGit' | 'gitWithoutRemote' | 'gitWithRemote';
@@ -56,7 +57,7 @@ class WorkspaceClass {
   private updated() {
     const containsNoGit = this.workspaceFolderSpecial.find(w => w.state === 'noGit');
     const containsGitWithoutRemote = this.workspaceFolderSpecial.find(w => w.state === 'gitWithoutRemote');
-    void vscode.commands.executeCommand('setContext', 'canPublish', containsNoGit || containsGitWithoutRemote);
+    void myExtensionSetContext('canPublish', containsNoGit || containsGitWithoutRemote);
   }
 
   private async resetGitWatcher() {

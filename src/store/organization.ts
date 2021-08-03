@@ -16,6 +16,7 @@ type OrganizationConstructor = {
   /** Organization pretty name, e.g 'SrBrahma Test' */
   name: string;
   isUserOrg: boolean;
+  userCanCreateRepositories: boolean;
 };
 
 export class Organization {
@@ -27,11 +28,14 @@ export class Organization {
   notClonedRepos: Repository[] = [];
   /** If it is the user organization, = the repos belong to him. */
   isUserOrg: boolean;
+  /** If the user can create new repositories in this organization */
+  userCanCreateRepositories: boolean;
 
   constructor(args: OrganizationConstructor) {
     this.login = args.login;
     this.name = args.name;
     this.isUserOrg = args.isUserOrg;
+    this.userCanCreateRepositories = args.userCanCreateRepositories;
     this.status = OrgStatus.notLoaded;
   }
 

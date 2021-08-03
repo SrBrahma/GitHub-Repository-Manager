@@ -1,3 +1,5 @@
+// GitHub GraphQL API Explorer: https://docs.github.com/en/graphql/overview/explorer
+
 import { Repository } from '../../store/repository';
 import { octokit } from '../../store/user';
 import { getOctokitErrorMessage } from './getOctokitErrorMessage';
@@ -15,7 +17,6 @@ export function extractRepositoryFromData(data: any): Repository {
     isPrivate: data.isPrivate,
     isFork: data.isFork,
     isTemplate: data.isTemplate,
-    userIsAdmin: data.viewerCanAdminister,
 
     // parent may be null if isn't a fork.
     parentRepoName: data.parent?.name,
@@ -26,6 +27,31 @@ export function extractRepositoryFromData(data: any): Repository {
   };
 }
 
+/** Used for both orgRepos and userRepos.
+ *
+ * The different indendation from query doesn't matter. https://stackoverflow.com/q/62398415/10247962 */
+export const repoInfosQuery = `
+name
+description
+owner {
+  login
+}
+primaryLanguage {
+  name
+}
+url
+isPrivate
+isFork
+isTemplate
+parent {
+  name
+  owner {
+    login
+  }
+}
+createdAt
+updatedAt
+`;
 
 export async function getOrgRepos(login: string): Promise<Repository[]> {
   if (!octokit)
@@ -63,34 +89,16 @@ const query = `
 query getOrgRepos ($after: String, $org: String!) {
   viewer {
     organization(login: $org) {
-      repositories(isFork: false, first: 100, after: $after) {
+      repositories(
+        isFork: false, first: 100, after: $after
+        orderBy: { field: NAME, direction: ASC }
+      ) {
         pageInfo {
           endCursor
           hasNextPage
         }
         nodes {
-          name
-          description
-          owner {
-            login
-          }
-          primaryLanguage {
-            name
-          }
-          url
-
-          isPrivate
-          isFork
-          isTemplate
-          viewerCanAdminister
-          parent {
-            name
-            owner {
-              login
-            }
-          }
-          createdAt
-          updatedAt
+          ${repoInfosQuery}
         }
       }
     }

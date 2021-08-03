@@ -1,10 +1,14 @@
+// GitHub GraphQL API Explorer: https://docs.github.com/en/graphql/overview/explorer
+
 import { octokit } from '../../store/user';
 import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 
 type GetUser = {
   login: string;
   profileUri: string;
-  organizations: any;
+  organizations: {
+    login: string; name: string; viewerCanCreateRepositories: boolean;
+  }[];
 };
 
 export async function getUser(): Promise<GetUser> {
@@ -12,6 +16,7 @@ export async function getUser(): Promise<GetUser> {
     throw new Error('Octokit not set up!');
   try {
     const userData = (await octokit.graphql(
+      // Doesn't seem to be possible to orderBy name as getRepo does. But it prob should be done automatically.
       `query getUser ($after: String) {
         viewer {
           login
@@ -19,9 +24,9 @@ export async function getUser(): Promise<GetUser> {
           organizations(first: 100, after: $after) {
             edges {
               node {
-                id,
-                login,
+                login
                 name
+                viewerCanCreateRepositories
               }
             }
           }
