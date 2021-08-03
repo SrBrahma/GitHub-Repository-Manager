@@ -54,6 +54,8 @@ I store my repos under **"\~/Dev"**, so that's what I use as my **"git.defaultCl
 
 While hovering the **REPOSITORIES** tree view title, a plus (**+**) button appears. Click on it, and enter the new repository name, description (optional) and visibility. On success, you may choose to clone the new repository.
 
+If you are a member of at least one organization that allows you to create new repositories for it, it will be requested to pick the new repository ownership: your own account or one of those organizations.
+
 <h2><b> Creating a repository for current project </b></h2>
 
 ![](images/readme/publish.png)

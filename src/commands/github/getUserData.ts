@@ -26,6 +26,7 @@ export async function getUser(): Promise<GetUser> {
               node {
                 login
                 name
+                viewerCanCreateRepositories
               }
             }
           }
