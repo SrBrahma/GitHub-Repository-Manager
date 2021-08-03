@@ -54,7 +54,17 @@ I store my repos under **"\~/Dev"**, so that's what I use as my **"git.defaultCl
 
 While hovering the **REPOSITORIES** tree view title, a plus (**+**) button appears. Click on it, and enter the new repository name, description (optional) and visibility. On success, you may choose to clone the new repository.
 
+<h2><b> Creating a repository for current project </b></h2>
 
+![](images/readme/publish.png)
+
+You may create a GitHub repository and push your current project within the same flow. If there are multiple folders in your workspace that may be published to GitHub, it will be prompted to pick the desired one.
+
+There are 2 possible cases that allows using that publish functionality:
+
+1) **Your project doesn't have a Git yet.** After entering the repository name, description and visibility, the repository will be created, the git will be initialized for the workspace folder, `main` branch will be created and selected, GitHub remote will be added as `origin` and your files will then be pushed to it.
+
+2) **Your project has a Git, but it hasn't a remote yet.** After filling the repository information, it will be checked if your git HEAD is `master`. If so, it will ask if you want the branch to be renamed to `main`. Yes or no, the repository will be created, the GitHub remote is added as `origin` and your code is pushed.
 
 <br/>
 <h1 align="center"> Settings </h1>
