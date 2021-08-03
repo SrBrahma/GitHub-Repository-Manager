@@ -1,11 +1,9 @@
-import { Configs } from '../main/configs';
 import fse from 'fs-extra';
 import path from 'path';
 import execa from 'execa';
 import GitUrlParse from 'git-url-parse';
+import { Configs } from '../../main/configs';
 
-// mz lib is a little old but does the job.
-// https://stackoverflow.com/a/37532027/10247962
 
 interface DirWithGitUrl {
   dirPath: string;
@@ -21,7 +19,6 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
       // was using git remote -v, but git ls-remote --get-url seems to also do the job with a single output.
       const { stdout: result } = await execa('git', ['ls-remote', '--get-url'], { cwd: dirPath });
 
-
       // Remove whitespaces chars.
       const url = result.trim();
 
@@ -33,7 +30,6 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
       }
     } catch (err) {
       // If error, it's because there isn't a remote. No need to manage it, may be left empty.
-      // console.log(dirPath, error); // Uncomment to debug.
     }
   }
   return dirsWithGitUrl;
@@ -52,7 +48,7 @@ async function getDirsWithDotGit(currentPath: string, availableDepth: number, di
   if (dirsName.find(dir => dir === '.git'))
     return [currentPath];
 
-  // If this was the last depth and we didn't find a .gir dir, return empty array;
+  // If this was the last depth and we didn't find a .git dir, return empty array;
   if (availableDepth === 0)
     return [];
 

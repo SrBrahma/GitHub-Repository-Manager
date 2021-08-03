@@ -3,7 +3,7 @@ import os from 'os';
 import { TreeItem, TreeItemConstructor } from '../treeViewBase';
 import { Configs } from '../../main/configs';
 import { Repository } from '../../store/repository';
-import { IsGitDirty } from '../../utils/isGitDirty';
+import { Dirtiness } from '../../commands/git/dirtiness/dirtiness';
 
 // https://code.visualstudio.com/api/references/icons-in-labels
 
@@ -25,7 +25,7 @@ function getIcon(repo: Repository) {
 }
 
 
-const dirtyToMessage: Record<IsGitDirty, string> = {
+const dirtyToMessage: Record<Dirtiness, string> = {
   clean: '',
   dirty: 'This repository has local changes',
   error: 'An error has happened while getting dirtiness state! Read extension Output!',
@@ -64,7 +64,7 @@ type RepoItemConstructor = Omit<TreeItemConstructor, 'label'> & {
   includeOwner?: boolean;
 };
 
-const dirtyToChar: Record<IsGitDirty, string> = {
+const dirtyToChar: Record<Dirtiness, string> = {
   clean: '',
   dirty: '*',
   error: 'E',

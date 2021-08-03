@@ -5,6 +5,7 @@ import { getClonedTreeItem, activateClonedRepos } from './clonedRepos';
 import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
 import { uiCreateRepo } from '../../commandsUi/uiCreateRepo';
 import { RepositoriesState, User } from '../../store/user';
+import { uiPublish } from '../../commandsUi/uiPublish/uiPublish';
 
 
 export function activateTreeViewRepositories(): void {
@@ -23,12 +24,14 @@ export function activateTreeViewRepositories(): void {
     vscode.env.clipboard.writeText(`${repo.url}.git`));
 
   // Reload repos
-  vscode.commands.registerCommand('githubRepoMgr.commands.repos.reload', () =>
-    User.reloadRepos());
+  vscode.commands.registerCommand('githubRepoMgr.commands.repos.reload', () => User.reloadRepos());
 
   // Create Repo
-  vscode.commands.registerCommand('githubRepoMgr.commands.repos.createRepo', () =>
-    uiCreateRepo());
+  vscode.commands.registerCommand('githubRepoMgr.commands.repos.createRepo', () => uiCreateRepo());
+
+
+  vscode.commands.registerCommand('githubRepoMgr.commands.repos.publish', () => uiPublish());
+
 
   activateClonedRepos();
   activateNotClonedRepos();

@@ -1,6 +1,6 @@
-import { getOrgRepos } from '../commands/getOrgRepos';
-import { getUserRepos } from '../commands/getUserRepos';
-import { isGitDirty } from '../utils/isGitDirty';
+import { getOrgRepos } from '../commands/github/getOrgRepos';
+import { getUserRepos } from '../commands/github/getUserRepos';
+import { getDirtiness } from '../commands/git/dirtiness/dirtiness';
 import { LocalRepository, Repository } from './repository';
 
 export enum OrgStatus {
@@ -11,7 +11,9 @@ export enum OrgStatus {
 }
 
 type OrganizationConstructor = {
+  /** Organization raw name, e.g 'srbrahmaTest' */
   login: string;
+  /** Organization pretty name, e.g 'SrBrahma Test' */
   name: string;
   isUserOrg: boolean;
 };
@@ -36,7 +38,7 @@ export class Organization {
   /** Callback is called for every local repo dirtiness checked. */
   async checkLocalReposDirtiness(callback: () => void): Promise<void> {
     await Promise.all(this.clonedRepos.map(async localRepo => {
-      localRepo.dirty = await isGitDirty(localRepo.localPath!);
+      localRepo.dirty = await getDirtiness(localRepo.localPath!);
       callback();
     }));
   }

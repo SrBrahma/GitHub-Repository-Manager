@@ -1,26 +1,28 @@
-import { Repository } from '../store/repository';
-import { octokit } from '../store/user';
-import { getOctokitErrorMessage } from './getErrorMessage';
+import { Repository } from '../../store/repository';
+import { octokit } from '../../store/user';
+import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 
-export function extractRepositoryFromData(node: any): Repository {
+export function extractRepositoryFromData(data: any): Repository {
   return {
-    name: node.name,
-    description: node.description,
-    ownerLogin: node.owner.login,
-    languageName: node.primaryLanguage?.name,
-    url: node.url,
+    name: data.name,
+    description: data.description,
+    ownerLogin: data.owner.login,
+    languageName: data.primaryLanguage?.name,
+    url: data.url,
 
-    isPrivate: node.isPrivate,
-    isFork: node.isFork,
-    isTemplate: node.isTemplate,
-    userIsAdmin: node.viewerCanAdminister,
+    // gitUrl: data.,
+
+    isPrivate: data.isPrivate,
+    isFork: data.isFork,
+    isTemplate: data.isTemplate,
+    userIsAdmin: data.viewerCanAdminister,
 
     // parent may be null if isn't a fork.
-    parentRepoName: node.parent?.name,
-    parentRepoOwnerLogin: node.parent?.owner.login,
+    parentRepoName: data.parent?.name,
+    parentRepoOwnerLogin: data.parent?.owner.login,
 
-    createdAt: new Date(node.createdAt),
-    updatedAt: new Date(node.updatedAt),
+    createdAt: new Date(data.createdAt),
+    updatedAt: new Date(data.updatedAt),
   };
 }
 

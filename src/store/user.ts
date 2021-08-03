@@ -1,9 +1,9 @@
 import vscode from 'vscode';
 import { Octokit } from '@octokit/rest';
-import { getLocalReposPathAndUrl } from '../utils/searchClonedRepos';
 import { Organization } from './organization';
 import { LocalRepository, Repository } from './repository';
-import { getUser } from '../commands/getUserData';
+import { getUser } from '../commands/github/getUserData';
+import { getLocalReposPathAndUrl } from '../commands/searchClonedRepos/searchClonedRepos';
 
 
 const AUTH_PROVIDER_ID = 'github';
@@ -36,12 +36,15 @@ export enum RepositoriesState {
   fullyLoaded,
 }
 
+// TODO refactor state management. It's quite non intuictive right now. State changing maybe should
+// be all in reloadRepos().
+
 class UserClass {
   /** The User current status. */
   readonly state: UserState = UserState.init;
   /** Used by cloneRepo() */
   token: string | undefined;
-  /** The user pretty name. */
+  /** The user raw name, e.g 'SrBrahma' (not the pretty customizable one). */
   login: string | undefined;
   /** The user GitHub url/uri. */
   profileUri: string | undefined;
@@ -107,7 +110,7 @@ class UserClass {
       }
     });
     try {
-      // vscode.authentication.onDidChangeSessions(e => console.log(e)); // It doesn't get the logout.
+      // vscode.authentication.onDidChangeSessions(e => ...); // It doesn't get the logout.
       /** Stored token */
       const token = (await vscode.authentication.getSession(AUTH_PROVIDER_ID, SCOPES, { createIfNone: false }))
         ?.accessToken;
@@ -172,15 +175,14 @@ class UserClass {
 
     const callback = () => {
       localReposDirtyCheckedCount++;
-      // If last localRepo to check dirtiness, remove existing timeout and informSubscribers now.
-      if (localReposDirtyCheckedCount === this.clonedRepos.length) {
+      const checkedAll = localReposDirtyCheckedCount === this.clonedRepos.length;
+      if (checkedAll) {
         clearTimeout(timeout as any); // no prob as any here, just to make code shorter.
         this.setRepositoriesState(RepositoriesState.fullyLoaded);
       } else if (!timeout)
         timeout = setTimeout(() => { this.informSubscribers('repos'); }, 1000);
     };
 
-    // Those three are run before the dirtiness callback, as they are sync.
     if (this.clonedRepos.length) {
       this.setRepositoriesState(RepositoriesState.partial); // To show unknown dirtiness or at least the not-cloned repos, if none is cloned.
       this.organizations.forEach(org => org.checkLocalReposDirtiness(callback));

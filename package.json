@@ -63,7 +63,7 @@
     "@typescript-eslint/parser": "4.28.4",
     "clean-webpack-plugin": "^3.0.0",
     "eslint": "7.31.0",
-    "eslint-config-gev": "2.6.0",
+    "eslint-config-gev": "2.7.0",
     "fork-ts-checker-webpack-plugin": "^6.2.13",
     "ts-loader": "^9.2.4",
     "typescript": "^4.3.5",
@@ -166,6 +166,11 @@
         "icon": "$(repo-create)"
       },
       {
+        "title": "Create Repository for Current Project",
+        "command": "githubRepoMgr.commands.repos.publish",
+        "icon": "$(repo-push)"
+      },
+      {
         "title": "Reload Repositories",
         "command": "githubRepoMgr.commands.repos.reload",
         "icon": "$(refresh)"
@@ -219,14 +224,19 @@
     "menus": {
       "view/title": [
         {
+          "command": "githubRepoMgr.commands.repos.publish",
+          "when": "view == githubRepoMgr.views.repositories && canPublish == true",
+          "group": "navigation@1"
+        },
+        {
           "command": "githubRepoMgr.commands.repos.createRepo",
           "when": "view == githubRepoMgr.views.repositories",
-          "group": "navigation"
+          "group": "navigation@2"
         },
         {
           "command": "githubRepoMgr.commands.repos.reload",
           "when": "view == githubRepoMgr.views.repositories",
-          "group": "navigation"
+          "group": "navigation@3"
         }
       ],
       "view/item/context": [
