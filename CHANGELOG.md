@@ -4,6 +4,7 @@
 
 - Added support to create repositories for organizations the user has permission to.
 - Organization repositories are now alphabetically ordered.
+- Create repository and reload buttons now will only show up if user is logged.
 
 ## 1.2.0 - 2021/08/03
 
