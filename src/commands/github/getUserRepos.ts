@@ -44,7 +44,6 @@ query getRepos ($after: String) {
       affiliations: [OWNER], ownerAffiliations:[OWNER],
       orderBy: {field: NAME, direction: ASC}, after: $after
     ) {
-
       pageInfo {
         endCursor
         hasNextPage

@@ -19,8 +19,7 @@ export async function getUser(): Promise<GetUser> {
           organizations(first: 100, after: $after) {
             edges {
               node {
-                id,
-                login,
+                login
                 name
               }
             }

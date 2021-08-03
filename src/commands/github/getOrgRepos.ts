@@ -38,18 +38,15 @@ primaryLanguage {
   name
 }
 url
-
 isPrivate
 isFork
 isTemplate
-
 parent {
   name
   owner {
     login
   }
 }
-
 createdAt
 updatedAt
 `;
