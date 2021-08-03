@@ -1,4 +1,4 @@
-import { extractRepositoryFromData } from './getOrgRepos';
+import { extractRepositoryFromData, repoInfosQuery } from './getOrgRepos';
 import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 import type { Repository } from '../../store/repository';
 import { octokit } from '../../store/user';
@@ -50,29 +50,7 @@ query getRepos ($after: String) {
         hasNextPage
       }
       nodes {
-        name
-        description
-        owner {
-          login
-        }
-        primaryLanguage {
-          name
-        }
-        url
-
-        isPrivate
-        isFork
-        isTemplate
-
-        parent {
-          name
-          owner {
-            login
-          }
-        }
-
-        createdAt
-        updatedAt
+        ${repoInfosQuery}
       }
     }
   }

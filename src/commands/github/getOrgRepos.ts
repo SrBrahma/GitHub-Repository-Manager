@@ -15,7 +15,6 @@ export function extractRepositoryFromData(data: any): Repository {
     isPrivate: data.isPrivate,
     isFork: data.isFork,
     isTemplate: data.isTemplate,
-    userIsAdmin: data.viewerCanAdminister,
 
     // parent may be null if isn't a fork.
     parentRepoName: data.parent?.name,
@@ -26,6 +25,34 @@ export function extractRepositoryFromData(data: any): Repository {
   };
 }
 
+/** Used for both orgRepos and userRepos.
+ *
+ * The different indendation from query doesn't matter. https://stackoverflow.com/q/62398415/10247962 */
+export const repoInfosQuery = `
+name
+description
+owner {
+  login
+}
+primaryLanguage {
+  name
+}
+url
+
+isPrivate
+isFork
+isTemplate
+
+parent {
+  name
+  owner {
+    login
+  }
+}
+
+createdAt
+updatedAt
+`;
 
 export async function getOrgRepos(login: string): Promise<Repository[]> {
   if (!octokit)
@@ -69,28 +96,7 @@ query getOrgRepos ($after: String, $org: String!) {
           hasNextPage
         }
         nodes {
-          name
-          description
-          owner {
-            login
-          }
-          primaryLanguage {
-            name
-          }
-          url
-
-          isPrivate
-          isFork
-          isTemplate
-          viewerCanAdminister
-          parent {
-            name
-            owner {
-              login
-            }
-          }
-          createdAt
-          updatedAt
+          ${repoInfosQuery}
         }
       }
     }
