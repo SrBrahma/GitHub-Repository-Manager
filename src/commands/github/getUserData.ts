@@ -4,7 +4,9 @@ import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 type GetUser = {
   login: string;
   profileUri: string;
-  organizations: any;
+  organizations: {
+    login: string; name: string; viewerCanCreateRepositories: boolean;
+  }[];
 };
 
 export async function getUser(): Promise<GetUser> {
