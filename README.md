@@ -113,10 +113,6 @@ Directories names that our cloned repositories searcher will ignore.
 
 - Search and clone public repositories
 
-- Only show Repository creation icon when logged
-
-- Git not installed message
-
 - Other repositories found by the Cloned Repository Searcher. Useful for quickly opening a repository you don't own.
 
 - Visualize without cloning (useful for getting some value or checking something from some repository)
