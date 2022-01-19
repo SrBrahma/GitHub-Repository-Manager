@@ -2,6 +2,8 @@
 // based on / copied https://github.com/JPeer264/node-is-git-dirty/blob/main/index.ts
 import execa from 'execa';
 
+
+
 export type Dirtiness = 'clean' | 'dirty' | 'unknown' | 'error';
 
 /** @returns 'clean', 'dirty' or 'error'.
@@ -10,7 +12,7 @@ export type Dirtiness = 'clean' | 'dirty' | 'unknown' | 'error';
 export async function getDirtiness(projectPath: string): Promise<Dirtiness> {
   try {
     return (await isGitDirty(projectPath)) ? 'dirty' : 'clean';
-  } catch (err) {
+  } catch (err: any) {
     console.error(`Error getting local project dirtiness with 'git status --short'. ProjectPath='${projectPath}', Error=${err}`);
     return 'error';
   }

@@ -1,6 +1,6 @@
-import { workspace, window, Uri, commands } from 'vscode';
-import { cloneRepo } from '../commands/git/cloneRepository/cloneRepository';
 import path from 'path';
+import { commands, Uri, window, workspace } from 'vscode';
+import { cloneRepo } from '../commands/git/cloneRepository/cloneRepository';
 import { Configs } from '../main/configs';
 import { User } from '../store/user';
 
@@ -63,7 +63,7 @@ export async function uiCloneTo({ ownerLogin, name, reloadRepos }: {
   try {
     await cloneRepo({ owner: ownerLogin, repositoryName: name, parentPath, token: User.token });
     statusBar.dispose();
-  } catch (err) {
+  } catch (err: any) {
     statusBar.dispose();
     void window.showErrorMessage(err.message);
     return;

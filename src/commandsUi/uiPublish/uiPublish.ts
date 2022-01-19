@@ -1,11 +1,11 @@
-import vscode from 'vscode';
 import path from 'path';
+import vscode from 'vscode';
 import { User } from '../../store/user';
 import { Workspace } from '../../store/workspace';
-import { OnRepositoryCreation, uiCreateRepoCore } from '../uiCreateRepo';
 import { myQuickPick } from '../../vscode/myQuickPick';
-import { preNoGit, posNoGit } from './noGit';
-import { preNoRemote, posNoRemote, preRepositoryCreateNoRemote as preRepositoryCreationNoRemote } from './noRemote';
+import { OnRepositoryCreation, uiCreateRepoCore } from '../uiCreateRepo';
+import { posNoGit, preNoGit } from './noGit';
+import { posNoRemote, preNoRemote, preRepositoryCreateNoRemote as preRepositoryCreationNoRemote } from './noRemote';
 
 
 
@@ -24,7 +24,7 @@ async function getWorkspaceFolderPathToPublish() {
   } else { // If multiple folders
 
     const quickPick = await myQuickPick({
-      items: publishableFolders.map(w => ({
+      items: publishableFolders.map((w) => ({
         label: w.name,
         description: w.path,
         // detail: w.state === 'noGit' ? "Will also initialize Git" : "Doesn't have a remote, will be added",
@@ -40,7 +40,7 @@ async function getWorkspaceFolderPathToPublish() {
     const path = quickPick.description!;
     return {
       path,
-      state: (publishableFolders.find(f => path === f.path))!.state,
+      state: (publishableFolders.find((f) => path === f.path))!.state,
     };
 
   }
@@ -111,7 +111,7 @@ export async function uiPublish(): Promise<void> {
       },
     });
 
-  } catch (err) {
+  } catch (err: any) {
     void vscode.window.showErrorMessage(err.message);
   }
 }

@@ -1,10 +1,11 @@
-import { commands, Uri, env, workspace } from 'vscode';
 import path from 'path';
-import { RepoItem } from './repoItem';
-import { TreeItem } from '../treeViewBase';
+import { commands, env, Uri, workspace } from 'vscode';
+import { noLocalSearchPaths } from '../../commands/searchClonedRepos/searchClonedRepos';
 import { Repository } from '../../store/repository';
 import { User } from '../../store/user';
-import { noLocalSearchPaths } from '../../commands/searchClonedRepos/searchClonedRepos';
+import { TreeItem } from '../treeViewBase';
+import { RepoItem } from './repoItem';
+
 
 
 export function activateClonedRepos(): void {
@@ -32,7 +33,7 @@ export function activateClonedRepos(): void {
 }
 
 function parseChildren(clonedRepos: Repository[], userLogin: string): TreeItem | TreeItem[] {
-  return clonedRepos.map(repo => new RepoItem({
+  return clonedRepos.map((repo) => new RepoItem({
     repo,
     contextValue: 'githubRepoMgr.context.clonedRepo',
     command: {

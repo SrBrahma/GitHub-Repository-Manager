@@ -1,7 +1,9 @@
+import { getDirtiness } from '../commands/git/dirtiness/dirtiness';
 import { getOrgRepos } from '../commands/github/getOrgRepos';
 import { getUserRepos } from '../commands/github/getUserRepos';
-import { getDirtiness } from '../commands/git/dirtiness/dirtiness';
 import { LocalRepository, Repository } from './repository';
+
+
 
 export enum OrgStatus {
   notLoaded,
@@ -41,7 +43,7 @@ export class Organization {
 
   /** Callback is called for every local repo dirtiness checked. */
   async checkLocalReposDirtiness(callback: () => void): Promise<void> {
-    await Promise.all(this.clonedRepos.map(async localRepo => {
+    await Promise.all(this.clonedRepos.map(async (localRepo) => {
       localRepo.dirty = await getDirtiness(localRepo.localPath!);
       callback();
     }));
@@ -56,18 +58,18 @@ export class Organization {
 
       this.repositories = this.isUserOrg ? await getUserRepos() : await getOrgRepos(this.login);
       // TODO splice localRepos so other orgs won't loop over it? Good for users/orgs with hundreds/thousands of repos.
-      localRepos.forEach(localRepo => {
-        const repoMatch = this.repositories.find(repo => repo.url === localRepo.gitUrl);
+      localRepos.forEach((localRepo) => {
+        const repoMatch = this.repositories.find((repo) => repo.url === localRepo.gitUrl);
         if (repoMatch) {
           repoMatch.localPath = localRepo.dirPath;
           repoMatch.dirty = 'unknown';
         }
       });
-      this.clonedRepos = this.repositories.filter(repo => repo.localPath);
-      this.notClonedRepos = this.repositories.filter(repo => !repo.localPath);
+      this.clonedRepos = this.repositories.filter((repo) => repo.localPath);
+      this.notClonedRepos = this.repositories.filter((repo) => !repo.localPath);
 
       this.status = OrgStatus.loaded;
-    } catch (err) {
+    } catch (err: any) {
       this.status = OrgStatus.errorLoading;
       throw new Error(err);
     }

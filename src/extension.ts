@@ -1,9 +1,9 @@
 import vscode from 'vscode';
-import { activateTreeViewAccount } from './treeView/account/account';
-import { activateTreeViewRepositories } from './treeView/repositories/repositories';
 import { Storage } from './main/storage';
 import { User } from './store/user';
 import { Workspace } from './store/workspace';
+import { activateTreeViewAccount } from './treeView/account/account';
+import { activateTreeViewRepositories } from './treeView/repositories/repositories';
 
 
 // This method is called when your extension is activated

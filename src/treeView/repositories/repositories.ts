@@ -1,11 +1,12 @@
 import vscode from 'vscode';
-import { BaseTreeDataProvider, TreeItem } from '../treeViewBase';
-import { RepoItem } from './repoItem';
-import { getClonedTreeItem, activateClonedRepos } from './clonedRepos';
-import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
 import { uiCreateRepo } from '../../commandsUi/uiCreateRepo';
-import { RepositoriesState, User } from '../../store/user';
 import { uiPublish } from '../../commandsUi/uiPublish/uiPublish';
+import { RepositoriesState, User } from '../../store/user';
+import { BaseTreeDataProvider, TreeItem } from '../treeViewBase';
+import { activateClonedRepos, getClonedTreeItem } from './clonedRepos';
+import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
+import { RepoItem } from './repoItem';
+
 
 
 export function activateTreeViewRepositories(): void {

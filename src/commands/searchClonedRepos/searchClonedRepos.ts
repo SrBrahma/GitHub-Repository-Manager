@@ -1,8 +1,9 @@
-import fse from 'fs-extra';
 import path from 'path';
 import execa from 'execa';
+import fse from 'fs-extra';
 import GitUrlParse from 'git-url-parse';
 import { Configs } from '../../main/configs';
+
 
 
 interface DirWithGitUrl {
@@ -28,7 +29,7 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
         const gitUrl = GitUrlParse(url).toString('https').replace(/\.git$/, ''); // remove final .git
         dirsWithGitUrl.push({ gitUrl, dirPath });
       }
-    } catch (err) {
+    } catch (err: any) {
       // If error, it's because there isn't a remote. No need to manage it, may be left empty.
     }
   }
@@ -41,11 +42,11 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
 async function getDirsWithDotGit(currentPath: string, availableDepth: number, dirsToSkip: string[]): Promise<string[]> {
 
   const dirsName = (await fse.readdir(currentPath, { withFileTypes: true }))
-    .filter(file => file.isDirectory())
-    .map(dir => dir.name);
+    .filter((file) => file.isDirectory())
+    .map((dir) => dir.name);
 
   // If current dir is a repository
-  if (dirsName.find(dir => dir === '.git'))
+  if (dirsName.find((dir) => dir === '.git'))
     return [currentPath];
 
   // If this was the last depth and we didn't find a .git dir, return empty array;

@@ -1,6 +1,7 @@
 import vscode from 'vscode';
 
 
+
 type CommandWithoutTitle = Omit<vscode.Command, 'title'> & {
   title?: string;
 };

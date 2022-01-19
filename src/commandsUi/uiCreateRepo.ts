@@ -4,6 +4,8 @@ import { User } from '../store/user';
 import { myQuickPick } from '../vscode/myQuickPick';
 import { uiCloneTo } from './uiCloneTo';
 
+
+
 export type NewRepository = CreateGitHubRepositoryReturn;
 export type OnRepositoryCreation = (newRepository: NewRepository) => Promise<void>;
 
@@ -35,7 +37,7 @@ export async function uiCreateRepoCore(options: {
     } else { // Else, pick one!
       const userDescription = 'Your personal account';
       const pick = (await myQuickPick({
-        items: orgsUserCanCreateRepo.map(e => ({
+        items: orgsUserCanCreateRepo.map((e) => ({
           label: (e.login === User.login) ? e.login : e.name,
           description: (e.login === User.login) ? userDescription : e.login,
         })),
@@ -96,7 +98,7 @@ export async function uiCreateRepoCore(options: {
 
     await options.onRepositoryCreation(newRepository);
 
-  } catch (err) {
+  } catch (err: any) {
     const errMessage = err.message as string;
     let message = errMessage;
     // The error message from octokit is a little strange. Is a JSON but has a string before it.
@@ -113,7 +115,7 @@ export async function uiCreateRepo(): Promise<void> {
   await uiCreateRepoCore({
     repositoryNameInitialValue: '',
     repositoryNamePrompt: 'Enter the new repository name',
-    onRepositoryCreation: async newRepository => {
+    onRepositoryCreation: async (newRepository) => {
       await Promise.all([
         User.reloadRepos(),
         (async () => {
@@ -121,10 +123,10 @@ export async function uiCreateRepo(): Promise<void> {
           const answer = await vscode.window.showInformationMessage(`Repository '${newRepository.name}' created successfully!`, ...actions);
 
           if (answer === actions[0]) {
-            if (!newRepository.owner?.login) // certainly wont happen
+            if (!newRepository.owner.login) // certainly wont happen
               throw new Error(`newRepository.owner?.login doesn't exist!`);
             await uiCloneTo({
-              ownerLogin: newRepository.owner?.login,
+              ownerLogin: newRepository.owner.login,
               name: newRepository.name,
               reloadRepos: true,
             });

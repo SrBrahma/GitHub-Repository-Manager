@@ -1,6 +1,8 @@
 import vscode, { ThemeIcon } from 'vscode';
-import { TreeItem, BaseTreeDataProvider } from '../treeViewBase';
 import { User, UserState } from '../../store/user';
+import { BaseTreeDataProvider, TreeItem } from '../treeViewBase';
+
+
 
 export let accountTreeDataProvider: TreeDataProvider;
 

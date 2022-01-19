@@ -1,6 +1,7 @@
 import { Dirtiness } from '../commands/git/dirtiness/dirtiness';
 
 
+
 export type Repository = {
   name: string;
   description: string | null;

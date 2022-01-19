@@ -1,10 +1,11 @@
-import vscode from 'vscode';
 import { Octokit } from '@octokit/rest';
-import { Organization } from './organization';
-import { LocalRepository, Repository } from './repository';
+import vscode from 'vscode';
 import { getUser } from '../commands/github/getUserData';
 import { getLocalReposPathAndUrl } from '../commands/searchClonedRepos/searchClonedRepos';
 import { myExtensionSetContext } from '../main/utils';
+import { Organization } from './organization';
+import { LocalRepository, Repository } from './repository';
+
 
 
 const AUTH_PROVIDER_ID = 'github';
@@ -58,7 +59,7 @@ class UserClass {
 
   /** Returns the orgs that the user can create new repositories.
    * As it uses this.organizations, it includes the user Organization. */
-  get organizationUserCanCreateRepositories() { return this.organizations.filter(o => o.userCanCreateRepositories === true);}
+  get organizationUserCanCreateRepositories() { return this.organizations.filter((o) => o.userCanCreateRepositories === true);}
 
   /** The ones listening for changes. */
   private subscribers: ['account' | 'repos', () => void][] = [];
@@ -83,16 +84,16 @@ class UserClass {
     this.login = undefined;
     this.profileUri = undefined;
     this.organizations = [];
-    if (opts?.resetUserStatus)
+    if (opts.resetUserStatus)
       this.setUserState(UserState.notLogged);
-    if (opts?.resetOctokit) {
+    if (opts.resetOctokit) {
       octokit = undefined;
       this.token = undefined;
     }
   }
   private resetRepos(opts: {resetRepositoriesStatus: boolean}) {
     this.clonedRepos = [];
-    if (opts?.resetRepositoriesStatus)
+    if (opts.resetRepositoriesStatus)
       this.setRepositoriesState(RepositoriesState.none);
   }
 
@@ -109,7 +110,7 @@ class UserClass {
         const token = (await vscode.authentication.getSession(AUTH_PROVIDER_ID, SCOPES, { createIfNone: true }))
           .accessToken;
         await this.initOctokit(token);
-      } catch (err) {
+      } catch (err: any) {
         void vscode.window.showErrorMessage(err.message);
       }
     });
@@ -123,7 +124,7 @@ class UserClass {
         await this.initOctokit(token);
       else
         this.setUserState(UserState.notLogged);
-    } catch (err) {
+    } catch (err: any) {
       void vscode.window.showErrorMessage(err.message);
     }
   }
@@ -134,7 +135,7 @@ class UserClass {
     this.token = token;
 
     /** reloadRepos() will change the userState on its end. */
-    await User.reloadRepos().catch (err => {
+    await User.reloadRepos().catch ((err) => {
       void vscode.window.showErrorMessage(err.message);
       console.error('Octokit init error: ', err);
       octokit = undefined;
@@ -159,7 +160,7 @@ class UserClass {
         userCanCreateRepositories: org.viewerCanCreateRepositories,
       })));
       this.setUserState(UserState.logged);
-    } catch (err) {
+    } catch (err: any) {
       void vscode.window.showErrorMessage(err.message);
       this.setUserState(UserState.errorLogging);
       throw new Error(err);
@@ -173,9 +174,9 @@ class UserClass {
   }): Promise<void> {
 
     this.setRepositoriesState(RepositoriesState.fetching);
-    await Promise.all(this.organizations.map(org => org.loadOrgRepos({ localRepos })));
+    await Promise.all(this.organizations.map((org) => org.loadOrgRepos({ localRepos })));
 
-    this.clonedRepos = this.organizations.map(org => org.clonedRepos).flat();
+    this.clonedRepos = this.organizations.map((org) => org.clonedRepos).flat();
 
     let timeout: NodeJS.Timeout | undefined;
     let localReposDirtyCheckedCount = 0;
@@ -192,7 +193,7 @@ class UserClass {
 
     if (this.clonedRepos.length) {
       this.setRepositoriesState(RepositoriesState.partial); // To show unknown dirtiness or at least the not-cloned repos, if none is cloned.
-      this.organizations.forEach(org => org.checkLocalReposDirtiness(callback));
+      this.organizations.forEach((org) => org.checkLocalReposDirtiness(callback));
     } else
       this.setRepositoriesState(RepositoriesState.fullyLoaded);
 

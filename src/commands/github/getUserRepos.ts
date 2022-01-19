@@ -1,9 +1,9 @@
 // GitHub GraphQL API Explorer: https://docs.github.com/en/graphql/overview/explorer
 
-import { extractRepositoryFromData, repoInfosQuery } from './getOrgRepos';
-import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 import type { Repository } from '../../store/repository';
 import { octokit } from '../../store/user';
+import { getOctokitErrorMessage } from './getOctokitErrorMessage';
+import { extractRepositoryFromData, repoInfosQuery } from './getOrgRepos';
 
 
 
@@ -31,7 +31,7 @@ export async function getUserRepos(): Promise<Repository[]> {
     } while (hasNextPage);
 
     return repos;
-  } catch (err) { // Octokit has a patter for errors, which we display properly at octokitErrorDisplay().
+  } catch (err: any) { // Octokit has a patter for errors, which we display properly at octokitErrorDisplay().
     throw new Error(getOctokitErrorMessage(err));
   }
 }

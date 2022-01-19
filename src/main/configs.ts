@@ -1,5 +1,5 @@
-import { workspace } from 'vscode';
 import os from 'os';
+import { workspace } from 'vscode';
 
 
 // Outside of class to call without `this.`.

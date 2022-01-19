@@ -1,9 +1,9 @@
-import vscode, { ThemeColor } from 'vscode';
 import os from 'os';
-import { TreeItem, TreeItemConstructor } from '../treeViewBase';
+import vscode, { ThemeColor } from 'vscode';
+import { Dirtiness } from '../../commands/git/dirtiness/dirtiness';
 import { Configs } from '../../main/configs';
 import { Repository } from '../../store/repository';
-import { Dirtiness } from '../../commands/git/dirtiness/dirtiness';
+import { TreeItem, TreeItemConstructor } from '../treeViewBase';
 
 // https://code.visualstudio.com/api/references/icons-in-labels
 
@@ -53,6 +53,7 @@ function getTooltip(repo: Repository) {
 + `\r\n**Updated at** | &nbsp; | ${repo.updatedAt.toLocaleString()}`
 + `\r\n**Created at** | &nbsp; | ${repo.createdAt.toLocaleString()}`
 + (repo.localPath ? `\r\n**Local path** | &nbsp; | ${localPath}` : '')
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 + ((repo.dirty && repo.dirty !== 'clean') ? `\r\n**Dirty** | &nbsp; | ${dirtyToMessage[repo.dirty ?? 'clean']}` : '');
 
   return new vscode.MarkdownString(string);

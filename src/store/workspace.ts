@@ -3,6 +3,7 @@ import { gitHasRemote } from '../commands/git/gitHasRemote/gitHasRemote';
 import { myExtensionSetContext } from '../main/utils';
 
 
+
 export type WorkspaceFolderState = 'noGit' | 'gitWithoutRemote' | 'gitWithRemote';
 export type PublishableFolderState = Exclude<WorkspaceFolderState, 'gitWithRemote'>;
 type WorkspaceFolderSpecial = {
@@ -16,7 +17,7 @@ async function checkState(path: string): Promise<WorkspaceFolderState> {
   try {
     const hasRemote = await gitHasRemote(path);
     return hasRemote ? 'gitWithRemote' : 'gitWithoutRemote';
-  } catch (err) { // gitHasRemote throws error if path has no git.
+  } catch (err: any) { // gitHasRemote throws error if path has no git.
     return 'noGit';
   }
 }
@@ -29,7 +30,7 @@ class WorkspaceClass {
 
   /** To be used by Publish UI command */
   public get foldersAndStates(): {state: WorkspaceFolderState; path: string; name: string}[] {
-    return this.workspaceFolderSpecial.map(w => ({
+    return this.workspaceFolderSpecial.map((w) => ({
       path: w.workspaceFolder.uri.fsPath,
       state: w.state,
       name: w.workspaceFolder.name,
@@ -37,7 +38,7 @@ class WorkspaceClass {
   }
 
   public get publishableFoldersAndStates(): {state: PublishableFolderState; path: string; name: string}[] {
-    return this.foldersAndStates.filter(w => w.state === 'gitWithoutRemote' || w.state === 'noGit') as any; // We are sure.
+    return this.foldersAndStates.filter((w) => w.state === 'gitWithoutRemote' || w.state === 'noGit') as any; // We are sure.
   }
 
   activate() {
@@ -50,21 +51,21 @@ class WorkspaceClass {
   }
 
   deactivate() {
-    this.workspaceFolderSpecial.forEach(w => w.disposable());
+    this.workspaceFolderSpecial.forEach((w) => w.disposable());
     this.workspaceFolderSpecial = [];
   }
 
   private updated() {
-    const containsNoGit = this.workspaceFolderSpecial.find(w => w.state === 'noGit');
-    const containsGitWithoutRemote = this.workspaceFolderSpecial.find(w => w.state === 'gitWithoutRemote');
+    const containsNoGit = this.workspaceFolderSpecial.find((w) => w.state === 'noGit');
+    const containsGitWithoutRemote = this.workspaceFolderSpecial.find((w) => w.state === 'gitWithoutRemote');
     void myExtensionSetContext('canPublish', containsNoGit || containsGitWithoutRemote);
   }
 
   private async resetGitWatcher() {
-    this.workspaceFolderSpecial.forEach(w => w.disposable()); // dispose all: ;
+    this.workspaceFolderSpecial.forEach((w) => w.disposable()); // dispose all: ;
     this.workspaceFolderSpecial = []; // Reset
     const workspaceFolders = vscode.workspace.workspaceFolders ?? [];
-    this.workspaceFolderSpecial = await Promise.all(workspaceFolders?.map(async workspaceFolder => {
+    this.workspaceFolderSpecial = await Promise.all(workspaceFolders.map(async (workspaceFolder) => {
       const watcherDir = vscode.workspace.createFileSystemWatcher(`${workspaceFolder.uri.path}/.git`); // just watching config wouldn't catch ./git deletion.
       const watcherFile = vscode.workspace.createFileSystemWatcher(`${workspaceFolder.uri.path}/.git/config`);
       const newSpecial: WorkspaceFolderSpecial = {

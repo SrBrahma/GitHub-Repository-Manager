@@ -3,6 +3,8 @@
 import { octokit } from '../../store/user';
 import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 
+
+
 type GetUser = {
   login: string;
   profileUri: string;
@@ -38,7 +40,7 @@ export async function getUser(): Promise<GetUser> {
       profileUri: userData.url,
       organizations: userData.organizations.edges.map((org: any) => org.node),
     };
-  } catch (err) { // Octokit has a pattern for errors, which we display properly at octokitErrorDisplay().
+  } catch (err: any) { // Octokit has a pattern for errors, which we display properly at octokitErrorDisplay().
     // Handle insufficient scope by logging user out
     if (err.errors?.find((error: any) => error.type === 'INSUFFICIENT_SCOPES')) {
       console.error(err);

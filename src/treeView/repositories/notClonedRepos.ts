@@ -1,9 +1,10 @@
-import { TreeItem } from '../treeViewBase';
-import { RepoItem } from './repoItem';
 import vscode, { commands } from 'vscode';
 import { uiCloneTo } from '../../commandsUi/uiCloneTo';
 import { OrgStatus } from '../../store/organization';
 import { User } from '../../store/user';
+import { TreeItem } from '../treeViewBase';
+import { RepoItem } from './repoItem';
+
 
 
 export function activateNotClonedRepos(): void {
@@ -28,11 +29,11 @@ function getEmptyOrgLabel(status: OrgStatus): string {
 }
 
 export function getNotClonedTreeItem(): TreeItem {
-  const orgs: TreeItem[] = User.organizations.map(org => {
+  const orgs: TreeItem[] = User.organizations.map((org) => {
     return new TreeItem({
       label: `${org.name}`,
       children: (org.repositories.length
-        ? org.notClonedRepos.map(repo => new RepoItem({
+        ? org.notClonedRepos.map((repo) => new RepoItem({
           repo,
           contextValue: 'githubRepoMgr.context.notClonedRepo',
           command: {

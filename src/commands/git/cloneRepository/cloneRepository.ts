@@ -24,8 +24,8 @@
 //
 // After those two, the pulled repo don't have a remote (github link). So we add it.
 
-import execa from 'execa';
 import path from 'path';
+import execa from 'execa';
 import fse from 'fs-extra';
 import { getRemoteHead as getRemoteHeadBranch } from '../getRemoteHeadBranch/getRemoteHeadBranch';
 import { getRepositoryGitUrl } from '../getRepositoryGitUrl';
@@ -56,7 +56,7 @@ export async function cloneRepo(options: {
     const repositoryIsEmpty = !headBranchRaw;
 
     /** Defaults to main if there is no HEAD */
-    const headBranch: string = repositoryIsEmpty ? 'main' : headBranchRaw!;
+    const headBranch: string = repositoryIsEmpty ? 'main' : headBranchRaw;
 
     /** https://stackoverflow.com/a/42871621/10247962 */
     await execa('git', ['checkout', '-b', headBranch], { cwd: repositoryPath });
@@ -78,7 +78,7 @@ export async function cloneRepo(options: {
 \tremote = origin
 \tmerge = refs/heads/${headBranch}`);
 
-  } catch (err) {
+  } catch (err: any) {
     // Removes the repo dir if error. We already checked before the try if the path existed,
     // so we are only removing what we possibly created.
     await fse.remove(repositoryPath);

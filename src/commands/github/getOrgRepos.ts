@@ -4,6 +4,8 @@ import { Repository } from '../../store/repository';
 import { octokit } from '../../store/user';
 import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 
+
+
 export function extractRepositoryFromData(data: any): Repository {
   return {
     name: data.name,
@@ -78,7 +80,7 @@ export async function getOrgRepos(login: string): Promise<Repository[]> {
     } while (hasNextPage);
 
     return repos;
-  } catch (err) { // Octokit has a patter for errors, which we display properly at octokitErrorDisplay().
+  } catch (err: any) { // Octokit has a patter for errors, which we display properly at octokitErrorDisplay().
     throw new Error(getOctokitErrorMessage(err));
   }
 }

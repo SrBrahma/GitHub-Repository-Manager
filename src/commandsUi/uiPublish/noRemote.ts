@@ -6,6 +6,7 @@ import { User } from '../../store/user';
 import { myQuickPick } from '../../vscode/myQuickPick';
 import { NewRepository } from '../uiCreateRepo';
 
+
 /** If returned undefined, do exit. */
 export async function preNoRemote({ cwd }: {cwd: string}): Promise<void> {
   if (await gitHasRemote(cwd))
@@ -59,7 +60,7 @@ export async function posNoRemote({ cwd, newRepository, headBranch }: {
 
   // Push local to GitHub. Note that user may have a dirty local, but we will leave the next commit to him.
   const tokenizedRepositoryUrl = getRepositoryGitUrl({
-    owner: newRepository.owner!.login,
+    owner: newRepository.owner.login,
     repositoryName: newRepository.name,
     token: User.token!,
   });

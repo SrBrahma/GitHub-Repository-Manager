@@ -1,6 +1,7 @@
 import vscode from 'vscode';
 
 
+
 type SelectedItem = {label: string; detail: string | undefined; description: string | undefined};
 
 
@@ -22,9 +23,9 @@ export async function myQuickPick(options: {
 
   quickPick.show();
 
-  const selection = await new Promise<SelectedItem | undefined>(resolve => {
+  const selection = await new Promise<SelectedItem | undefined>((resolve) => {
     quickPick.onDidHide(() => {resolve(undefined);});
-    quickPick.onDidChangeSelection(e => {
+    quickPick.onDidChangeSelection((e) => {
       const innerSelection = e[0];
       if (!innerSelection)
         return resolve(undefined); // won't happen but just type checking

@@ -1,8 +1,9 @@
+import path from 'path';
 import execa from 'execa';
 import fse from 'fs-extra';
-import path from 'path';
 import { getRepositoryGitUrl } from '../getRepositoryGitUrl';
 import { pathHasGit } from '../pathHasGit/pathHasGit';
+
 
 
 type Options = {
@@ -62,7 +63,7 @@ export async function initGit(projectPath: string, options?: Options): Promise<v
         await execa('git', ['push', tokenizedRepositoryUrl], { cwd: projectPath });
       }
     }
-  } catch (err) {
+  } catch (err: any) {
     if (cleanOnError)
       await fse.remove(path.join(projectPath, '.git')); // Remove created .git on error
     throw err;
