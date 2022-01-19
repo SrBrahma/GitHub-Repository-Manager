@@ -24,12 +24,11 @@
     "lint": "eslint --fix \"src/**\"",
     "vscode:prepublish": "webpack --config webpack/webpack.config.prod.js",
     "publish": "vsce publish",
-    "deploy": "npm run publish",
     "webpack": "webpack --config webpack/webpack.config.dev.js",
     "webpack-dev": "webpack --config webpack/webpack.config.dev.js --watch",
     "test-compile": "tsc -p ./",
     "watch": "npm run webpack-dev",
-    "start": "npm run webpack-dev"
+    "start": "npm run watch"
   },
   "categories": [
     "Other",

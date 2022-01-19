@@ -1,5 +1,9 @@
 # Change Log : GitHub Repository Manager
 
+## 1.3.1 - 2022-01-19
+
+- Trying to fix #33 by setting specific dependencies version. Strangely, this error doesn't happen on dev.
+
 ## 1.3.0 - 2021/08/03
 
 - Added support to create repositories for organizations the user has permission to.
