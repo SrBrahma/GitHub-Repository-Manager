@@ -29,7 +29,7 @@ export async function uiCreateRepoCore(options: {
     const orgsUserCanCreateRepo = User.organizationUserCanCreateRepositories;
 
     if (orgsUserCanCreateRepo.length === 0)
-      return; // Just don't do nothing. The user just haven't loaded yet!
+      return; // Just don't do nothing. The user just hasn't loaded yet!
       // throw new Error('There is nowhere to the user to publish!');
 
     else if (orgsUserCanCreateRepo.length === 1) {
