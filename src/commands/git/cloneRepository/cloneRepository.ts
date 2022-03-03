@@ -84,7 +84,7 @@ export async function cloneRepo(options: {
     await fse.remove(repositoryPath);
 
     /** Error message with user token censored, if included */
-    const censoredMsg = (err.message as string).replace(token, '[tokenHidden]');
+    const censoredMsg = (err.message as string).replace(new RegExp(token, 'g'), '[tokenHidden]');
     throw new Error(censoredMsg);
   }
 }

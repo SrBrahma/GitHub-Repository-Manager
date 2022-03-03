@@ -1,5 +1,9 @@
 # Change Log : GitHub Repository Manager
 
+## 1.3.3 - 2022-03-03
+* Fixed the Remote HEAD obtaining for japanese Git - [#35](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/35). Thanks, [@YuuJinS](https://github.com/YuuJinS)!
+* Fixed `tokenHidden` replace not being applied on all tokens in error messages.
+
 ## 1.3.2 - 2022-01-19
 
 - Possible solution. Seems it was a git language output issue on `git remote show ...`. But no idea on why it isn't happenning on Dev.

@@ -18,7 +18,7 @@ export async function getRemoteHead({ remoteUrl, repositoryPath }: {
     { cwd: repositoryPath })
   ).stdout;
     /** (unknown) if no branch, = new empty repository. Certainly won't be undefined. */
-  const headFromRemoteShow: '(unknown)' | string | undefined = gitRemoteShowResult.match(/(?<=HEAD.*:).+/)?.[0]!.trim();
+  const headFromRemoteShow: '(unknown)' | string | undefined = gitRemoteShowResult.match(/(?<=HEAD.*[:：]).+/)?.[0]!.trim();
 
   if (!headFromRemoteShow)
     throw new Error(`'git remote show <remoteUrl>' hasn't returned a HEAD branch! Report this error to the extension author! stdout: "${gitRemoteShowResult}"`);
