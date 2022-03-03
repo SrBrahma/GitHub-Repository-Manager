@@ -1,7 +1,7 @@
 import path from 'path';
 import { commands, env, Uri, workspace } from 'vscode';
 import { noLocalSearchPaths } from '../../commands/searchClonedRepos/searchClonedRepos';
-import { Repository } from '../../store/repository';
+import type { Repository } from '../../store/repository';
 import { User } from '../../store/user';
 import { TreeItem } from '../treeViewBase';
 import { RepoItem } from './repoItem';

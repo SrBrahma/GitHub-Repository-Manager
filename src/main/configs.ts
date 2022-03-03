@@ -12,9 +12,9 @@ function getConfig<T>(section: string, defaultVal: T): T {
 
 class ConfigsClass {
   get alwaysCloneToDefaultDirectory() { return getConfig<boolean>('alwaysCloneToDefaultDirectory', false); }
-  get defaultCloneDirectoryMaximumDepth() {return getConfig<number>('defaultCloneDirectoryMaximumDepth', 3);}
-  get coloredIcons() { return getConfig<boolean>('coloredIcons', true);}
-  get directoriesToIgnore() { return getConfig<string[]>('directoriesToIgnore', ['.vscode', '.git', 'node_modules']);}
+  get defaultCloneDirectoryMaximumDepth() { return getConfig<number>('defaultCloneDirectoryMaximumDepth', 3); }
+  get coloredIcons() { return getConfig<boolean>('coloredIcons', true); }
+  get directoriesToIgnore() { return getConfig<string[]>('directoriesToIgnore', ['.vscode', '.git', 'node_modules']); }
 
   get gitDefaultCloneDir(): string | undefined {
     let path = workspace.getConfiguration('git').get<string>('defaultCloneDirectory');

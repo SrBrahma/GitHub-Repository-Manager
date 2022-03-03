@@ -1,6 +1,6 @@
 // GitHub GraphQL API Explorer: https://docs.github.com/en/graphql/overview/explorer
 
-import { Repository } from '../../store/repository';
+import type { Repository } from '../../store/repository';
 import { octokit } from '../../store/user';
 import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 

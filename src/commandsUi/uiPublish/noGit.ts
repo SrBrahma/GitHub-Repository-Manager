@@ -1,7 +1,7 @@
 import { initGit } from '../../commands/git/initGit/initGit';
 import { pathHasGit } from '../../commands/git/pathHasGit/pathHasGit';
 import { User } from '../../store/user';
-import { NewRepository } from '../uiCreateRepo';
+import type { NewRepository } from '../uiCreateRepo';
 
 
 

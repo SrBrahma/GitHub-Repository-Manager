@@ -3,7 +3,8 @@ import vscode from 'vscode';
 import { User } from '../../store/user';
 import { Workspace } from '../../store/workspace';
 import { myQuickPick } from '../../vscode/myQuickPick';
-import { OnRepositoryCreation, uiCreateRepoCore } from '../uiCreateRepo';
+import type { OnRepositoryCreation } from '../uiCreateRepo';
+import { uiCreateRepoCore } from '../uiCreateRepo';
 import { posNoGit, preNoGit } from './noGit';
 import { posNoRemote, preNoRemote, preRepositoryCreateNoRemote as preRepositoryCreationNoRemote } from './noRemote';
 

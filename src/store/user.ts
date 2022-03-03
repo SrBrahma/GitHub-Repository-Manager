@@ -4,7 +4,7 @@ import { getUser } from '../commands/github/getUserData';
 import { getLocalReposPathAndUrl } from '../commands/searchClonedRepos/searchClonedRepos';
 import { myExtensionSetContext } from '../main/utils';
 import { Organization } from './organization';
-import { LocalRepository, Repository } from './repository';
+import type { LocalRepository, Repository } from './repository';
 
 
 
@@ -59,12 +59,12 @@ class UserClass {
 
   /** Returns the orgs that the user can create new repositories.
    * As it uses this.organizations, it includes the user Organization. */
-  get organizationUserCanCreateRepositories() { return this.organizations.filter((o) => o.userCanCreateRepositories === true);}
+  get organizationUserCanCreateRepositories() { return this.organizations.filter((o) => o.userCanCreateRepositories === true); }
 
   /** The ones listening for changes. */
   private subscribers: ['account' | 'repos', () => void][] = [];
-  public subscribe(changed: 'account' | 'repos', callback: () => void) { this.subscribers.push([changed, callback]);}
-  private informSubscribers(changed: 'account' | 'repos') { this.subscribers.forEach(([c, cb]) => (changed === c) && cb());}
+  public subscribe(changed: 'account' | 'repos', callback: () => void) { this.subscribers.push([changed, callback]); }
+  private informSubscribers(changed: 'account' | 'repos') { this.subscribers.forEach(([c, cb]) => (changed === c) && cb()); }
 
   /** Will also informSubscribers('account') */
   setUserState(state: UserState) {

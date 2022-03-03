@@ -1,4 +1,4 @@
-import vscode from 'vscode';
+import type vscode from 'vscode';
 
 
 

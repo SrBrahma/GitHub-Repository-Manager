@@ -5,7 +5,7 @@ import { RepositoriesState, User } from '../../store/user';
 import { BaseTreeDataProvider, TreeItem } from '../treeViewBase';
 import { activateClonedRepos, getClonedTreeItem } from './clonedRepos';
 import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
-import { RepoItem } from './repoItem';
+import type { RepoItem } from './repoItem';
 
 
 

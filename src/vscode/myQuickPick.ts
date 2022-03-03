@@ -24,7 +24,7 @@ export async function myQuickPick(options: {
   quickPick.show();
 
   const selection = await new Promise<SelectedItem | undefined>((resolve) => {
-    quickPick.onDidHide(() => {resolve(undefined);});
+    quickPick.onDidHide(() => { resolve(undefined); });
     quickPick.onDidChangeSelection((e) => {
       const innerSelection = e[0];
       if (!innerSelection)

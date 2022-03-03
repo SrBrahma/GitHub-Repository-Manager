@@ -4,7 +4,7 @@ import { getRepositoryGitUrl } from '../../commands/git/getRepositoryGitUrl';
 import { gitHasRemote } from '../../commands/git/gitHasRemote/gitHasRemote';
 import { User } from '../../store/user';
 import { myQuickPick } from '../../vscode/myQuickPick';
-import { NewRepository } from '../uiCreateRepo';
+import type { NewRepository } from '../uiCreateRepo';
 
 
 /** If returned undefined, do exit. */

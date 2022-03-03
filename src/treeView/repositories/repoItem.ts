@@ -1,9 +1,10 @@
 import os from 'os';
 import vscode, { ThemeColor } from 'vscode';
-import { Dirtiness } from '../../commands/git/dirtiness/dirtiness';
+import type { Dirtiness } from '../../commands/git/dirtiness/dirtiness';
 import { Configs } from '../../main/configs';
-import { Repository } from '../../store/repository';
-import { TreeItem, TreeItemConstructor } from '../treeViewBase';
+import type { Repository } from '../../store/repository';
+import type { TreeItemConstructor } from '../treeViewBase';
+import { TreeItem } from '../treeViewBase';
 
 // https://code.visualstudio.com/api/references/icons-in-labels
 

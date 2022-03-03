@@ -1,7 +1,7 @@
 import { getDirtiness } from '../commands/git/dirtiness/dirtiness';
 import { getOrgRepos } from '../commands/github/getOrgRepos';
 import { getUserRepos } from '../commands/github/getUserRepos';
-import { LocalRepository, Repository } from './repository';
+import type { LocalRepository, Repository } from './repository';
 
 
 

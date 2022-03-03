@@ -1,4 +1,4 @@
-import vscode from 'vscode';
+import type vscode from 'vscode';
 import { Storage } from './main/storage';
 import { User } from './store/user';
 import { Workspace } from './store/workspace';

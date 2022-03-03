@@ -1,5 +1,6 @@
 import vscode from 'vscode';
-import { createGitHubRepository, CreateGitHubRepositoryReturn } from '../commands/github/createGitHubRepository';
+import type { CreateGitHubRepositoryReturn } from '../commands/github/createGitHubRepository';
+import { createGitHubRepository } from '../commands/github/createGitHubRepository';
 import { User } from '../store/user';
 import { myQuickPick } from '../vscode/myQuickPick';
 import { uiCloneTo } from './uiCloneTo';

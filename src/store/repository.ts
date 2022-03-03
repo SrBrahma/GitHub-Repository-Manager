@@ -1,4 +1,4 @@
-import { Dirtiness } from '../commands/git/dirtiness/dirtiness';
+import type { Dirtiness } from '../commands/git/dirtiness/dirtiness';
 
 
 
