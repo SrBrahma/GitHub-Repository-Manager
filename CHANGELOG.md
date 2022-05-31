@@ -1,5 +1,9 @@
 # Change Log : GitHub Repository Manager
 
+
+## 1.4.0 - 2022-05-31
+* Added button in the TreeView to set the "git.defaultCloneDirectory"! [#40](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/40) [#29](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/29)
+
 ## 1.3.3 - 2022-03-03
 * Fixed the Remote HEAD obtaining for japanese Git - [#35](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/35). Thanks, [@YuuJinS](https://github.com/YuuJinS)!
 * Fixed `tokenHidden` replace not being applied on all tokens in error messages.

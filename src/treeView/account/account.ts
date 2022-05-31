@@ -1,4 +1,5 @@
 import vscode, { ThemeIcon } from 'vscode';
+import { noLocalSearchPaths } from '../../commands/searchClonedRepos/searchClonedRepos';
 import { User, UserState } from '../../store/user';
 import { BaseTreeDataProvider, TreeItem } from '../treeViewBase';
 
@@ -66,6 +67,13 @@ export function getLoggedTreeData(): TreeItem[] {
           command: 'githubRepoMgr.commands.user.openProfilePage',
           iconPath: new ThemeIcon('github'),
         }),
+        ...(noLocalSearchPaths
+          ? []
+          : [new TreeItem({
+            label: 'Change "git.defaultCloneDirectory"',
+            command: 'githubRepoMgr.commands.pick.defaultCloneDirectory',
+            iconPath: new ThemeIcon('file-directory'),
+          })]),
         // new TreeItem({
         //   label: ' Open extension Readme',
         //   command: 'githubRepoMgr.commands.user.openReadme',

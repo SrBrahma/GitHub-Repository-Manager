@@ -45,9 +45,9 @@ To logout in this new VS Code system, remove it from the Trusted Extensions. In 
 
 <h2><b> Cloned Repositories Search </b></h2>
 
-To make your GitHub cloned repositories show up in the **Cloned** tree view, you will need to set the **`"git.defaultCloneDirectory"`** on your VSCode `settings.json` file to an absolute path where your cloned repositories are located (may be deep). On Linux you may use **"\~"** to point to your home directory. On Windows, you must use the `"X:\\folderA\\folderB"` pattern.
+To make your GitHub cloned repositories show up in the **Cloned** tree view, you will need to set the **`"git.defaultCloneDirectory"`** in your VSCode `settings.json` file to an absolute path where your cloned repositories are located (the may be deeply located there).
 
-I store my repos under **"\~/Dev"**, so that's what I use as my **"git.defaultCloneDirectory"** value.
+**1.4.0** - there is now a button to set this config interactively!
 
 
 <h2><b> Creating a repository </b></h2>

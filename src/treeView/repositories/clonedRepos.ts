@@ -1,6 +1,7 @@
 import path from 'path';
-import { commands, env, Uri, workspace } from 'vscode';
+import { commands, env, ThemeIcon, Uri, window, workspace } from 'vscode';
 import { noLocalSearchPaths } from '../../commands/searchClonedRepos/searchClonedRepos';
+import { Configs } from '../../main/configs';
 import type { Repository } from '../../store/repository';
 import { User } from '../../store/user';
 import { TreeItem } from '../treeViewBase';
@@ -29,6 +30,24 @@ export function activateClonedRepos(): void {
   // Copy local path to clipboard
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.copyPath', ({ repo }: RepoItem) => {
     repo.localPath && void env.clipboard.writeText(repo.localPath);
+  });
+
+  // Copy local path to clipboard
+  commands.registerCommand('githubRepoMgr.commands.pick.defaultCloneDirectory', async () => {
+    const thenable = await window.showOpenDialog({
+      defaultUri: Uri.file(Configs.defaultCloneToDir),
+      openLabel: `Select as default directory`,
+      canSelectFiles: false,
+      canSelectFolders: true,
+      canSelectMany: false,
+    });
+
+    if (!thenable) // Cancel if quitted dialog
+      return;
+
+    // 3rd param as true to change global setting. Else wouldn't work.
+    await workspace.getConfiguration('git').update('defaultCloneDirectory', thenable[0]!.fsPath, true);
+    await User.reloadRepos();
   });
 }
 
@@ -73,7 +92,11 @@ export function getClonedTreeItem(): TreeItem {
   return new TreeItem({
     label: 'Cloned', // I tried a +(${User.clonedRepos.length}), but it made me a little anxious. Better not having it.
     children: noLocalSearchPaths
-      ? new TreeItem({ label: '"git.defaultCloneDirectory" is not set! Read the extension README!' })
+      ? new TreeItem({
+        label: 'Press here to select "git.defaultCloneDirectory"',
+        command: 'githubRepoMgr.commands.pick.defaultCloneDirectory',
+        iconPath: new ThemeIcon('file-directory'),
+      })
       : parseChildren(sortedClonedRepos, User.login),
   });
 }

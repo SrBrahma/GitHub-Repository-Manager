@@ -28,7 +28,7 @@ export class TreeItem extends vscode.TreeItem {
       this.children = Array.isArray(children) ? children : [children];
 
     if (typeof command === 'string')
-      this.command = { command: command, title: '' };
+      this.command = { command, title: '' };
 
     else if (command) // If command was given (not undefined)
       this.command = { ...command, title: command.title || '' }; // Just a way to omit writing empty titles.
