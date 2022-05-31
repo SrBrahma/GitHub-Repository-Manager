@@ -70,7 +70,7 @@ export function getLoggedTreeData(): TreeItem[] {
         ...(noLocalSearchPaths
           ? []
           : [new TreeItem({
-            label: 'Change "git.defaultCloneDirectory"',
+            label: ' Change "git.defaultCloneDirectory"',
             command: 'githubRepoMgr.commands.pick.defaultCloneDirectory',
             iconPath: new ThemeIcon('file-directory'),
           })]),

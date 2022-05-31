@@ -93,7 +93,7 @@ export function getClonedTreeItem(): TreeItem {
     label: 'Cloned', // I tried a +(${User.clonedRepos.length}), but it made me a little anxious. Better not having it.
     children: noLocalSearchPaths
       ? new TreeItem({
-        label: 'Press here to select "git.defaultCloneDirectory"',
+        label: ' Press here to select "git.defaultCloneDirectory"',
         command: 'githubRepoMgr.commands.pick.defaultCloneDirectory',
         iconPath: new ThemeIcon('file-directory'),
       })
