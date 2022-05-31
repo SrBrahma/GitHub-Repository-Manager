@@ -49,6 +49,7 @@ To make your GitHub cloned repositories show up in the **Cloned** tree view, you
 
 **1.4.0** - there is now a button to set this config interactively!
 
+![](https://user-images.githubusercontent.com/28177550/171236229-86a8fbd4-d21d-4b96-938a-ff0f09a59948.png)
 
 <h2><b> Creating a repository </b></h2>
 
