@@ -87,7 +87,7 @@ Colors the repositories icons.
 
 ![](images/readme/config/coloredIconsTrue.png) ![](images/readme/config/coloredIconsFalse.png)
 
-_Those `*` means that the repository is **dirty**! It means that it has local changes that aren't yet commited!
+_Those `*` means that the repository is **dirty**! It means that it has local changes that aren't yet commited!_
 
 
 - ## Default Clone Directory Maximum Depth
