@@ -1,7 +1,6 @@
 import os from 'os';
 import vscode, { ThemeColor } from 'vscode';
 import type { Dirtiness } from '../../commands/git/dirtiness/dirtiness';
-import { Configs } from '../../main/configs';
 import type { Repository } from '../../store/repository';
 import type { TreeItemConstructor } from '../treeViewBase';
 import { TreeItem } from '../treeViewBase';
@@ -21,7 +20,7 @@ function getIcon(repo: Repository) {
   })();
   return new vscode.ThemeIcon(
     args[0],
-    (Configs.coloredIcons && args[1]) ? new ThemeColor(args[1]) : undefined,
+    args[1] ? new ThemeColor(args[1]) : undefined,
   );
 }
 

@@ -8,8 +8,7 @@
     "strict": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
   },
-  "exclude": ["node_modules", ".vscode-test"],
-  "include": ["src"]
+  "include": ["src/**/*"]
 }

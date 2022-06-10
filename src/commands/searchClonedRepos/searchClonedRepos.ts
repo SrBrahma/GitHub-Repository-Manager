@@ -1,7 +1,7 @@
 import path from 'path';
 import execa from 'execa';
-import fse from 'fs-extra';
 import GitUrlParse from 'git-url-parse';
+import globby from 'globby';
 import { Configs } from '../../main/configs';
 
 
@@ -37,31 +37,6 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
 }
 
 
-
-// Recursive function to find directories with .git dir.
-async function getDirsWithDotGit(currentPath: string, availableDepth: number, dirsToSkip: string[]): Promise<string[]> {
-
-  const dirsName = (await fse.readdir(currentPath, { withFileTypes: true }))
-    .filter((file) => file.isDirectory())
-    .map((dir) => dir.name);
-
-  // If current dir is a repository
-  if (dirsName.find((dir) => dir === '.git'))
-    return [currentPath];
-
-  // If this was the last depth and we didn't find a .git dir, return empty array;
-  if (availableDepth === 0)
-    return [];
-
-  // Else, go deeper!
-  const results = [];
-  for (const dirName of dirsName) { // Maybe could use forEach as it doesn't wait awaits, the 'parallelism' could work nice. Needs benchmark.
-    if (!dirsToSkip.includes(dirName))
-      results.push(...await getDirsWithDotGit(path.resolve(currentPath, dirName), availableDepth - 1, dirsToSkip));
-  }
-  return results;
-}
-
 export let noLocalSearchPaths: boolean = false;
 
 
@@ -89,6 +64,7 @@ export async function getLocalReposPathAndUrl(): Promise<DirWithGitUrl[]> {
 
   // Get starting search paths.
   const startingSearchPaths = getStartingSearchPaths();
+  console.log('starting', startingSearchPaths);
   if (startingSearchPaths.length === 0) {
     noLocalSearchPaths = true;
     return [];
@@ -100,11 +76,16 @@ export async function getLocalReposPathAndUrl(): Promise<DirWithGitUrl[]> {
   const repositoriesPaths: string[] = [];
   const dirsToSkip = Configs.directoriesToIgnore;
   for (const startingSearchPath of startingSearchPaths)
-    repositoriesPaths.push(...(await getDirsWithDotGit(
-      startingSearchPath.path,
-      startingSearchPath.availableDepth,
-      dirsToSkip)
-    ));
+    repositoriesPaths.push(...(await globby('**/.git/config', {
+      deep: startingSearchPath.availableDepth + 2, // +2 for .git/config
+      cwd: startingSearchPath.path,
+      followSymbolicLinks: false,
+      absolute: true,
+      ignore: dirsToSkip.map((d) => `**/${d}`),
+      caseSensitiveMatch: false,
+    })
+    ).map((e) => path.resolve('../..')),
+    );
 
   return await getGitUrls(repositoriesPaths);
 }

@@ -87,7 +87,7 @@ Colors the repositories icons.
 
 ![](images/readme/config/coloredIconsTrue.png) ![](images/readme/config/coloredIconsFalse.png)
 
-_Those `*` means that the repository is **dirty**! It means that it has local changes that aren't yet commited!_
+_Those `*` means that the repository is **dirty**! It means that it has local changes that weren't yet commited!
 
 
 - ## Default Clone Directory Maximum Depth
@@ -99,7 +99,7 @@ How deep on `"git.defaultCloneDirectory"` the cloned repositories will be search
 - ## Directories To Ignore
 ##### _"githubRepositoryManager.clonedRepositoriesSearch.directoriesToIgnore"_
 Directories names that our cloned repositories searcher will ignore.
-##### Default: **["node_modules", ".vscode", ".git"]**
+##### Default: **["node_modules", ".vscode", ".git", "logs", "src", "lib", "out", "build"]**
 
 
 <br/>

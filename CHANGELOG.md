@@ -1,5 +1,8 @@
 # Change Log : GitHub Repository Manager
 
+## 1.5.0 - 2022-06-09
+* Now using `globby` to find the dirs that contains .git.
+* Removed `coloredIcons` option. It's just ugly if the repos don't have colors, certainly no one disabled that. Contact me if you did.
 
 ## 1.4.0~1 - 2022-05-31
 * Added button in the TreeView to set the "git.defaultCloneDirectory"! [#40](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/40) [#29](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/29)
