@@ -117,8 +117,7 @@ class UserClass {
     try {
       // vscode.authentication.onDidChangeSessions(e => ...); // It doesn't get the logout.
       /** Stored token */
-      const token = (await vscode.authentication.getSession(AUTH_PROVIDER_ID, SCOPES, { createIfNone: false }))
-        ?.accessToken;
+      const token = (await vscode.authentication.getSession(AUTH_PROVIDER_ID, SCOPES, { createIfNone: false }))?.accessToken;
       /** Init octokit if we have a stored token */
       if (token)
         await this.initOctokit(token);
@@ -169,9 +168,7 @@ class UserClass {
 
 
   /** Must be executed after loadUser and loadLocalRepos */
-  private async loadRepos({ localRepos }: {
-    localRepos: LocalRepository[];
-  }): Promise<void> {
+  private async loadRepos({ localRepos }: { localRepos: LocalRepository[] }): Promise<void> {
 
     this.setRepositoriesState(RepositoriesState.fetching);
     await Promise.all(this.organizations.map((org) => org.loadOrgRepos({ localRepos })));

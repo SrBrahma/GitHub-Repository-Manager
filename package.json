@@ -108,7 +108,7 @@
         },
         "githubRepositoryManager.defaultCloneDirectoryMaximumDepth": {
           "minimum": 0,
-          "default": 3,
+          "default": 2,
           "type": "integer",
           "description": "How deep on \"git.defaultCloneDirectory\" the cloned repositories will be searched. A depth of 0 means it will only search in the directory itself, a depth of 3 means it will search up to 3 directories below."
         },
@@ -117,12 +117,15 @@
           "default": [
             "node_modules",
             ".vscode",
-            ".git",
+            ".git/*",
             "logs",
+            "images",
             "src",
             "lib",
             "out",
-            "build"
+            "build",
+            "etc",
+            "public"
           ],
           "description": "Directories names that our cloned repositories searcher will ignore."
         }

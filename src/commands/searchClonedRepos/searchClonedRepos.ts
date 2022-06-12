@@ -3,6 +3,7 @@ import execa from 'execa';
 import GitUrlParse from 'git-url-parse';
 import globby from 'globby';
 import { Configs } from '../../main/configs';
+import { replaceTildeToHomedir } from '../../main/utils';
 
 
 
@@ -64,7 +65,6 @@ export async function getLocalReposPathAndUrl(): Promise<DirWithGitUrl[]> {
 
   // Get starting search paths.
   const startingSearchPaths = getStartingSearchPaths();
-  console.log('starting', startingSearchPaths);
   if (startingSearchPaths.length === 0) {
     noLocalSearchPaths = true;
     return [];
@@ -74,18 +74,27 @@ export async function getLocalReposPathAndUrl(): Promise<DirWithGitUrl[]> {
 
   // Get local repositories paths.
   const repositoriesPaths: string[] = [];
-  const dirsToSkip = Configs.directoriesToIgnore;
+
+  const ignore = Configs.directoriesToIgnore
+    .filter((d) => !/\.git\/?$/.test(d)) // Remove .git if present in ignore list. We need it!
+    .map((d) => `**/${d}`); // Add **/ to the patterns
+
   for (const startingSearchPath of startingSearchPaths)
-    repositoriesPaths.push(...(await globby('**/.git/config', {
-      deep: startingSearchPath.availableDepth + 2, // +2 for .git/config
-      cwd: startingSearchPath.path,
+    repositoriesPaths.push(...(await globby('**/.git', {
+      deep: startingSearchPath.availableDepth,
+      cwd: replaceTildeToHomedir(startingSearchPath.path),
       followSymbolicLinks: false,
       absolute: true,
-      ignore: dirsToSkip.map((d) => `**/${d}`),
+      ignore,
       caseSensitiveMatch: false,
-    })
-    ).map((e) => path.resolve('../..')),
-    );
+      onlyDirectories: true,
+      onlyFiles: false,
+    })).map((gitPath) => path.resolve(gitPath, '..')));
+
+  // channel.appendLine(JSON.stringify(startingSearchPaths));
+  // channel.appendLine(JSON.stringify(Configs.directoriesToIgnore));
+  // channel.appendLine(JSON.stringify(repositoriesPaths));
+
 
   return await getGitUrls(repositoriesPaths);
 }
