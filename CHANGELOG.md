@@ -1,5 +1,8 @@
 # Change Log : GitHub Repository Manager
 
+## 1.5.1 - 2022-06-20
+* Improved HEAD detection for repository cloning. It nall shall work for all the system languages. [#42](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/42). Thanks, [lo-ca](https://github.com/lo-ca)!
+
 ## 1.5.0 - 2022-06-09
 * Now using `globby` to find the dirs that contains .git. It's not only faster but fixes a strange bug where there wouldn't appear any cloned repositories.
 * Removed `coloredIcons` option. It's just ugly if the repos don't have colors, certainly no one disabled that. Contact me if you did.
