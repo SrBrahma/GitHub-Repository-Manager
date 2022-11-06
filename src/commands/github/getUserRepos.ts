@@ -6,7 +6,6 @@ import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 import { extractRepositoryFromData, repoInfosQuery } from './getOrgRepos';
 
 
-
 export async function getUserRepos(): Promise<Repository[]> {
   if (!octokit)
     throw new Error('Octokit not set up!');
@@ -21,7 +20,7 @@ export async function getUserRepos(): Promise<Repository[]> {
 
     do {
       // https://github.com/octokit/graphql.js/#variables
-      const { nodes, pageInfo }: {nodes: any; pageInfo: any} = (await octokit.graphql(query, {
+      const { nodes, pageInfo }: { nodes: any; pageInfo: any } = (await octokit.graphql(query, {
         after: endCursor,
       }) as any).viewer.repositories;
 

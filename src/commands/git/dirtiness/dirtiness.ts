@@ -3,7 +3,6 @@
 import execa from 'execa';
 
 
-
 export type Dirtiness = 'clean' | 'dirty' | 'unknown' | 'error';
 
 /** @returns 'clean', 'dirty' or 'error'.

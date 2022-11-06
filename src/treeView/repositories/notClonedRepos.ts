@@ -6,7 +6,6 @@ import { TreeItem } from '../treeViewBase';
 import { RepoItem } from './repoItem';
 
 
-
 export function activateNotClonedRepos(): void {
   // Clone repo to [open select repo location]. You must pass the repo as arg.
   commands.registerCommand('githubRepoMgr.commands.notClonedRepos.cloneTo',

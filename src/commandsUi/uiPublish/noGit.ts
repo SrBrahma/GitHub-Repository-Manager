@@ -4,8 +4,7 @@ import { User } from '../../store/user';
 import type { NewRepository } from '../uiCreateRepo';
 
 
-
-export async function preNoGit({ cwd }: {cwd: string}): Promise<void> {
+export async function preNoGit({ cwd }: { cwd: string }): Promise<void> {
   if (await pathHasGit(cwd))
     throw new Error('Project already has .git!');
 }

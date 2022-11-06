@@ -8,7 +8,6 @@ import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
 import type { RepoItem } from './repoItem';
 
 
-
 export function activateTreeViewRepositories(): void {
   const repositoriesTreeDataProvider = new TreeDataProvider();
 
@@ -39,7 +38,6 @@ export function activateTreeViewRepositories(): void {
 }
 
 
-
 class TreeDataProvider extends BaseTreeDataProvider {
   constructor() { super(); }
   getData() {
@@ -55,6 +53,7 @@ class TreeDataProvider extends BaseTreeDataProvider {
         return [getClonedTreeItem(), getNotClonedTreeItem()];
     }
   }
+
   protected makeData() {
     this.data = this.getData();
   }

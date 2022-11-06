@@ -6,7 +6,6 @@ import { Configs } from '../../main/configs';
 import { replaceTildeToHomedir } from '../../main/utils';
 
 
-
 interface DirWithGitUrl {
   dirPath: string;
   gitUrl: string;
@@ -15,7 +14,7 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
   const dirsWithGitUrl: DirWithGitUrl[] = [];
 
   // forEach would call all execs 'at the same time', as it doesnt wait await.
-  for (const dirPath of dirsPath) {
+  for (const dirPath of dirsPath)
     try {
       // https://stackoverflow.com/a/23682620/10247962
       // was using git remote -v, but git ls-remote --get-url seems to also do the job with a single output.
@@ -33,7 +32,7 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
     } catch (err: any) {
       // If error, it's because there isn't a remote. No need to manage it, may be left empty.
     }
-  }
+
   return dirsWithGitUrl;
 }
 
@@ -90,11 +89,6 @@ export async function getLocalReposPathAndUrl(): Promise<DirWithGitUrl[]> {
       onlyDirectories: true,
       onlyFiles: false,
     })).map((gitPath) => path.resolve(gitPath, '..')));
-
-  // channel.appendLine(JSON.stringify(startingSearchPaths));
-  // channel.appendLine(JSON.stringify(Configs.directoriesToIgnore));
-  // channel.appendLine(JSON.stringify(repositoriesPaths));
-
 
   return await getGitUrls(repositoriesPaths);
 }

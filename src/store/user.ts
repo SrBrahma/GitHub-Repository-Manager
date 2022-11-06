@@ -7,7 +7,6 @@ import { Organization } from './organization';
 import type { LocalRepository, Repository } from './repository';
 
 
-
 const AUTH_PROVIDER_ID = 'github';
 const SCOPES = ['repo', 'read:org'];
 
@@ -59,7 +58,7 @@ class UserClass {
 
   /** Returns the orgs that the user can create new repositories.
    * As it uses this.organizations, it includes the user Organization. */
-  get organizationUserCanCreateRepositories() { return this.organizations.filter((o) => o.userCanCreateRepositories === true); }
+  get organizationUserCanCreateRepositories() { return this.organizations.filter((o) => o.userCanCreateRepositories); }
 
   /** The ones listening for changes. */
   private subscribers: ['account' | 'repos', () => void][] = [];
@@ -72,6 +71,7 @@ class UserClass {
     void myExtensionSetContext('userState', state);
     this.informSubscribers('account');
   }
+
   /** Will also informSubscribers('repos') */
   setRepositoriesState(state: RepositoriesState) {
     this.repositoriesState = state;
@@ -79,8 +79,7 @@ class UserClass {
   }
 
 
-
-  private resetUser(opts: {resetUserStatus: boolean; resetOctokit: boolean}) {
+  private resetUser(opts: { resetUserStatus: boolean; resetOctokit: boolean }) {
     this.login = undefined;
     this.profileUri = undefined;
     this.organizations = [];
@@ -91,7 +90,8 @@ class UserClass {
       this.token = undefined;
     }
   }
-  private resetRepos(opts: {resetRepositoriesStatus: boolean}) {
+
+  private resetRepos(opts: { resetRepositoriesStatus: boolean }) {
     this.clonedRepos = [];
     if (opts.resetRepositoriesStatus)
       this.setRepositoriesState(RepositoriesState.none);
@@ -184,15 +184,13 @@ class UserClass {
       if (checkedAll) {
         clearTimeout(timeout as any); // no prob as any here, just to make code shorter.
         this.setRepositoriesState(RepositoriesState.fullyLoaded);
-      } else if (!timeout)
-        timeout = setTimeout(() => { this.informSubscribers('repos'); }, 1000);
+      } else if (!timeout) { timeout = setTimeout(() => { this.informSubscribers('repos'); }, 1000); }
     };
 
     if (this.clonedRepos.length) {
       this.setRepositoriesState(RepositoriesState.partial); // To show unknown dirtiness or at least the not-cloned repos, if none is cloned.
       this.organizations.forEach((org) => org.checkLocalReposDirtiness(callback));
-    } else
-      this.setRepositoriesState(RepositoriesState.fullyLoaded);
+    } else { this.setRepositoriesState(RepositoriesState.fullyLoaded); }
 
 
   }
@@ -205,7 +203,7 @@ class UserClass {
       if (!octokit) // Ignore if octokit not set up, after resetting above.
         return;
       this.setRepositoriesState(RepositoriesState.fetching);
-      const [, localRepos] = await Promise.all([this.loadUser(), getLocalReposPathAndUrl()]); // Simultaneously to improve the performance by a bit
+      const [, localRepos] = await Promise.all([this.loadUser(), getLocalReposPathAndUrl()]);
       await this.loadRepos({ localRepos });
     }
   }

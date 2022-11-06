@@ -2,7 +2,6 @@ import type { Octokit } from '@octokit/rest';
 import { octokit } from '../../store/user';
 
 
-
 type Fun = Octokit['repos']['createForAuthenticatedUser'];
 type ThenArg<T> = T extends PromiseLike<infer U> ? U : T;
 export type CreateGitHubRepositoryReturn = ThenArg<ReturnType<Fun>>['data'];

@@ -8,7 +8,6 @@ import { TreeItem } from '../treeViewBase';
 import { RepoItem } from './repoItem';
 
 
-
 export function activateClonedRepos(): void {
   // Open
   commands.registerCommand('githubRepoMgr.commands.clonedRepos.open', ({ repo }: RepoItem) =>

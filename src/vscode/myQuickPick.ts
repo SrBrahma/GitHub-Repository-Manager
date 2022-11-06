@@ -1,8 +1,7 @@
 import vscode from 'vscode';
 
 
-
-type SelectedItem = {label: string; detail: string | undefined; description: string | undefined};
+type SelectedItem = { label: string; detail: string | undefined; description: string | undefined };
 
 
 /** vscode.window.showQuickPick() is fast but weak. createQuickPick is good, but too complex to be used quickly.

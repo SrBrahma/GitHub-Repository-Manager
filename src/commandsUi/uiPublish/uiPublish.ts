@@ -9,7 +9,6 @@ import { posNoGit, preNoGit } from './noGit';
 import { posNoRemote, preNoRemote, preRepositoryCreateNoRemote as preRepositoryCreationNoRemote } from './noRemote';
 
 
-
 async function getWorkspaceFolderPathToPublish() {
   if (!User.login)
     return undefined;
@@ -48,9 +47,6 @@ async function getWorkspaceFolderPathToPublish() {
 }
 
 
-
-
-
 export async function uiPublish(): Promise<void> {
   try {
     if (!User.token)
@@ -73,9 +69,7 @@ export async function uiPublish(): Promise<void> {
 
 
     const onRepositoryCreation: OnRepositoryCreation = async (newRepository) => {
-      if (state === 'noGit')
-        await posNoGit({ cwd, newRepository });
-      else {
+      if (state === 'noGit') { await posNoGit({ cwd, newRepository }); } else {
         if (!headBranch)
           throw new Error('headBranch not set! Contact extension developer.'); // Shouldn't happen.
         await posNoRemote({ cwd, newRepository, headBranch });

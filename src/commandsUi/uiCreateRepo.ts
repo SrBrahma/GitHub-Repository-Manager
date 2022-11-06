@@ -6,7 +6,6 @@ import { myQuickPick } from '../vscode/myQuickPick';
 import { uiCloneTo } from './uiCloneTo';
 
 
-
 export type NewRepository = CreateGitHubRepositoryReturn;
 export type OnRepositoryCreation = (newRepository: NewRepository) => Promise<void>;
 
@@ -29,11 +28,9 @@ export async function uiCreateRepoCore(options: {
 
     const orgsUserCanCreateRepo = User.organizationUserCanCreateRepositories;
 
-    if (orgsUserCanCreateRepo.length === 0)
-      return; // Just don't do nothing. The user just hasn't loaded yet!
-      // throw new Error('There is nowhere to the user to publish!');
-
-    else if (orgsUserCanCreateRepo.length === 1) {
+    if (orgsUserCanCreateRepo.length === 0) {
+      return; // Do nothing. The user just hasn't loaded yet!
+    } else if (orgsUserCanCreateRepo.length === 1) {
       // Do nothing if user is the only available org.
     } else { // Else, pick one!
       const userDescription = 'Your personal account';

@@ -4,7 +4,6 @@ import { getUserRepos } from '../commands/github/getUserRepos';
 import type { LocalRepository, Repository } from './repository';
 
 
-
 export enum OrgStatus {
   notLoaded,
   loading,

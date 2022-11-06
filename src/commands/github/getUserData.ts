@@ -4,7 +4,6 @@ import { octokit } from '../../store/user';
 import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 
 
-
 type GetUser = {
   login: string;
   profileUri: string;

@@ -31,7 +31,6 @@ import { getRemoteHead as getRemoteHeadBranch } from '../getRemoteHeadBranch/get
 import { getRepositoryGitUrl } from '../getRepositoryGitUrl';
 
 
-
 export async function cloneRepo(options: {
   repositoryName: string;
   owner: string;
@@ -63,12 +62,12 @@ export async function cloneRepo(options: {
     await execa('git', ['remote', 'add', 'origin', remoteUrl], { cwd: repositoryPath });
 
     // If repository has a HEAD branch, aka has a commit, aka isn't empty
-    if (!repositoryIsEmpty) {
+    if (!repositoryIsEmpty)
       /** TODO: "If you don't want your token to be stored in your shell history, you can set GITHUB_TOKEN
        * in the environment and that will be read instead"
        * https://github.com/mheap/github-default-branch */
       await execa('git', ['pull', remoteUrlTokenized], { cwd: repositoryPath });
-    }
+
 
     /** I didn't find a way to automatically set the push destination.
      * The usual way is by doing "git push -u origin main", however, it requires the user being

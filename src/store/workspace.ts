@@ -3,7 +3,6 @@ import { gitHasRemote } from '../commands/git/gitHasRemote/gitHasRemote';
 import { myExtensionSetContext } from '../main/utils';
 
 
-
 export type WorkspaceFolderState = 'noGit' | 'gitWithoutRemote' | 'gitWithRemote';
 export type PublishableFolderState = Exclude<WorkspaceFolderState, 'gitWithRemote'>;
 type WorkspaceFolderSpecial = {
@@ -29,7 +28,7 @@ class WorkspaceClass {
   private workspaceFolderSpecial: WorkspaceFolderSpecial[] = [];
 
   /** To be used by Publish UI command */
-  public get foldersAndStates(): {state: WorkspaceFolderState; path: string; name: string}[] {
+  public get foldersAndStates(): { state: WorkspaceFolderState; path: string; name: string }[] {
     return this.workspaceFolderSpecial.map((w) => ({
       path: w.workspaceFolder.uri.fsPath,
       state: w.state,
@@ -37,7 +36,7 @@ class WorkspaceClass {
     }));
   }
 
-  public get publishableFoldersAndStates(): {state: PublishableFolderState; path: string; name: string}[] {
+  public get publishableFoldersAndStates(): { state: PublishableFolderState; path: string; name: string }[] {
     return this.foldersAndStates.filter((w) => w.state === 'gitWithoutRemote' || w.state === 'noGit') as any; // We are sure.
   }
 
@@ -91,7 +90,6 @@ class WorkspaceClass {
   } // End of resetGitWatcher;
 
 } // End of WorkspaceClass;
-
 
 
 export const Workspace = new WorkspaceClass();

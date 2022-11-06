@@ -1,7 +1,6 @@
 import vscode from 'vscode';
 
 
-
 type CommandWithoutTitle = Omit<vscode.Command, 'title'> & {
   title?: string;
 };
@@ -38,7 +37,6 @@ export class TreeItem extends vscode.TreeItem {
 }
 
 
-
 // https://www.typescriptlang.org/docs/handbook/classes.html#abstract-classes
 export abstract class BaseTreeDataProvider implements vscode.TreeDataProvider<TreeItem> {
 
@@ -64,6 +62,7 @@ export abstract class BaseTreeDataProvider implements vscode.TreeDataProvider<Tr
   getTreeItem(element: TreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
     return element;
   }
+
   getChildren(element?: TreeItem): vscode.ProviderResult<TreeItem[]> {
     if (element === undefined)
       return Array.isArray(this.data) ? this.data : [this.data];

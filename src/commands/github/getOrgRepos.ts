@@ -5,7 +5,6 @@ import { octokit } from '../../store/user';
 import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 
 
-
 export function extractRepositoryFromData(data: any): Repository {
   return {
     name: data.name,
@@ -84,7 +83,6 @@ export async function getOrgRepos(login: string): Promise<Repository[]> {
     throw new Error(getOctokitErrorMessage(err));
   }
 }
-
 
 
 const query = `

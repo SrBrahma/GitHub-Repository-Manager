@@ -4,10 +4,10 @@
 'use strict';
 
 const path = require('path');
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
-/**@type {import('webpack').Configuration}*/
+/** @type {import('webpack').Configuration}*/
 const config = {
   target: 'node',
 
@@ -16,17 +16,17 @@ const config = {
     path: path.resolve(__dirname, '..', 'dist'),
     filename: 'extension.js',
     libraryTarget: 'commonjs2',
-    devtoolModuleFilenameTemplate: '../[resource-path]'
+    devtoolModuleFilenameTemplate: '../[resource-path]',
   },
   devtool: 'source-map',
   externals: {
-    vscode: 'commonjs vscode' // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+    vscode: 'commonjs vscode', // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
   },
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: ['.ts', '.js'],
   },
   stats: {
-    warningsFilter: /Critical dependency: the request of a dependency is an expression/
+    warningsFilter: /Critical dependency: the request of a dependency is an expression/,
   },
   module: {
     rules: [
@@ -35,18 +35,18 @@ const config = {
         exclude: /node_modules/,
         loader: 'ts-loader',
         options: { // Makes the compilation faster https://github.com/TypeStrong/ts-loader#faster-builds
-          transpileOnly: true
-        }
-      }
-    ]
+          transpileOnly: true,
+        },
+      },
+    ],
   },
   plugins: [
     new CleanWebpackPlugin(),
     new ForkTsCheckerWebpackPlugin({
       eslint: {
-        files: './src/**/*.{ts,tsx,js,jsx}' // required - same as command `eslint ./src/**/*.{ts,tsx,js,jsx} --ext .ts,.tsx,.js,.jsx`
-      }
-    })
-  ]
+        files: './src/**/*.{ts,tsx,js,jsx}', // required - same as command `eslint ./src/**/*.{ts,tsx,js,jsx} --ext .ts,.tsx,.js,.jsx`
+      },
+    }),
+  ],
 };
 module.exports = config;

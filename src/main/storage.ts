@@ -1,7 +1,6 @@
 import type vscode from 'vscode';
 
 
-
 let context: vscode.ExtensionContext;
 
 
@@ -25,12 +24,15 @@ class Item<T> {
     array.push(...(typeof additionalKey === 'string' ? [additionalKey] : additionalKey));
     return array.join('.');
   }
-  get<D = T>(args: ItemCommon & {defaultValue: D}): T | D {
+
+  get<D = T>(args: ItemCommon & { defaultValue: D }): T | D {
     return get(this.getKey(args.additionalKey), args.defaultValue);
   }
-  set(args: ItemCommon & {value: T}) {
+
+  set(args: ItemCommon & { value: T }) {
     return set(this.getKey(args.additionalKey), args.value);
   }
+
   remove(args: ItemCommon) { return remove(this.getKey(args.additionalKey)); }
 }
 

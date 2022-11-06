@@ -4,7 +4,6 @@ import { User, UserState } from '../../store/user';
 import { BaseTreeDataProvider, TreeItem } from '../treeViewBase';
 
 
-
 export let accountTreeDataProvider: TreeDataProvider;
 
 export function activateTreeViewAccount(): void {
