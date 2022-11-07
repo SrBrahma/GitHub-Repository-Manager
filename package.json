@@ -22,13 +22,13 @@
   "icon": "images/logo/logo128.png",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "lint": "pnpm typecheck && eslint --ext js,ts .",
-    "lint:fix": "pnpm lint --fix",
+    "lint": "npm run typecheck && eslint --ext js,ts .",
+    "lint:fix": "npm run lint --fix",
     "vscode:prepublish": "webpack --config webpack/webpack.config.prod.js",
     "publish": "vsce publish",
     "webpack-dev": "webpack --config webpack/webpack.config.dev.js --watch",
-    "watch": "pnpm webpack-dev",
-    "start": "pnpm watch"
+    "watch": "npm run webpack-dev",
+    "start": "npm run watch"
   },
   "categories": [
     "Other",
