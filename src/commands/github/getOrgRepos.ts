@@ -7,6 +7,7 @@ import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 
 export function extractRepositoryFromData(data: any): Repository {
   return {
+    type: 'remote',
     name: data.name,
     description: data.description,
     ownerLogin: data.owner.login,

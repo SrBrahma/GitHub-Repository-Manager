@@ -9,7 +9,9 @@ import { TreeItem } from '../treeViewBase';
 
 // TODO: Use GitHub icons (must resize them)
 // we may use repo-cloned as icon for template.
-function getIcon(repo: Repository) {
+function getIcon(repo: Repository): vscode.ThemeIcon | undefined {
+  if (repo.type === 'local') return; // No icon if local (sure?)
+
   const args = ((): [name: string, color: string | undefined] => {
     if (repo.isPrivate)
       return ['lock', 'githubRepositoryManager.private'];
@@ -39,19 +41,19 @@ function getTooltip(repo: Repository) {
   const localPath = repo.localPath?.replace(RegExp(`^${os.homedir()}`), '~') ?? '';
 
   // the | &nbsp; | adds a little more spacing.
+  const R = repo.type === 'remote' ? repo : undefined;
+
   const string = `
 |     |     |     |
 | --- | --- | --- |
-**Name** | &nbsp; | ${repo.name}
-**Description** | &nbsp; | ${repo.description ? repo.description : 'No description'}
-**Author** | &nbsp; | ${repo.ownerLogin}
-**Visibility** | &nbsp; | ${repo.isPrivate ? 'Private' : 'Public'}`
-
-+ (repo.languageName ? `\r\n**Language** | &nbsp; |${repo.languageName}` : '')
-
-+ (repo.isFork ? `\r\n**Fork of** | &nbsp; | ${repo.parentRepoOwnerLogin} / ${repo.parentRepoName}` : '')
-+ `\r\n**Updated at** | &nbsp; | ${repo.updatedAt.toLocaleString()}`
-+ `\r\n**Created at** | &nbsp; | ${repo.createdAt.toLocaleString()}`
+**Name** | &nbsp; | ${repo.name}`
++ (!R ? '' : `\r\n**Description** | &nbsp; | ${R.description ? R.description : 'No description'}`)
++ `\r\n**Author** | &nbsp; | ${repo.ownerLogin}`
++ (!R ? '' : `\r\n**Visibility** | &nbsp; | ${R.isPrivate ? 'Private' : 'Public'}`)
++ (!R ? '' : (R.languageName ? `\r\n**Language** | &nbsp; |${R.languageName}` : ''))
++ (!R ? '' : (R.isFork ? `\r\n**Fork of** | &nbsp; | ${R.parentRepoOwnerLogin} / ${R.parentRepoName}` : ''))
++ (!R ? '' : `\r\n**Updated at** | &nbsp; | ${R.updatedAt.toLocaleString()}`)
++ (!R ? '' : `\r\n**Created at** | &nbsp; | ${R.createdAt.toLocaleString()}`)
 + (repo.localPath ? `\r\n**Local path** | &nbsp; | ${localPath}` : '')
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 + ((repo.dirty && repo.dirty !== 'clean') ? `\r\n**Dirty** | &nbsp; | ${dirtyToMessage[repo.dirty ?? 'clean']}` : '');

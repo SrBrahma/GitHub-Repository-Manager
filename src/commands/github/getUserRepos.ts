@@ -11,9 +11,7 @@ export async function getUserRepos(): Promise<Repository[]> {
     throw new Error('Octokit not set up!');
 
   try {
-
     const repos: Repository[] = [];
-
     // For pagination (if user has more repos than the query results (current max per query is 100))
     let endCursor: string | null = null;
     let hasNextPage = false;

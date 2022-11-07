@@ -1,7 +1,7 @@
-import { getDirtiness } from '../commands/git/dirtiness/dirtiness';
 import { getOrgRepos } from '../commands/github/getOrgRepos';
 import { getUserRepos } from '../commands/github/getUserRepos';
-import type { LocalRepository, Repository } from './repository';
+import type { DirWithGitUrl } from '../commands/searchClonedRepos/searchClonedRepos';
+import type { Repository } from './repository';
 
 
 export enum OrgStatus {
@@ -40,17 +40,9 @@ export class Organization {
     this.status = OrgStatus.notLoaded;
   }
 
-  /** Callback is called for every local repo dirtiness checked. */
-  async checkLocalReposDirtiness(callback: () => void): Promise<void> {
-    await Promise.all(this.clonedRepos.map(async (localRepo) => {
-      localRepo.dirty = await getDirtiness(localRepo.localPath!);
-      callback();
-    }));
-  }
-
   /** Call it after constructing it. */
   async loadOrgRepos({ localRepos }: {
-    localRepos: LocalRepository[];
+    localRepos: DirWithGitUrl[];
   }): Promise<void> {
     try {
       this.status = OrgStatus.loading;

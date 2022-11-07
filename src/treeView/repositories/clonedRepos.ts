@@ -1,7 +1,9 @@
 import path from 'path';
+import fse from 'fs-extra';
+import type { MessageItem } from 'vscode';
 import { commands, env, ThemeIcon, Uri, window, workspace } from 'vscode';
+import { isGitDirty } from '../../commands/git/dirtiness/dirtiness';
 import { noLocalSearchPaths } from '../../commands/searchClonedRepos/searchClonedRepos';
-import { Configs } from '../../main/configs';
 import type { Repository } from '../../store/repository';
 import { User } from '../../store/user';
 import { TreeItem } from '../treeViewBase';
@@ -31,26 +33,43 @@ export function activateClonedRepos(): void {
     repo.localPath && void env.clipboard.writeText(repo.localPath);
   });
 
-  // Copy local path to clipboard
-  commands.registerCommand('githubRepoMgr.commands.pick.defaultCloneDirectory', async () => {
-    const thenable = await window.showOpenDialog({
-      defaultUri: Uri.file(Configs.defaultCloneToDir),
-      openLabel: `Select as default directory`,
-      canSelectFiles: false,
-      canSelectFolders: true,
-      canSelectMany: false,
-    });
+  // Delete repo
+  commands.registerCommand('githubRepoMgr.commands.clonedRepos.delete', async ({ repo }: RepoItem) => {
+    if (!repo.localPath)
+      return; // DO nothing if repo hasn't local path
+    const isDirty = await isGitDirty(repo.localPath);
 
-    if (!thenable) // Cancel if quitted dialog
-      return;
+    const title = isDirty ? `Delete DIRTY ${repo.name} repository?` : `Delete ${repo.name} repository?`;
+    const message = isDirty
+      ? `The repository is DIRTY; there are uncommitted local changes. Are you sure you want to locally delete this repository? This action is IRREVERSIBLE.`
+      : `Are you sure you want to locally delete the repository? This action is irreversible.`;
 
-    // 3rd param as true to change global setting. Else wouldn't work.
-    await workspace.getConfiguration('git').update('defaultCloneDirectory', thenable[0]!.fsPath, true);
-    await User.reloadRepos();
+    const deleteString = 'Delete';
+    const answer = await window.showWarningMessage<MessageItem>(title,
+      {
+        detail: message,
+        modal: true,
+      },
+      { title: 'Cancel', isCloseAffordance: true },
+      { title: deleteString },
+    );
+
+    if (answer?.title === deleteString) {
+      const disposable = window.setStatusBarMessage(`Locally deleting ${repo.name}...`);
+      try {
+        await fse.remove(repo.localPath);
+        void window.showInformationMessage(`Locally deleted the ${repo.name} repository.`);
+        await User.reloadRepos();
+      } catch (err) {
+        void window.showErrorMessage((err as any).message);
+      } finally {
+        disposable.dispose();
+      }
+    }
   });
 }
 
-function parseChildren(clonedRepos: Repository[], userLogin: string): TreeItem | TreeItem[] {
+function parseChildren(clonedRepos: Repository[], userLogin?: string): TreeItem | TreeItem[] {
   return clonedRepos.map((repo) => new RepoItem({
     repo,
     contextValue: 'githubRepoMgr.context.clonedRepo',
@@ -63,14 +82,16 @@ function parseChildren(clonedRepos: Repository[], userLogin: string): TreeItem |
   }));
 }
 
-function sortClonedRepos(clonedRepos: Repository[], userLogin: string): Repository[] {
+function sortClonedRepos(clonedRepos: Repository[], userLogin?: string): Repository[] {
   return clonedRepos.sort((a, b) => {
 
-    // User repos comes first
-    if (a.ownerLogin === userLogin && b.ownerLogin !== userLogin)
-      return -1;
-    if (a.ownerLogin !== userLogin && b.ownerLogin === userLogin)
-      return 1;
+    if (userLogin) {
+      // User repos comes first
+      if (a.ownerLogin === userLogin && b.ownerLogin !== userLogin)
+        return -1;
+      if (a.ownerLogin !== userLogin && b.ownerLogin === userLogin)
+        return 1;
+    }
 
     // Different Authors are sorted (ownerLogin === userLogin doesn't enter this block)
     if (a.ownerLogin !== b.ownerLogin)
@@ -87,15 +108,26 @@ function sortClonedRepos(clonedRepos: Repository[], userLogin: string): Reposito
 export function getClonedTreeItem(): TreeItem {
   if (!User.login)
     throw new Error('User.login is not set!');
-  const sortedClonedRepos = sortClonedRepos(User.clonedRepos, User.login);
+
+  const sortedRepos = sortClonedRepos(User.clonedRepos, User.login);
   return new TreeItem({
-    label: 'Cloned', // I tried a +(${User.clonedRepos.length}), but it made me a little anxious. Better not having it.
+    label: 'Cloned',
     children: noLocalSearchPaths
       ? new TreeItem({
         label: ' Press here to select "git.defaultCloneDirectory"',
         command: 'githubRepoMgr.commands.pick.defaultCloneDirectory',
         iconPath: new ThemeIcon('file-directory'),
       })
-      : parseChildren(sortedClonedRepos, User.login),
+      : parseChildren(sortedRepos, User.login),
+  });
+}
+
+
+// TODO: Add remember cloned repos when not logged option?
+export function getClonedOthersTreeItem(): TreeItem {
+  const sortedRepos = sortClonedRepos(User.clonedOtherRepos);
+  return new TreeItem({
+    label: 'Cloned - Others',
+    children: parseChildren(sortedRepos, User.login),
   });
 }

@@ -6,10 +6,10 @@ import { Configs } from '../../main/configs';
 import { replaceTildeToHomedir } from '../../main/utils';
 
 
-interface DirWithGitUrl {
+export type DirWithGitUrl = {
   dirPath: string;
   gitUrl: string;
-}
+};
 async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
   const dirsWithGitUrl: DirWithGitUrl[] = [];
 
@@ -22,7 +22,7 @@ async function getGitUrls(dirsPath: string[]): Promise<DirWithGitUrl[]> {
 
       // Remove whitespaces chars.
       const url = result.trim();
-
+      // TODO we can allow repos without url, to allow repos without remote
       if (url) {
         // Parse the git URL into a repository URL, as it could be the git@github.com:author/reponame url pattern.
         // This changes any known kind to the https://github.com/author/reponame pattern.

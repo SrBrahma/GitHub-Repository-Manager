@@ -1,6 +1,9 @@
 import { Octokit } from '@octokit/rest';
+import gitUrlParse from 'git-url-parse';
 import vscode from 'vscode';
+import { getDirtiness } from '../commands/git/dirtiness/dirtiness';
 import { getUser } from '../commands/github/getUserData';
+import type { DirWithGitUrl } from '../commands/searchClonedRepos/searchClonedRepos';
 import { getLocalReposPathAndUrl } from '../commands/searchClonedRepos/searchClonedRepos';
 import { myExtensionSetContext } from '../main/utils';
 import { Organization } from './organization';
@@ -55,6 +58,8 @@ class UserClass {
   /** The User current status. */
   repositoriesState: RepositoriesState = RepositoriesState.none;
   clonedRepos: Repository[] = [];
+  /** Repositories that are cloned but not from user / user's org */
+  clonedOtherRepos: LocalRepository[] = [];
 
   /** Returns the orgs that the user can create new repositories.
    * As it uses this.organizations, it includes the user Organization. */
@@ -93,6 +98,7 @@ class UserClass {
 
   private resetRepos(opts: { resetRepositoriesStatus: boolean }) {
     this.clonedRepos = [];
+    this.clonedOtherRepos = [];
     if (opts.resetRepositoriesStatus)
       this.setRepositoriesState(RepositoriesState.none);
   }
@@ -168,44 +174,52 @@ class UserClass {
 
 
   /** Must be executed after loadUser and loadLocalRepos */
-  private async loadRepos({ localRepos }: { localRepos: LocalRepository[] }): Promise<void> {
-
+  private async loadRepos({ localRepos }: { localRepos: DirWithGitUrl[] }): Promise<void> {
     this.setRepositoriesState(RepositoriesState.fetching);
     await Promise.all(this.organizations.map((org) => org.loadOrgRepos({ localRepos })));
 
+    // Get dirtyness status of local repos
     this.clonedRepos = this.organizations.map((org) => org.clonedRepos).flat();
+    this.clonedOtherRepos = localRepos
+    // Remove repos that are on Cloned tree
+      .filter((r) => !this.clonedRepos.find((c) => c.localPath === r.dirPath))
+      .map((r) => ({
+        name: gitUrlParse(r.gitUrl).name,
+        ownerLogin: gitUrlParse(r.gitUrl).owner,
+        url: r.gitUrl,
+        localPath: r.dirPath,
+        type: 'local',
+      }));
 
-    let timeout: NodeJS.Timeout | undefined;
-    let localReposDirtyCheckedCount = 0;
+    // To show unknown dirtiness or at least the not-cloned repos, if none is cloned.
+    this.setRepositoriesState(RepositoriesState.partial);
+    // Updates dirty forms from time to time while not done
+    const interval = setInterval(() => { this.informSubscribers('repos'); }, 250);
 
-    const callback = () => {
-      localReposDirtyCheckedCount++;
-      const checkedAll = localReposDirtyCheckedCount === this.clonedRepos.length;
-      if (checkedAll) {
-        clearTimeout(timeout as any); // no prob as any here, just to make code shorter.
-        this.setRepositoriesState(RepositoriesState.fullyLoaded);
-      } else if (!timeout) { timeout = setTimeout(() => { this.informSubscribers('repos'); }, 1000); }
-    };
+    // Check dirty of orgs' local repos
+    await Promise.all(this.organizations.map((org) => Promise.all(
+      org.clonedRepos.map(async (localRepo) => {
+        localRepo.dirty = await getDirtiness(localRepo.localPath!);
+      })),
+    ));
+    clearInterval(interval);
 
-    if (this.clonedRepos.length) {
-      this.setRepositoriesState(RepositoriesState.partial); // To show unknown dirtiness or at least the not-cloned repos, if none is cloned.
-      this.organizations.forEach((org) => org.checkLocalReposDirtiness(callback));
-    } else { this.setRepositoriesState(RepositoriesState.fullyLoaded); }
-
-
+    this.setRepositoriesState(RepositoriesState.fullyLoaded);
   }
 
   /** Fetch again the user data and its orgs that he belongs to. */
+  // TODO add local reload, for actions like delete to avoid unncessary refetch
   public async reloadRepos(): Promise<void> {
-    if ([RepositoriesState.none, RepositoriesState.fullyLoaded].includes(this.repositoriesState)) {
-      this.resetUser({ resetUserStatus: false, resetOctokit: false });
-      this.resetRepos({ resetRepositoriesStatus: false });
-      if (!octokit) // Ignore if octokit not set up, after resetting above.
-        return;
-      this.setRepositoriesState(RepositoriesState.fetching);
-      const [, localRepos] = await Promise.all([this.loadUser(), getLocalReposPathAndUrl()]);
-      await this.loadRepos({ localRepos });
-    }
+    if (this.repositoriesState === RepositoriesState.fetching)
+      return; // Don't allow multiple fetches (it should, by cancelling first)
+
+    this.resetUser({ resetUserStatus: false, resetOctokit: false });
+    this.resetRepos({ resetRepositoriesStatus: false });
+    if (!octokit) // Ignore if octokit not set up, after resetting above.
+      return;
+    this.setRepositoriesState(RepositoriesState.fetching);
+    const [, localRepos] = await Promise.all([this.loadUser(), getLocalReposPathAndUrl()]);
+    await this.loadRepos({ localRepos });
   }
 
 }

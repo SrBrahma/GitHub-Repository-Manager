@@ -1,9 +1,10 @@
-import vscode from 'vscode';
+import vscode, { commands, Uri, window, workspace } from 'vscode';
 import { uiCreateRepo } from '../../commandsUi/uiCreateRepo';
 import { uiPublish } from '../../commandsUi/uiPublish/uiPublish';
+import { Configs } from '../../main/configs';
 import { RepositoriesState, User } from '../../store/user';
 import { BaseTreeDataProvider, TreeItem } from '../treeViewBase';
-import { activateClonedRepos, getClonedTreeItem } from './clonedRepos';
+import { activateClonedRepos, getClonedOthersTreeItem, getClonedTreeItem } from './clonedRepos';
 import { activateNotClonedRepos, getNotClonedTreeItem } from './notClonedRepos';
 import type { RepoItem } from './repoItem';
 
@@ -32,6 +33,22 @@ export function activateTreeViewRepositories(): void {
 
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.publish', () => uiPublish());
 
+  // Sets the default directory for cloning
+  commands.registerCommand('githubRepoMgr.commands.pick.defaultCloneDirectory', async () => {
+    const thenable = await window.showOpenDialog({
+      defaultUri: Uri.file(Configs.defaultCloneToDir),
+      openLabel: `Select as default directory`,
+      canSelectFiles: false,
+      canSelectFolders: true,
+      canSelectMany: false,
+    });
+
+    if (thenable) {
+      // 3rd param as true to change global setting. Else wouldn't work.
+      await workspace.getConfiguration('git').update('defaultCloneDirectory', thenable[0]!.fsPath, true);
+      await User.reloadRepos();
+    }
+  });
 
   activateClonedRepos();
   activateNotClonedRepos();
@@ -49,8 +66,12 @@ class TreeDataProvider extends BaseTreeDataProvider {
           label: 'Loading...',
         });
       case RepositoriesState.partial:
-      case RepositoriesState.fullyLoaded:
-        return [getClonedTreeItem(), getNotClonedTreeItem()];
+      case RepositoriesState.fullyLoaded: {
+        const clonedFromOthers = User.clonedOtherRepos.length
+          ? [getClonedOthersTreeItem()]
+          : [];
+        return [getClonedTreeItem(), ...clonedFromOthers, getNotClonedTreeItem()];
+      }
     }
   }
 
