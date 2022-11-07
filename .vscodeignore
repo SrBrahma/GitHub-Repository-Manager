@@ -1,10 +1,10 @@
 .vscode/**
-.vscode-test/**
 out/test/**
 src/**
 .gitignore
 vsc-extension-quickstart.md
 **/tsconfig.json
+**/tsconfig.lint.json
 **/.eslintrc.json
 **/.eslintrc.js
 webpack
@@ -16,3 +16,6 @@ node_modules
 .git
 
 usefulLinks.txt
+pnpm-lock.yaml
+images/*
+!images/logo
