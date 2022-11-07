@@ -5,7 +5,7 @@
 * Added `Delete` to cloned repositories' context menu. It has a confirmation and informs if the repository is dirty, but still, be careful!
 
 ## 1.5.1 - 2022-06-20
-* Improved HEAD detection for repository cloning. It nall shall work for all the system languages. [#42](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/42). Thanks, [lo-ca](https://github.com/lo-ca)!
+* Improved HEAD detection for repository cloning. It shall work for all the languages. [#42](https://github.com/SrBrahma/GitHub-Repository-Manager/issues/42). Thanks, [lo-ca](https://github.com/lo-ca)!
 
 ## 1.5.0 - 2022-06-09
 * Now using `globby` to find the dirs that contains .git. It's not only faster but fixes a strange bug where there wouldn't appear any cloned repositories.
