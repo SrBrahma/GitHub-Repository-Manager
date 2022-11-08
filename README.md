@@ -111,8 +111,6 @@ Directories names that are ignored on the search for the cloned repositories. `*
 
 - Search and clone public repositories
 
-- Other repositories found by the Cloned Repository Searcher. Useful for quickly opening a repository you don't own.
-
 - Visualize without cloning (useful for getting some value or checking something from some repository)
 
 - "Order by" (alphabetically, stars, your open frequency, created on, updated on) in top menu
@@ -120,8 +118,6 @@ Directories names that are ignored on the search for the cloned repositories. `*
 - Search repository by name
 
 - Fetch repositories on demand - Some devs have hundreds or thousands of repos. Instead of fetching all of them on init and displaying all of them together, there could be a \[1..100\], \[101, 200\] tree system, for both on demand fetch and display.
-
-- Remove cloned from local if it isn't dirty (= not locally diff from github)
 
 <br/>
 <h2 align="center"> Feel free to open an issue for features requests, problems or questions! </h2>
