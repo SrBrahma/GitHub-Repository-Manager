@@ -23,15 +23,18 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "typecheck:watch": "tsc --noEmit --watch",
-    "lint": "npm run typecheck && eslint --ext js,ts .",
-    "lint:fix": "npm run lint --fix",
+    "lint": "pnpm typecheck && eslint --ext js,ts .",
+    "lint:fix": "pnpm lint --fix",
     "prettier": "prettier .",
     "prettier:fix": "prettier --write .",
-    "vscode:prepublish": "webpack --config webpack/webpack.config.prod.js",
-    "publish": "vsce publish",
-    "webpack-dev": "webpack --config webpack/webpack.config.dev.js --watch",
-    "watch": "npm run webpack-dev",
-    "start": "npm run watch"
+    "=== using pnpm ===": "https://github.com/microsoft/vscode-vsce/issues/421#issuecomment-1038911725",
+    "esbuild:base": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node",
+    "esbuild:watch": "pnpm esbuild:base --watch",
+    "vscode:prepublish": "pnpm esbuild:base --minify",
+    "package": "vsce package --no-dependencies",
+    "publish": "vsce publish --no-dependencies",
+    "watch": "run-p esbuild:watch typecheck:watch",
+    "start": "pnpm watch"
   },
   "categories": [
     "Other",
@@ -62,17 +65,13 @@
     "@types/git-url-parse": "^9.0.1",
     "@types/node": "^17.0.21",
     "@types/vscode": "1.58.0",
-    "clean-webpack-plugin": "^4.0.0",
+    "esbuild": "0.15.13",
     "eslint-config-gev": "3.0.1",
-    "fork-ts-checker-webpack-plugin": "^6.5.0",
+    "npm-run-all": "4.1.5",
     "prettier": "2.7.1",
     "prettier-config-gev": "1.1.0",
-    "ts-loader": "^9.2.7",
     "typescript": "^4.8.4",
-    "vsce": "2.13.0",
-    "webpack": "^5.69.1",
-    "webpack-cli": "^4.9.2",
-    "webpack-merge": "^5.8.0"
+    "vsce": "2.13.0"
   },
   "contributes": {
     "colors": [

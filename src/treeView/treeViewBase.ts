@@ -41,6 +41,7 @@ export abstract class BaseTreeDataProvider
   // https://code.visualstudio.com/api/extension-guides/tree-view#updating-tree-view-content
   private _onDidChangeTreeData: vscode.EventEmitter<TreeItem> =
     new vscode.EventEmitter<TreeItem>();
+
   readonly onDidChangeTreeData: vscode.Event<TreeItem> =
     this._onDidChangeTreeData.event;
 

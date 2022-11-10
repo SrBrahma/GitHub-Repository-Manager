@@ -15,9 +15,11 @@ class ConfigsClass {
   get alwaysCloneToDefaultDirectory() {
     return getConfig<boolean>('alwaysCloneToDefaultDirectory', false);
   }
+
   get defaultCloneDirectoryMaximumDepth() {
     return getConfig<number>('defaultCloneDirectoryMaximumDepth', 3);
   }
+
   get directoriesToIgnore() {
     return getConfig<string[]>('directoriesToIgnore', [
       '.vscode',

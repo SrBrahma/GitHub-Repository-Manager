@@ -6,6 +6,12 @@
 - Added support for repositories without remote in `Cloned - Others`
 - Removed `<ownerName> / ` from cloned repositories labels that you are not owner. Now only the repository name will show. They are still sorted last.
 
+#### Inner
+
+- Moved to `pnpm`
+- Removed `ESLint` formatting rules and added `Prettier`
+- Moved from `webpack` to `esbuild`
+
 ## 1.6.0
 
 - Added `Cloned - Others` tree for local repositories that aren't from the user or from an organization the user is part of. For now they must have a remote URL. Later I will add support for repositories without remote.

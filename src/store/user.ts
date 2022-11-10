@@ -71,6 +71,7 @@ class UserClass {
   public subscribe(changed: 'account' | 'repos', callback: () => void) {
     this.subscribers.push([changed, callback]);
   }
+
   private informSubscribers(changed: 'account' | 'repos') {
     this.subscribers.forEach(([c, cb]) => changed === c && cb());
   }

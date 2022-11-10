@@ -1,3 +1,5 @@
 dist/
+images/
 tsconfig.tsbuildinfo
 package-lock.json
+pnpm-lock.yaml
