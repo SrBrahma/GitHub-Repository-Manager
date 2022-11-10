@@ -4,7 +4,6 @@ import type { DirWithGitUrl } from '../commands/searchClonedRepos/searchClonedRe
 import type { Repository } from './repository';
 import { isRepoOnDisk } from './repository';
 
-
 export enum OrgStatus {
   notLoaded,
   loading,
@@ -42,23 +41,29 @@ export class Organization {
   }
 
   /** Call it after constructing it. */
-  async loadOrgRepos({ localRepos }: {
-    localRepos: DirWithGitUrl[];
-  }): Promise<void> {
+  async loadOrgRepos({ localRepos }: { localRepos: DirWithGitUrl[] }): Promise<void> {
     try {
       this.status = OrgStatus.loading;
 
-      this.repositories = this.isUserOrg ? await getUserRepos() : await getOrgRepos(this.login);
+      this.repositories = this.isUserOrg
+        ? await getUserRepos()
+        : await getOrgRepos(this.login);
       // TODO splice localRepos so other orgs won't loop over it? Good for users/orgs with hundreds/thousands of repos.
       localRepos.forEach((localRepo) => {
-        const repoMatch = this.repositories.find((repo) => repo.url === localRepo.gitUrl) as Repository<true, 'user-is-member'> | undefined;
+        const repoMatch = this.repositories.find(
+          (repo) => repo.url === localRepo.gitUrl,
+        ) as Repository<true, 'user-is-member'> | undefined;
         if (repoMatch) {
           repoMatch.localPath = localRepo.dirPath;
           repoMatch.dirty = 'unknown';
         }
       });
-      this.clonedRepos = this.repositories.filter((repo) => isRepoOnDisk(repo)) as Repository<true, 'user-is-member'>[];
-      this.notClonedRepos = this.repositories.filter((repo) => !isRepoOnDisk(repo)) as Repository<false, 'user-is-member'>[];
+      this.clonedRepos = this.repositories.filter((repo) =>
+        isRepoOnDisk(repo),
+      ) as Repository<true, 'user-is-member'>[];
+      this.notClonedRepos = this.repositories.filter(
+        (repo) => !isRepoOnDisk(repo),
+      ) as Repository<false, 'user-is-member'>[];
 
       this.status = OrgStatus.loaded;
     } catch (err: any) {

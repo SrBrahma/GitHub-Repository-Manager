@@ -28,10 +28,7 @@
       "type": "shell",
       "command": "tsc",
       "isBackground": true,
-      "args": [
-        "--build",
-        "--watch"
-      ],
+      "args": ["--build", "--watch"],
       "group": {
         "kind": "build",
         "isDefault": true
@@ -49,6 +46,6 @@
       "options": {
         "cwd": "${workspaceFolder}/functions"
       }
-    },
+    }
   ]
 }

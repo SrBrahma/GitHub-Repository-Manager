@@ -6,3 +6,4 @@ node_modules/
 .env
 .VSCodeCounter
 test.js
+tsconfig.tsbuildinfo

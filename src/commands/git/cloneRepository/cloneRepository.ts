@@ -30,20 +30,20 @@ import fse from 'fs-extra';
 import { getRemoteHead as getRemoteHeadBranch } from '../getRemoteHeadBranch/getRemoteHeadBranch';
 import { getRepositoryGitUrl } from '../getRepositoryGitUrl';
 
-
 export async function cloneRepo(options: {
   repositoryName: string;
   owner: string;
   parentPath: string;
   token: string;
 }): Promise<void> {
-
   const { owner, repositoryName, parentPath, token } = options;
 
   const repositoryPath = path.join(parentPath, repositoryName);
 
   if (await fse.pathExists(repositoryPath))
-    throw new Error(`There is already a directory named '${repositoryName}' at '${parentPath}'!`);
+    throw new Error(
+      `There is already a directory named '${repositoryName}' at '${parentPath}'!`,
+    );
 
   const remoteUrl = getRepositoryGitUrl({ owner, repositoryName });
   const remoteUrlTokenized = getRepositoryGitUrl({ owner, repositoryName, token });
@@ -51,7 +51,10 @@ export async function cloneRepo(options: {
   try {
     await execa('git', ['init', repositoryName], { cwd: parentPath });
 
-    const headBranchRaw = await getRemoteHeadBranch({ remoteUrl: remoteUrlTokenized, repositoryPath });
+    const headBranchRaw = await getRemoteHeadBranch({
+      remoteUrl: remoteUrlTokenized,
+      repositoryPath,
+    });
     const repositoryIsEmpty = !headBranchRaw;
 
     /** Defaults to main if there is no HEAD */
@@ -59,7 +62,9 @@ export async function cloneRepo(options: {
 
     /** https://stackoverflow.com/a/42871621/10247962 */
     await execa('git', ['checkout', '-b', headBranch], { cwd: repositoryPath });
-    await execa('git', ['remote', 'add', 'origin', remoteUrl], { cwd: repositoryPath });
+    await execa('git', ['remote', 'add', 'origin', remoteUrl], {
+      cwd: repositoryPath,
+    });
 
     // If repository has a HEAD branch, aka has a commit, aka isn't empty
     if (!repositoryIsEmpty)
@@ -68,22 +73,25 @@ export async function cloneRepo(options: {
        * https://github.com/mheap/github-default-branch */
       await execa('git', ['pull', remoteUrlTokenized], { cwd: repositoryPath });
 
-
     /** I didn't find a way to automatically set the push destination.
      * The usual way is by doing "git push -u origin main", however, it requires the user being
      * logged, which isn't always true (and we actually didn't in previous steps). #22. */
-    await fse.appendFile(path.join(repositoryPath, '.git', 'config'),
+    await fse.appendFile(
+      path.join(repositoryPath, '.git', 'config'),
       `[branch "${headBranch}"]
 \tremote = origin
-\tmerge = refs/heads/${headBranch}`);
-
+\tmerge = refs/heads/${headBranch}`,
+    );
   } catch (err: any) {
     // Removes the repo dir if error. We already checked before the try if the path existed,
     // so we are only removing what we possibly created.
     await fse.remove(repositoryPath);
 
     /** Error message with user token censored, if included */
-    const censoredMsg = (err.message as string).replace(new RegExp(token, 'g'), '[tokenHidden]');
+    const censoredMsg = (err.message as string).replace(
+      new RegExp(token, 'g'),
+      '[tokenHidden]',
+    );
     throw new Error(censoredMsg);
   }
 }

@@ -4,8 +4,9 @@ import type { Repository } from '../../store/repository';
 import { octokit } from '../../store/user';
 import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 
-
-export function extractRepositoryFromData(data: any): Repository<false, 'user-is-member'> {
+export function extractRepositoryFromData(
+  data: any,
+): Repository<false, 'user-is-member'> {
   return {
     name: data.name,
     description: data.description,
@@ -52,9 +53,10 @@ createdAt
 updatedAt
 `;
 
-export async function getOrgRepos(login: string): Promise<Repository<false, 'user-is-member'>[]> {
-  if (!octokit)
-    throw new Error('Octokit not set up!');
+export async function getOrgRepos(
+  login: string,
+): Promise<Repository<false, 'user-is-member'>[]> {
+  if (!octokit) throw new Error('Octokit not set up!');
   try {
     const repos: Repository<false, 'user-is-member'>[] = [];
 
@@ -66,10 +68,9 @@ export async function getOrgRepos(login: string): Promise<Repository<false, 'use
       const response = (await octokit.graphql(query, {
         after: endCursor,
         org: login,
-      }) as any);
+      })) as any;
 
-      if (response.viewer.organization === null)
-        return repos;
+      if (response.viewer.organization === null) return repos;
 
       const { nodes, pageInfo } = response.viewer.organization.repositories;
       ({ endCursor, hasNextPage } = pageInfo);
@@ -77,11 +78,11 @@ export async function getOrgRepos(login: string): Promise<Repository<false, 'use
     } while (hasNextPage);
 
     return repos;
-  } catch (err: any) { // Octokit has a patter for errors, which we display properly at octokitErrorDisplay().
+  } catch (err: any) {
+    // Octokit has a patter for errors, which we display properly at octokitErrorDisplay().
     throw new Error(getOctokitErrorMessage(err));
   }
 }
-
 
 const query = `
 query getOrgRepos ($after: String, $org: String!) {

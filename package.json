@@ -25,6 +25,8 @@
     "typecheck:watch": "tsc --noEmit --watch",
     "lint": "npm run typecheck && eslint --ext js,ts .",
     "lint:fix": "npm run lint --fix",
+    "prettier": "prettier .",
+    "prettier:fix": "prettier --write .",
     "vscode:prepublish": "webpack --config webpack/webpack.config.prod.js",
     "publish": "vsce publish",
     "webpack-dev": "webpack --config webpack/webpack.config.dev.js --watch",

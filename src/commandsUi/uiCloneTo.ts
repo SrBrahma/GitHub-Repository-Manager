@@ -20,7 +20,11 @@ const addToWorkspaceStr = 'Add to Workspace';
 
 // TODO: Add cancel button
 /** Doesn't throw errors. */
-export async function uiCloneTo({ ownerLogin, name, reloadRepos }: {
+export async function uiCloneTo({
+  ownerLogin,
+  name,
+  reloadRepos,
+}: {
   /** The repository name */
   name: string;
   /** The owner login */
@@ -28,13 +32,10 @@ export async function uiCloneTo({ ownerLogin, name, reloadRepos }: {
   /** If should reloadRepos() on clone success. */
   reloadRepos: boolean;
 }): Promise<void> {
-
-  if (!User.token)
-    throw new Error('User token is not set!');
+  if (!User.token) throw new Error('User token is not set!');
 
   let labelRepoName = `/${name}`;
-  if (labelRepoName.length >= 15)
-    labelRepoName = `${labelRepoName.substr(0, 12)}...`;
+  if (labelRepoName.length >= 15) labelRepoName = `${labelRepoName.substr(0, 12)}...`;
 
   let parentPath: string = '';
 
@@ -47,7 +48,8 @@ export async function uiCloneTo({ ownerLogin, name, reloadRepos }: {
       canSelectMany: false,
     });
 
-    if (!thenable) // Cancel if quitted dialog
+    if (!thenable)
+      // Cancel if quitted dialog
       return;
 
     parentPath = thenable[0]!.fsPath;
@@ -61,7 +63,12 @@ export async function uiCloneTo({ ownerLogin, name, reloadRepos }: {
   // Will leave it as status bar until we have a cancel button.
   const statusBar = window.setStatusBarMessage(`Cloning ${name} to ${repoPath}...`);
   try {
-    await cloneRepo({ owner: ownerLogin, repositoryName: name, parentPath, token: User.token });
+    await cloneRepo({
+      owner: ownerLogin,
+      repositoryName: name,
+      parentPath,
+      token: User.token,
+    });
     statusBar.dispose();
   } catch (err: any) {
     statusBar.dispose();
@@ -72,18 +79,28 @@ export async function uiCloneTo({ ownerLogin, name, reloadRepos }: {
   await Promise.all([
     reloadRepos ? User.reloadRepos() : undefined,
     (async () => {
-      const action = await window.showInformationMessage(`Cloned ${name} to ${repoPath}!`,
-        openStr, openInNewWindowStr, addToWorkspaceStr);
+      const action = await window.showInformationMessage(
+        `Cloned ${name} to ${repoPath}!`,
+        openStr,
+        openInNewWindowStr,
+        addToWorkspaceStr,
+      );
 
       switch (action) {
         case openStr:
-          void commands.executeCommand('vscode.openFolder', uri); break;
+          void commands.executeCommand('vscode.openFolder', uri);
+          break;
         case openInNewWindowStr:
-          void commands.executeCommand('vscode.openFolder', uri, true); break;
+          void commands.executeCommand('vscode.openFolder', uri, true);
+          break;
         case addToWorkspaceStr:
-          workspace.updateWorkspaceFolders(workspace.workspaceFolders?.length ?? 0, 0, { uri }); break;
+          workspace.updateWorkspaceFolders(
+            workspace.workspaceFolders?.length ?? 0,
+            0,
+            { uri },
+          );
+          break;
       }
     })(),
   ]);
-
 }

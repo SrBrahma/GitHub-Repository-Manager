@@ -4,7 +4,6 @@ import fse from 'fs-extra';
 import { getRepositoryGitUrl } from '../getRepositoryGitUrl';
 import { pathHasGit } from '../pathHasGit/pathHasGit';
 
-
 type Options = {
   /** If defined, will add remote and a branch with it as remote. '.git' is added to its end. */
   remote?: {
@@ -25,11 +24,9 @@ type Options = {
 export async function initGit(projectPath: string, options?: Options): Promise<void> {
   const { cleanOnError, commitAllAndPush, remote } = options ?? {};
 
-  if (await pathHasGit(projectPath))
-    throw new Error('Path already contains .git!');
+  if (await pathHasGit(projectPath)) throw new Error('Path already contains .git!');
 
   try {
-
     await execa('git', ['init'], { cwd: projectPath });
 
     const headBranch: string = 'main';
@@ -38,17 +35,33 @@ export async function initGit(projectPath: string, options?: Options): Promise<v
 
     if (remote) {
       const remoteUrl = getRepositoryGitUrl(remote);
-      await execa('git', ['remote', 'add', 'origin', remoteUrl], { cwd: projectPath });
+      await execa('git', ['remote', 'add', 'origin', remoteUrl], {
+        cwd: projectPath,
+      });
 
       // Manually add the upstream
-      await execa('git', ['config', '--local', `branch.${headBranch}.remote`, 'origin'], { cwd: projectPath });
-      await execa('git', ['config', '--local', `branch.${headBranch}.merge`, `refs/heads/${headBranch}`], { cwd: projectPath });
+      await execa(
+        'git',
+        ['config', '--local', `branch.${headBranch}.remote`, 'origin'],
+        { cwd: projectPath },
+      );
+      await execa(
+        'git',
+        [
+          'config',
+          '--local',
+          `branch.${headBranch}.merge`,
+          `refs/heads/${headBranch}`,
+        ],
+        { cwd: projectPath },
+      );
 
-
-      await fse.appendFile(path.join(projectPath, '.git', 'config'),
+      await fse.appendFile(
+        path.join(projectPath, '.git', 'config'),
         `[branch "${headBranch}"]
 \tremote = origin
-\tmerge = refs/heads/${headBranch}`);
+\tmerge = refs/heads/${headBranch}`,
+      );
 
       if (commitAllAndPush) {
         await execa('git', ['add', '.'], { cwd: projectPath });
@@ -63,8 +76,7 @@ export async function initGit(projectPath: string, options?: Options): Promise<v
       }
     }
   } catch (err: any) {
-    if (cleanOnError)
-      await fse.remove(path.join(projectPath, '.git')); // Remove created .git on error
+    if (cleanOnError) await fse.remove(path.join(projectPath, '.git')); // Remove created .git on error
     throw err;
   }
 }

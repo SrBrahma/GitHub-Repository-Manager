@@ -26,7 +26,8 @@ const config = {
     extensions: ['.ts', '.js'],
   },
   stats: {
-    warningsFilter: /Critical dependency: the request of a dependency is an expression/,
+    warningsFilter:
+      /Critical dependency: the request of a dependency is an expression/,
   },
   module: {
     rules: [
@@ -34,7 +35,8 @@ const config = {
         test: /\.ts$/,
         exclude: /node_modules/,
         loader: 'ts-loader',
-        options: { // Makes the compilation faster https://github.com/TypeStrong/ts-loader#faster-builds
+        options: {
+          // Makes the compilation faster https://github.com/TypeStrong/ts-loader#faster-builds
           transpileOnly: true,
         },
       },

@@ -3,35 +3,44 @@ import { noLocalSearchPaths } from '../../commands/searchClonedRepos/searchClone
 import { User, UserState } from '../../store/user';
 import { BaseTreeDataProvider, TreeItem } from '../treeViewBase';
 
-
 export let accountTreeDataProvider: TreeDataProvider;
 
 export function activateTreeViewAccount(): void {
   accountTreeDataProvider = new TreeDataProvider();
-  vscode.window.registerTreeDataProvider('githubRepoMgr.views.account', accountTreeDataProvider);
+  vscode.window.registerTreeDataProvider(
+    'githubRepoMgr.views.account',
+    accountTreeDataProvider,
+  );
 
-  User.subscribe('account', () => { accountTreeDataProvider.refresh(); });
+  User.subscribe('account', () => {
+    accountTreeDataProvider.refresh();
+  });
 
   // Open user profile page
-  vscode.commands.registerCommand('githubRepoMgr.commands.user.openProfilePage', async () => {
-    if (User.profileUri)
-      await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(User.profileUri));
-  });
+  vscode.commands.registerCommand(
+    'githubRepoMgr.commands.user.openProfilePage',
+    async () => {
+      if (User.profileUri)
+        await vscode.commands.executeCommand(
+          'vscode.open',
+          vscode.Uri.parse(User.profileUri),
+        );
+    },
+  );
 
   // Open Extension README
   // vscode.commands.registerCommand('githubRepoMgr.commands.user.openReadme', async () => {
   //   if (User.profileUri)
   //     await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://github.com/SrBrahma/GitHub-Repository-Manager#github-repository-manager'));
   // });
-
 }
-
 
 // There is a TreeItem from vscode. Should I use it? But it would need a workaround to
 // avoid using title in command.
 class TreeDataProvider extends BaseTreeDataProvider {
-
-  constructor() { super(); }
+  constructor() {
+    super();
+  }
 
   getData() {
     switch (User.state) {
@@ -50,9 +59,7 @@ class TreeDataProvider extends BaseTreeDataProvider {
   protected makeData() {
     this.data = this.getData();
   }
-
 }
-
 
 export function getLoggedTreeData(): TreeItem[] {
   return [
@@ -68,11 +75,13 @@ export function getLoggedTreeData(): TreeItem[] {
         }),
         ...(noLocalSearchPaths
           ? []
-          : [new TreeItem({
-            label: ' Change "git.defaultCloneDirectory"',
-            command: 'githubRepoMgr.commands.pick.defaultCloneDirectory',
-            iconPath: new ThemeIcon('file-directory'),
-          })]),
+          : [
+              new TreeItem({
+                label: ' Change "git.defaultCloneDirectory"',
+                command: 'githubRepoMgr.commands.pick.defaultCloneDirectory',
+                iconPath: new ThemeIcon('file-directory'),
+              }),
+            ]),
         // new TreeItem({
         //   label: ' Open extension Readme',
         //   command: 'githubRepoMgr.commands.user.openReadme',

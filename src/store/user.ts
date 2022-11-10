@@ -10,10 +10,8 @@ import { Organization } from './organization';
 import type { Repository } from './repository';
 import { isRepoOnDisk } from './repository';
 
-
 const AUTH_PROVIDER_ID = 'github';
 const SCOPES = ['repo', 'read:org'];
-
 
 // Values are named as we use them to setContext and also for better debugging (console.log(user.state))
 export enum UserState {
@@ -64,12 +62,18 @@ class UserClass {
 
   /** Returns the orgs that the user can create new repositories.
    * As it uses this.organizations, it includes the user Organization. */
-  get organizationUserCanCreateRepositories() { return this.organizations.filter((o) => o.userCanCreateRepositories); }
+  get organizationUserCanCreateRepositories() {
+    return this.organizations.filter((o) => o.userCanCreateRepositories);
+  }
 
   /** The ones listening for changes. */
   private subscribers: ['account' | 'repos', () => void][] = [];
-  public subscribe(changed: 'account' | 'repos', callback: () => void) { this.subscribers.push([changed, callback]); }
-  private informSubscribers(changed: 'account' | 'repos') { this.subscribers.forEach(([c, cb]) => (changed === c) && cb()); }
+  public subscribe(changed: 'account' | 'repos', callback: () => void) {
+    this.subscribers.push([changed, callback]);
+  }
+  private informSubscribers(changed: 'account' | 'repos') {
+    this.subscribers.forEach(([c, cb]) => changed === c && cb());
+  }
 
   /** Will also informSubscribers('account') */
   setUserState(state: UserState) {
@@ -84,13 +88,11 @@ class UserClass {
     this.informSubscribers('repos');
   }
 
-
   private resetUser(opts: { resetUserStatus: boolean; resetOctokit: boolean }) {
     this.login = undefined;
     this.profileUri = undefined;
     this.organizations = [];
-    if (opts.resetUserStatus)
-      this.setUserState(UserState.notLogged);
+    if (opts.resetUserStatus) this.setUserState(UserState.notLogged);
     if (opts.resetOctokit) {
       octokit = undefined;
       this.token = undefined;
@@ -109,27 +111,34 @@ class UserClass {
     this.resetRepos({ resetRepositoriesStatus: true });
   }
 
-
   async activate() {
-    vscode.commands.registerCommand('githubRepoMgr.commands.auth.vscodeAuth', async () => {
-      try {
-        /** Returns the new authed token. May throw errors. */
-        const token = (await vscode.authentication.getSession(AUTH_PROVIDER_ID, SCOPES, { createIfNone: true }))
-          .accessToken;
-        await this.initOctokit(token);
-      } catch (err: any) {
-        void vscode.window.showErrorMessage(err.message);
-      }
-    });
+    vscode.commands.registerCommand(
+      'githubRepoMgr.commands.auth.vscodeAuth',
+      async () => {
+        try {
+          /** Returns the new authed token. May throw errors. */
+          const token = (
+            await vscode.authentication.getSession(AUTH_PROVIDER_ID, SCOPES, {
+              createIfNone: true,
+            })
+          ).accessToken;
+          await this.initOctokit(token);
+        } catch (err: any) {
+          void vscode.window.showErrorMessage(err.message);
+        }
+      },
+    );
     try {
       // vscode.authentication.onDidChangeSessions(e => ...); // It doesn't get the logout.
       /** Stored token */
-      const token = (await vscode.authentication.getSession(AUTH_PROVIDER_ID, SCOPES, { createIfNone: false }))?.accessToken;
+      const token = (
+        await vscode.authentication.getSession(AUTH_PROVIDER_ID, SCOPES, {
+          createIfNone: false,
+        })
+      )?.accessToken;
       /** Init octokit if we have a stored token */
-      if (token)
-        await this.initOctokit(token);
-      else
-        this.setUserState(UserState.notLogged);
+      if (token) await this.initOctokit(token);
+      else this.setUserState(UserState.notLogged);
     } catch (err: any) {
       void vscode.window.showErrorMessage(err.message);
     }
@@ -141,7 +150,7 @@ class UserClass {
     this.token = token;
 
     /** reloadRepos() will change the userState on its end. */
-    await User.reloadRepos().catch ((err) => {
+    await User.reloadRepos().catch((err) => {
       void vscode.window.showErrorMessage(err.message);
       console.error('Octokit init error: ', err);
       octokit = undefined;
@@ -156,15 +165,25 @@ class UserClass {
       this.login = login;
       this.profileUri = profileUri;
       // We set name as login. The user real name really isn't useful anywhere here and would be too personal, invasive.
-      this.userOrganization = new Organization({ login, name: login, isUserOrg: true, userCanCreateRepositories: true });
+      this.userOrganization = new Organization({
+        login,
+        name: login,
+        isUserOrg: true,
+        userCanCreateRepositories: true,
+      });
 
       this.organizations.push(this.userOrganization);
-      this.organizations.push(...organizations.map((org: any) => new Organization({
-        isUserOrg: false,
-        login: org.login,
-        name: org.name,
-        userCanCreateRepositories: org.viewerCanCreateRepositories,
-      })));
+      this.organizations.push(
+        ...organizations.map(
+          (org: any) =>
+            new Organization({
+              isUserOrg: false,
+              login: org.login,
+              name: org.name,
+              userCanCreateRepositories: org.viewerCanCreateRepositories,
+            }),
+        ),
+      );
       this.setUserState(UserState.logged);
     } catch (err: any) {
       void vscode.window.showErrorMessage(err.message);
@@ -173,17 +192,25 @@ class UserClass {
     }
   }
 
-
   /** Must be executed after loadUser and loadLocalRepos */
-  private async loadRepos({ localRepos }: { localRepos: DirWithGitUrl[] }): Promise<void> {
+  private async loadRepos({
+    localRepos,
+  }: {
+    localRepos: DirWithGitUrl[];
+  }): Promise<void> {
     this.setRepositoriesState(RepositoriesState.fetching);
-    await Promise.all(this.organizations.map((org) => org.loadOrgRepos({ localRepos })));
+    await Promise.all(
+      this.organizations.map((org) => org.loadOrgRepos({ localRepos })),
+    );
 
     // Get dirtyness status of local repos
     this.clonedRepos = this.organizations.map((org) => org.clonedRepos).flat();
     this.otherLocalsRepos = localRepos
-    // Remove repos that are on Cloned tree
-      .filter((r) => !this.clonedRepos.find((c) => isRepoOnDisk(c) && c.localPath === r.dirPath))
+      // Remove repos that are on Cloned tree
+      .filter(
+        (r) =>
+          !this.clonedRepos.find((c) => isRepoOnDisk(c) && c.localPath === r.dirPath),
+      )
       .map((r) => ({
         name: gitUrlParse(r.gitUrl).name,
         ownerLogin: gitUrlParse(r.gitUrl).owner,
@@ -196,14 +223,20 @@ class UserClass {
     // To show unknown dirtiness or at least the not-cloned repos, if none is cloned.
     this.setRepositoriesState(RepositoriesState.partial);
     // Updates dirty forms from time to time while not done
-    const interval = setInterval(() => { this.informSubscribers('repos'); }, 250);
+    const interval = setInterval(() => {
+      this.informSubscribers('repos');
+    }, 250);
 
     // Check dirty of orgs' local repos
-    await Promise.all(this.organizations.map((org) => Promise.all(
-      org.clonedRepos.map(async (localRepo) => {
-        localRepo.dirty = await getDirtiness(localRepo.localPath);
-      })),
-    ));
+    await Promise.all(
+      this.organizations.map((org) =>
+        Promise.all(
+          org.clonedRepos.map(async (localRepo) => {
+            localRepo.dirty = await getDirtiness(localRepo.localPath);
+          }),
+        ),
+      ),
+    );
     clearInterval(interval);
 
     this.setRepositoriesState(RepositoriesState.fullyLoaded);
@@ -212,18 +245,20 @@ class UserClass {
   /** Fetch again the user data and its orgs that he belongs to. */
   // TODO add local reload, for actions like delete to avoid unncessary refetch
   public async reloadRepos(): Promise<void> {
-    if (this.repositoriesState === RepositoriesState.fetching)
-      return; // Don't allow multiple fetches (it should, by cancelling first)
+    if (this.repositoriesState === RepositoriesState.fetching) return; // Don't allow multiple fetches (it should, by cancelling first)
 
     this.resetUser({ resetUserStatus: false, resetOctokit: false });
     this.resetRepos({ resetRepositoriesStatus: false });
-    if (!octokit) // Ignore if octokit not set up, after resetting above.
+    if (!octokit)
+      // Ignore if octokit not set up, after resetting above.
       return;
     this.setRepositoriesState(RepositoriesState.fetching);
-    const [, localRepos] = await Promise.all([this.loadUser(), getLocalReposPathAndUrl()]);
+    const [, localRepos] = await Promise.all([
+      this.loadUser(),
+      getLocalReposPathAndUrl(),
+    ]);
     await this.loadRepos({ localRepos });
   }
-
 }
 
 export const User = new UserClass();

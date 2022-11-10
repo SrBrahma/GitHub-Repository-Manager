@@ -12,10 +12,7 @@
 VS Code extension that lists your personal and organizations GitHub repositories, allowing you to clone and access them and create new ones
 </h3>
 
-
 <br/>
-
-
 
 <div align="center">
 <img src="https://raw.githubusercontent.com/SrBrahma/GitHub-Repository-Manager/master/images/readme/usage.gif" width="85%" >
@@ -38,7 +35,6 @@ _The `*` means that the repository is **dirty**! So it has local changes that ar
 Guide
 </h1>
 
-
 <!-- Maybe not needed. See if someone asks on how to do it. <h2><b> Log in </b></h2>
 
 **[1.0.0]** We are now using the VS Code integrated GitHub login system!
@@ -50,7 +46,6 @@ Guide
 To logout in this new VS Code system, remove it from the Trusted Extensions. In the next VS Code session, the extension won't have access to your account. Note that if
 
 ![](images/readme/logout1.png) ![](images/readme/logout2.png) -->
-
 
 <h2><b> Cloned Repositories Search </b></h2>
 
@@ -74,30 +69,36 @@ You may create a GitHub repository and push your current project within the same
 
 There are 2 possible cases that allows using that publish functionality:
 
-1) **Your project doesn't have a Git yet.** After entering the repository name, description and visibility, the repository will be created, the git will be initialized for the workspace folder, `main` branch will be created and selected, GitHub remote will be added as `origin` and your files will then be pushed to it.
+1. **Your project doesn't have a Git yet.** After entering the repository name, description and visibility, the repository will be created, the git will be initialized for the workspace folder, `main` branch will be created and selected, GitHub remote will be added as `origin` and your files will then be pushed to it.
 
-2) **Your project has a Git, but it hasn't a remote yet.** After filling the repository information, it will be checked if your git HEAD is `master`. If so, it will ask if you want the branch to be renamed to `main`. Then the repository will be created, the GitHub remote is added as `origin` and your code is pushed.
+2. **Your project has a Git, but it hasn't a remote yet.** After filling the repository information, it will be checked if your git HEAD is `master`. If so, it will ask if you want the branch to be renamed to `main`. Then the repository will be created, the GitHub remote is added as `origin` and your code is pushed.
 
 <br/>
 <h1 align="center"> Settings </h1>
 
-
 - ### Always Clone To Default Directory
+
 ##### _"githubRepositoryManager.alwaysCloneToDefaultDirectory"_
+
 Always clone to the directory specified in "git.defaultCloneDirectory".
+
 ##### Default: **false**
 
 - ## Default Clone Directory Maximum Depth
+
 ##### _"githubRepositoryManager.clonedRepositoriesSearch.defaultCloneDirectoryMaximumDepth"_
+
 How deep on `"git.defaultCloneDirectory"` the cloned repositories will be searched. A depth of 0 means it will only search in the directory itself, a depth of 3 means it will search up to 3 directories below. The lesser the faster.
+
 ##### Default: **2**
 
-
 - ## Directories To Ignore
-##### _"githubRepositoryManager.clonedRepositoriesSearch.directoriesToIgnore"_
-Directories names that are ignored on the search for the cloned repositories. `**/` is added to their start.
-##### Default: **["node_modules", ".vscode", ".git/*", "logs", "src", "lib", "out", "build"]**
 
+##### _"githubRepositoryManager.clonedRepositoriesSearch.directoriesToIgnore"_
+
+Directories names that are ignored on the search for the cloned repositories. `**/` is added to their start.
+
+##### Default: **["node_modules", ".vscode", ".git/*", "logs", "src", "lib", "out", "build"]**
 
 <br/>
 

@@ -17,9 +17,13 @@ export function getOctokitErrorMessage(error: any): string {
   let errorMessage = '';
   switch (error.status) {
     case 401:
-      errorMessage = customErrorMsg('The entered or stored token is wrong, has expired or has been revoked! If you want, authenticate again!'); break;
+      errorMessage = customErrorMsg(
+        'The entered or stored token is wrong, has expired or has been revoked! If you want, authenticate again!',
+      );
+      break;
     case 500:
-      errorMessage = customErrorMsg('Looks like your internet is off!'); break;
+      errorMessage = customErrorMsg('Looks like your internet is off!');
+      break;
     default:
       errorMessage = defaultErrorMsg();
   }

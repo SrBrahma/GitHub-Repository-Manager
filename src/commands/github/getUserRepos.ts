@@ -5,10 +5,8 @@ import { octokit } from '../../store/user';
 import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 import { extractRepositoryFromData, repoInfosQuery } from './getOrgRepos';
 
-
 export async function getUserRepos(): Promise<Repository<false, 'user-is-member'>[]> {
-  if (!octokit)
-    throw new Error('Octokit not set up!');
+  if (!octokit) throw new Error('Octokit not set up!');
 
   try {
     const repos: Repository<false, 'user-is-member'>[] = [];
@@ -18,9 +16,11 @@ export async function getUserRepos(): Promise<Repository<false, 'user-is-member'
 
     do {
       // https://github.com/octokit/graphql.js/#variables
-      const { nodes, pageInfo }: { nodes: any; pageInfo: any } = (await octokit.graphql(query, {
-        after: endCursor,
-      }) as any).viewer.repositories;
+      const { nodes, pageInfo }: { nodes: any; pageInfo: any } = (
+        (await octokit.graphql(query, {
+          after: endCursor,
+        })) as any
+      ).viewer.repositories;
 
       ({ endCursor, hasNextPage } = pageInfo);
 
@@ -28,11 +28,11 @@ export async function getUserRepos(): Promise<Repository<false, 'user-is-member'
     } while (hasNextPage);
 
     return repos;
-  } catch (err: any) { // Octokit has a patter for errors, which we display properly at octokitErrorDisplay().
+  } catch (err: any) {
+    // Octokit has a patter for errors, which we display properly at octokitErrorDisplay().
     throw new Error(getOctokitErrorMessage(err));
   }
 }
-
 
 // Made with https://developer.github.com/v4/explorer/
 const query = `
