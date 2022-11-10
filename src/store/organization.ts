@@ -2,6 +2,7 @@ import { getOrgRepos } from '../commands/github/getOrgRepos';
 import { getUserRepos } from '../commands/github/getUserRepos';
 import type { DirWithGitUrl } from '../commands/searchClonedRepos/searchClonedRepos';
 import type { Repository } from './repository';
+import { isRepoOnDisk } from './repository';
 
 
 export enum OrgStatus {
@@ -24,9 +25,9 @@ export class Organization {
   name: string; // Used in notClonedRepo tree.
   login: string;
   status: OrgStatus;
-  repositories: Repository[] = [];
-  clonedRepos: Repository[] = [];
-  notClonedRepos: Repository[] = [];
+  repositories: Repository<boolean, 'user-is-member'>[] = [];
+  clonedRepos: Repository<true, 'user-is-member'>[] = [];
+  notClonedRepos: Repository<false, 'user-is-member'>[] = [];
   /** If it is the user organization, = the repos belong to him. */
   isUserOrg: boolean;
   /** If the user can create new repositories in this organization */
@@ -50,14 +51,14 @@ export class Organization {
       this.repositories = this.isUserOrg ? await getUserRepos() : await getOrgRepos(this.login);
       // TODO splice localRepos so other orgs won't loop over it? Good for users/orgs with hundreds/thousands of repos.
       localRepos.forEach((localRepo) => {
-        const repoMatch = this.repositories.find((repo) => repo.url === localRepo.gitUrl);
+        const repoMatch = this.repositories.find((repo) => repo.url === localRepo.gitUrl) as Repository<true, 'user-is-member'> | undefined;
         if (repoMatch) {
           repoMatch.localPath = localRepo.dirPath;
           repoMatch.dirty = 'unknown';
         }
       });
-      this.clonedRepos = this.repositories.filter((repo) => repo.localPath);
-      this.notClonedRepos = this.repositories.filter((repo) => !repo.localPath);
+      this.clonedRepos = this.repositories.filter((repo) => isRepoOnDisk(repo)) as Repository<true, 'user-is-member'>[];
+      this.notClonedRepos = this.repositories.filter((repo) => !isRepoOnDisk(repo)) as Repository<false, 'user-is-member'>[];
 
       this.status = OrgStatus.loaded;
     } catch (err: any) {

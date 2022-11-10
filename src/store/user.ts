@@ -7,7 +7,8 @@ import type { DirWithGitUrl } from '../commands/searchClonedRepos/searchClonedRe
 import { getLocalReposPathAndUrl } from '../commands/searchClonedRepos/searchClonedRepos';
 import { myExtensionSetContext } from '../main/utils';
 import { Organization } from './organization';
-import type { LocalRepository, Repository } from './repository';
+import type { Repository } from './repository';
+import { isRepoOnDisk } from './repository';
 
 
 const AUTH_PROVIDER_ID = 'github';
@@ -57,9 +58,9 @@ class UserClass {
   organizations: Organization[] = [];
   /** The User current status. */
   repositoriesState: RepositoriesState = RepositoriesState.none;
-  clonedRepos: Repository[] = [];
+  clonedRepos: Repository<true, 'user-is-member'>[] = [];
   /** Repositories that are cloned but not from user / user's org */
-  clonedOtherRepos: LocalRepository[] = [];
+  otherLocalsRepos: Repository<true>[] = [];
 
   /** Returns the orgs that the user can create new repositories.
    * As it uses this.organizations, it includes the user Organization. */
@@ -98,7 +99,7 @@ class UserClass {
 
   private resetRepos(opts: { resetRepositoriesStatus: boolean }) {
     this.clonedRepos = [];
-    this.clonedOtherRepos = [];
+    this.otherLocalsRepos = [];
     if (opts.resetRepositoriesStatus)
       this.setRepositoriesState(RepositoriesState.none);
   }
@@ -180,15 +181,16 @@ class UserClass {
 
     // Get dirtyness status of local repos
     this.clonedRepos = this.organizations.map((org) => org.clonedRepos).flat();
-    this.clonedOtherRepos = localRepos
+    this.otherLocalsRepos = localRepos
     // Remove repos that are on Cloned tree
-      .filter((r) => !this.clonedRepos.find((c) => c.localPath === r.dirPath))
+      .filter((r) => !this.clonedRepos.find((c) => isRepoOnDisk(c) && c.localPath === r.dirPath))
       .map((r) => ({
         name: gitUrlParse(r.gitUrl).name,
         ownerLogin: gitUrlParse(r.gitUrl).owner,
         url: r.gitUrl,
         localPath: r.dirPath,
         type: 'local',
+        dirty: 'unknown',
       }));
 
     // To show unknown dirtiness or at least the not-cloned repos, if none is cloned.
@@ -199,7 +201,7 @@ class UserClass {
     // Check dirty of orgs' local repos
     await Promise.all(this.organizations.map((org) => Promise.all(
       org.clonedRepos.map(async (localRepo) => {
-        localRepo.dirty = await getDirtiness(localRepo.localPath!);
+        localRepo.dirty = await getDirtiness(localRepo.localPath);
       })),
     ));
     clearInterval(interval);

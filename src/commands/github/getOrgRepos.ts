@@ -5,16 +5,13 @@ import { octokit } from '../../store/user';
 import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 
 
-export function extractRepositoryFromData(data: any): Repository {
+export function extractRepositoryFromData(data: any): Repository<false, 'user-is-member'> {
   return {
-    type: 'remote',
     name: data.name,
     description: data.description,
     ownerLogin: data.owner.login,
     languageName: data.primaryLanguage?.name,
     url: data.url,
-
-    // gitUrl: data.,
 
     isPrivate: data.isPrivate,
     isFork: data.isFork,
@@ -55,11 +52,11 @@ createdAt
 updatedAt
 `;
 
-export async function getOrgRepos(login: string): Promise<Repository[]> {
+export async function getOrgRepos(login: string): Promise<Repository<false, 'user-is-member'>[]> {
   if (!octokit)
     throw new Error('Octokit not set up!');
   try {
-    const repos: Repository[] = [];
+    const repos: Repository<false, 'user-is-member'>[] = [];
 
     let endCursor: string | null = null;
     let hasNextPage = false;

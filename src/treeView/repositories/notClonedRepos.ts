@@ -1,7 +1,7 @@
 import vscode, { commands } from 'vscode';
 import { uiCloneTo } from '../../commandsUi/uiCloneTo';
+import type { Organization } from '../../store/organization';
 import { OrgStatus } from '../../store/organization';
-import { User } from '../../store/user';
 import { TreeItem } from '../treeViewBase';
 import { RepoItem } from './repoItem';
 
@@ -9,7 +9,7 @@ import { RepoItem } from './repoItem';
 export function activateNotClonedRepos(): void {
   // Clone repo to [open select repo location]. You must pass the repo as arg.
   commands.registerCommand('githubRepoMgr.commands.notClonedRepos.cloneTo',
-    ({ repo }: RepoItem) => uiCloneTo({
+    ({ repo }: RepoItem<false, 'user-is-member'>) => uiCloneTo({
       name: repo.name, ownerLogin: repo.ownerLogin, reloadRepos: true,
     }));
 }
@@ -27,8 +27,10 @@ function getEmptyOrgLabel(status: OrgStatus): string {
   }
 }
 
-export function getNotClonedTreeItem(): TreeItem {
-  const orgs: TreeItem[] = User.organizations.map((org) => {
+export function getNotClonedTreeItem({ userOrgs }: {
+  userOrgs: Organization[];
+}): TreeItem {
+  const orgs: TreeItem[] = userOrgs.map((org) => {
     return new TreeItem({
       label: `${org.name}`,
       children: (org.repositories.length

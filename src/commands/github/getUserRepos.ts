@@ -6,12 +6,12 @@ import { getOctokitErrorMessage } from './getOctokitErrorMessage';
 import { extractRepositoryFromData, repoInfosQuery } from './getOrgRepos';
 
 
-export async function getUserRepos(): Promise<Repository[]> {
+export async function getUserRepos(): Promise<Repository<false, 'user-is-member'>[]> {
   if (!octokit)
     throw new Error('Octokit not set up!');
 
   try {
-    const repos: Repository[] = [];
+    const repos: Repository<false, 'user-is-member'>[] = [];
     // For pagination (if user has more repos than the query results (current max per query is 100))
     let endCursor: string | null = null;
     let hasNextPage = false;

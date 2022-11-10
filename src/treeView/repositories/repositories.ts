@@ -2,6 +2,7 @@ import vscode, { commands, Uri, window, workspace } from 'vscode';
 import { uiCreateRepo } from '../../commandsUi/uiCreateRepo';
 import { uiPublish } from '../../commandsUi/uiPublish/uiPublish';
 import { Configs } from '../../main/configs';
+import { hasRepoRemote } from '../../store/repository';
 import { RepositoriesState, User } from '../../store/user';
 import { BaseTreeDataProvider, TreeItem } from '../treeViewBase';
 import { activateClonedRepos, getClonedOthersTreeItem, getClonedTreeItem } from './clonedRepos';
@@ -17,12 +18,16 @@ export function activateTreeViewRepositories(): void {
   User.subscribe('repos', () => { repositoriesTreeDataProvider.refresh(); });
 
   // Access GitHub Web Page
-  vscode.commands.registerCommand('githubRepoMgr.commands.repos.openWebPage', ({ repo }: RepoItem) =>
-    vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(repo.url)));
+  vscode.commands.registerCommand('githubRepoMgr.commands.repos.openWebPage', ({ repo }: RepoItem) => {
+    if (hasRepoRemote(repo))
+      return vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(repo.url));
+  });
 
   // Will have .git on the end.
-  vscode.commands.registerCommand('githubRepoMgr.commands.repos.copyRepositoryUrl', ({ repo }: RepoItem) =>
-    vscode.env.clipboard.writeText(`${repo.url}.git`));
+  vscode.commands.registerCommand('githubRepoMgr.commands.repos.copyRepositoryUrl', ({ repo }: RepoItem) => {
+    if (hasRepoRemote(repo))
+      return vscode.env.clipboard.writeText(`${repo.url}.git`);
+  });
 
   // Reload repos
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.reload', () => User.reloadRepos());
@@ -67,10 +72,19 @@ class TreeDataProvider extends BaseTreeDataProvider {
         });
       case RepositoriesState.partial:
       case RepositoriesState.fullyLoaded: {
-        const clonedFromOthers = User.clonedOtherRepos.length
-          ? [getClonedOthersTreeItem()]
+        const userLogin = User.login;
+        if (!userLogin)
+          throw new Error('User.login is not set!');
+
+        const clonedFromOthers = User.otherLocalsRepos.length
+          ? [getClonedOthersTreeItem({ repos: User.otherLocalsRepos })]
           : [];
-        return [getClonedTreeItem(), ...clonedFromOthers, getNotClonedTreeItem()];
+
+        return [
+          getClonedTreeItem({ repos: User.clonedRepos, userLogin }),
+          ...clonedFromOthers,
+          getNotClonedTreeItem({ userOrgs: User.organizations }),
+        ];
       }
     }
   }

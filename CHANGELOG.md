@@ -1,5 +1,10 @@
 # Change Log : GitHub Repository Manager
 
+## 1.7.0
+* Added icons to `Cloned - Others` repositories.
+* Added support for repositories without remote in `Cloned - Others`
+* Removed `<ownerName> / ` from cloned repositories labels that you are not owner. Now only the repository name will show. They are still sorted last.
+
 ## 1.6.0
 * Added `Cloned - Others` tree for local repositories that aren't from the user or from an organization the user is part of. For now they must have a remote URL. Later I will add support for repositories without remote.
 * Added `Delete` to cloned repositories' context menu. It has a confirmation and informs if the repository is dirty, but still, be careful!

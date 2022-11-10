@@ -5,6 +5,7 @@ import { commands, env, ThemeIcon, Uri, window, workspace } from 'vscode';
 import { isGitDirty } from '../../commands/git/dirtiness/dirtiness';
 import { noLocalSearchPaths } from '../../commands/searchClonedRepos/searchClonedRepos';
 import type { Repository } from '../../store/repository';
+import { hasRepoRemote } from '../../store/repository';
 import { User } from '../../store/user';
 import { TreeItem } from '../treeViewBase';
 import { RepoItem } from './repoItem';
@@ -12,29 +13,33 @@ import { RepoItem } from './repoItem';
 
 export function activateClonedRepos(): void {
   // Open
-  commands.registerCommand('githubRepoMgr.commands.clonedRepos.open', ({ repo }: RepoItem) =>
-    repo.localPath && commands.executeCommand('vscode.openFolder', Uri.file(repo.localPath)));
+  commands.registerCommand('githubRepoMgr.commands.clonedRepos.open', ({ repo }: RepoItem<true>) =>
+    repo.localPath && commands.executeCommand('vscode.openFolder', Uri.file(repo.localPath)),
+  );
 
   // Open in New Window
-  commands.registerCommand('githubRepoMgr.commands.clonedRepos.openInNewWindow', ({ repo }: RepoItem) =>
-    repo.localPath && commands.executeCommand('vscode.openFolder', Uri.file(repo.localPath), true));
+  commands.registerCommand('githubRepoMgr.commands.clonedRepos.openInNewWindow', ({ repo }: RepoItem<true>) =>
+    commands.executeCommand('vscode.openFolder', Uri.file(repo.localPath), true),
+  );
 
   // Add to Workspace
-  commands.registerCommand('githubRepoMgr.commands.clonedRepos.addToWorkspace', ({ repo }: RepoItem) =>
-    repo.localPath && workspace.updateWorkspaceFolders(workspace.workspaceFolders?.length ?? 0, 0, { uri: Uri.file(repo.localPath) }));
+  commands.registerCommand('githubRepoMgr.commands.clonedRepos.addToWorkspace', ({ repo }: RepoItem<true>) =>
+    workspace.updateWorkspaceFolders(workspace.workspaceFolders?.length ?? 0, 0, { uri: Uri.file(repo.localPath) }),
+  );
 
   // Open Containing Folder
-  commands.registerCommand('githubRepoMgr.commands.clonedRepos.openContainingFolder', ({ repo }: RepoItem) =>
+  commands.registerCommand('githubRepoMgr.commands.clonedRepos.openContainingFolder', ({ repo }: RepoItem<true>) =>
     // revealFileInOS always open the parent path. So, to open the repo dir in fact, we pass the
-    repo.localPath && commands.executeCommand('revealFileInOS', Uri.file(path.resolve(repo.localPath, '.git'))));
+    commands.executeCommand('revealFileInOS', Uri.file(path.resolve(repo.localPath, '.git'))),
+  );
 
   // Copy local path to clipboard
-  commands.registerCommand('githubRepoMgr.commands.clonedRepos.copyPath', ({ repo }: RepoItem) => {
-    repo.localPath && void env.clipboard.writeText(repo.localPath);
+  commands.registerCommand('githubRepoMgr.commands.clonedRepos.copyPath', ({ repo }: RepoItem<true>) => {
+    void env.clipboard.writeText(repo.localPath);
   });
 
   // Delete repo
-  commands.registerCommand('githubRepoMgr.commands.clonedRepos.delete', async ({ repo }: RepoItem) => {
+  commands.registerCommand('githubRepoMgr.commands.clonedRepos.delete', async ({ repo }: RepoItem<true>) => {
     if (!repo.localPath)
       return; // DO nothing if repo hasn't local path
     const isDirty = await isGitDirty(repo.localPath);
@@ -69,8 +74,8 @@ export function activateClonedRepos(): void {
   });
 }
 
-function parseChildren(clonedRepos: Repository[], userLogin?: string): TreeItem | TreeItem[] {
-  return clonedRepos.map((repo) => new RepoItem({
+function parseChildren(repos: Repository[]): TreeItem | TreeItem[] {
+  return repos.map((repo) => new RepoItem({
     repo,
     contextValue: 'githubRepoMgr.context.clonedRepo',
     command: {
@@ -78,20 +83,18 @@ function parseChildren(clonedRepos: Repository[], userLogin?: string): TreeItem 
       command: 'githubRepoMgr.commands.clonedRepos.open',
       arguments: [{ repo }],
     },
-    includeOwner: repo.ownerLogin !== userLogin,
+    includeOwner: false, // !!userLogin && repo.ownerLogin !== userLogin, // we disabled that
   }));
 }
 
-function sortClonedRepos(clonedRepos: Repository[], userLogin?: string): Repository[] {
-  return clonedRepos.sort((a, b) => {
+function sortClonedRepos<R extends Repository<true, 'user-is-member'>[]>(repos: R, userLogin: string): R {
+  return repos.sort((a, b) => {
 
-    if (userLogin) {
-      // User repos comes first
-      if (a.ownerLogin === userLogin && b.ownerLogin !== userLogin)
-        return -1;
-      if (a.ownerLogin !== userLogin && b.ownerLogin === userLogin)
-        return 1;
-    }
+    // User repos comes first
+    if (a.ownerLogin === userLogin && b.ownerLogin !== userLogin)
+      return -1;
+    if (a.ownerLogin !== userLogin && b.ownerLogin === userLogin)
+      return 1;
 
     // Different Authors are sorted (ownerLogin === userLogin doesn't enter this block)
     if (a.ownerLogin !== b.ownerLogin)
@@ -105,11 +108,11 @@ function sortClonedRepos(clonedRepos: Repository[], userLogin?: string): Reposit
 }
 
 // TODO: Add remember cloned repos when not logged option?
-export function getClonedTreeItem(): TreeItem {
-  if (!User.login)
-    throw new Error('User.login is not set!');
-
-  const sortedRepos = sortClonedRepos(User.clonedRepos, User.login);
+export function getClonedTreeItem({ repos, userLogin }: {
+  repos: Repository<true, 'user-is-member'>[];
+  userLogin: string;
+}): TreeItem {
+  const sortedRepos = sortClonedRepos(repos, userLogin);
   return new TreeItem({
     label: 'Cloned',
     children: noLocalSearchPaths
@@ -118,16 +121,41 @@ export function getClonedTreeItem(): TreeItem {
         command: 'githubRepoMgr.commands.pick.defaultCloneDirectory',
         iconPath: new ThemeIcon('file-directory'),
       })
-      : parseChildren(sortedRepos, User.login),
+      : parseChildren(sortedRepos),
   });
 }
 
 
+function sortOtherLocalRepos<R extends Repository<true, 'no-remote' | 'user-not-member'>[]>(repos: R): R {
+  return repos.sort((a, b) => {
+    const aHasRemote = hasRepoRemote(a);
+    const bHasRemote = hasRepoRemote(b);
+
+    // Repos with remote come first
+    if (aHasRemote && !bHasRemote)
+      return -1;
+    if (!aHasRemote && bHasRemote)
+      return 1;
+
+    // If both repos have remote and diff owner name, sort by it
+    // Different Authors are sorted
+    if (aHasRemote && bHasRemote && a.ownerLogin !== b.ownerLogin)
+      return (a.ownerLogin.toLocaleUpperCase() < b.ownerLogin.toLocaleUpperCase())
+        ? -1 : 1;
+
+    // If same owner login, repos are sorted by name.
+    return (a.name.toLocaleUpperCase() < b.name.toLocaleUpperCase())
+      ? -1 : 1;
+  });
+}
+
 // TODO: Add remember cloned repos when not logged option?
-export function getClonedOthersTreeItem(): TreeItem {
-  const sortedRepos = sortClonedRepos(User.clonedOtherRepos);
+export function getClonedOthersTreeItem({ repos }: {
+  repos: Repository<true, 'no-remote' | 'user-not-member'>[];
+}): TreeItem {
+  const sortedRepos = sortOtherLocalRepos(repos);
   return new TreeItem({
     label: 'Cloned - Others',
-    children: parseChildren(sortedRepos, User.login),
+    children: parseChildren(sortedRepos),
   });
 }
