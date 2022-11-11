@@ -1,8 +1,9 @@
 import os from 'os';
 import vscode from 'vscode';
-import { extensionIdentifier } from './consts';
 
-/** Will prefix it with `${extensionIdentifier}.` */
+export const extensionIdentifier = 'githubRepoMgr';
+
+/** Will prefix it with `${extensionIdentifier}.` Is it required? */
 export async function myExtensionSetContext(
   context: string,
   value: any,

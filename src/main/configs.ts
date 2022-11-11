@@ -11,16 +11,16 @@ function getConfig<T>(section: string, defaultVal: T): T {
   );
 }
 
-class ConfigsClass {
-  get alwaysCloneToDefaultDirectory() {
+export class Configs {
+  static get alwaysCloneToDefaultDirectory(): boolean {
     return getConfig<boolean>('alwaysCloneToDefaultDirectory', false);
   }
 
-  get defaultCloneDirectoryMaximumDepth() {
-    return getConfig<number>('defaultCloneDirectoryMaximumDepth', 3);
+  static get defaultCloneDirectoryMaximumDepth(): number {
+    return getConfig<number>('defaultCloneDirectoryMaximumDepth', 2);
   }
 
-  get directoriesToIgnore() {
+  static get directoriesToIgnore(): string[] {
     return getConfig<string[]>('directoriesToIgnore', [
       '.vscode',
       '.git',
@@ -28,15 +28,13 @@ class ConfigsClass {
     ]);
   }
 
-  get gitDefaultCloneDir(): string | undefined {
+  static get gitDefaultCloneDir(): string | undefined {
     let path = workspace.getConfiguration('git').get<string>('defaultCloneDirectory');
     if (path) path = path.replace(/^~/, os.homedir());
     return path;
   }
 
-  get defaultCloneToDir(): string {
+  static get defaultCloneToDir(): string {
     return this.gitDefaultCloneDir || os.homedir();
   }
 }
-
-export const Configs = new ConfigsClass();

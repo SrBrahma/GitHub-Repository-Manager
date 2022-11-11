@@ -1,8 +1,7 @@
 import path from 'path';
 import execa from 'execa';
 import fse from 'fs-extra';
-import { getRepositoryGitUrl } from '../getRepositoryGitUrl';
-import { pathHasGit } from '../pathHasGit/pathHasGit';
+import { getRepositoryGitUrl, pathHasGit } from './utils';
 
 type Options = {
   /** If defined, will add remote and a branch with it as remote. '.git' is added to its end. */

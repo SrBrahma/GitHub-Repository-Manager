@@ -2,8 +2,8 @@ import path from 'path';
 import fse from 'fs-extra';
 import type { MessageItem } from 'vscode';
 import { commands, env, ThemeIcon, Uri, window, workspace } from 'vscode';
-import { isGitDirty } from '../../commands/git/dirtiness/dirtiness';
-import { noLocalSearchPaths } from '../../commands/searchClonedRepos/searchClonedRepos';
+import { isGitDirty } from '../../commands/git/dirtiness';
+import { noLocalSearchPaths } from '../../commands/git/searchClonedRepos';
 import type { Repository } from '../../store/repository';
 import { hasRepoRemote } from '../../store/repository';
 import { User } from '../../store/user';
@@ -64,6 +64,7 @@ export function activateClonedRepos(): void {
       const title = isDirty
         ? `Delete DIRTY ${repo.name} repository?`
         : `Delete ${repo.name} repository?`;
+
       const message = isDirty
         ? `The repository is DIRTY; there are uncommitted local changes. Are you sure you want to locally delete this repository? This action is IRREVERSIBLE.`
         : `Are you sure you want to locally delete the repository? This action is irreversible.`;
@@ -89,8 +90,8 @@ export function activateClonedRepos(): void {
             `Locally deleted the ${repo.name} repository.`,
           );
           await User.reloadRepos();
-        } catch (err) {
-          void window.showErrorMessage((err as any).message);
+        } catch (err: any) {
+          void window.showErrorMessage(err.message);
         } finally {
           disposable.dispose();
         }

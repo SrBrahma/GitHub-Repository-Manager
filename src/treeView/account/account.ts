@@ -1,5 +1,5 @@
 import vscode, { ThemeIcon } from 'vscode';
-import { noLocalSearchPaths } from '../../commands/searchClonedRepos/searchClonedRepos';
+import { noLocalSearchPaths } from '../../commands/git/searchClonedRepos';
 import { User, UserState } from '../../store/user';
 import { BaseTreeDataProvider, TreeItem } from '../treeViewBase';
 
@@ -7,6 +7,7 @@ export let accountTreeDataProvider: TreeDataProvider;
 
 export function activateTreeViewAccount(): void {
   accountTreeDataProvider = new TreeDataProvider();
+
   vscode.window.registerTreeDataProvider(
     'githubRepoMgr.views.account',
     accountTreeDataProvider,
@@ -27,12 +28,6 @@ export function activateTreeViewAccount(): void {
         );
     },
   );
-
-  // Open Extension README
-  // vscode.commands.registerCommand('githubRepoMgr.commands.user.openReadme', async () => {
-  //   if (User.profileUri)
-  //     await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://github.com/SrBrahma/GitHub-Repository-Manager#github-repository-manager'));
-  // });
 }
 
 // There is a TreeItem from vscode. Should I use it? But it would need a workaround to
@@ -46,7 +41,7 @@ class TreeDataProvider extends BaseTreeDataProvider {
     switch (User.state) {
       case UserState.errorLogging: // TODO: Bad when token already stored and we have a connection error
         return new TreeItem({ label: 'An error happened!' });
-      case UserState.notLogged: // If going to change it, beware it is also being used in helpers.loadUser().
+      case UserState.notLogged:
         return []; // Empty, do show nothing.
       case UserState.init:
       case UserState.logging:
@@ -82,11 +77,6 @@ export function getLoggedTreeData(): TreeItem[] {
                 iconPath: new ThemeIcon('file-directory'),
               }),
             ]),
-        // new TreeItem({
-        //   label: ' Open extension Readme',
-        //   command: 'githubRepoMgr.commands.user.openReadme',
-        //   iconPath: new ThemeIcon('notebook'),
-        // }), // TODO Looked awful, annoying. Find a better way to point to it.
       ],
     }),
   ];

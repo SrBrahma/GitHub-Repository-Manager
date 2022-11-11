@@ -1,6 +1,6 @@
 import path from 'path';
 import { commands, Uri, window, workspace } from 'vscode';
-import { cloneRepo } from '../commands/git/cloneRepository/cloneRepository';
+import { cloneRepo } from '../commands/git/clone';
 import { Configs } from '../main/configs';
 import { User } from '../store/user';
 
@@ -13,10 +13,6 @@ import { User } from '../store/user';
 // Uses the repoName in the openLabel, as the user could missclick the desired repo,
 // and clone a wrong one.
 // This '/' is to give to the user a  hint that it will create a directory.
-
-const openStr = 'Open';
-const openInNewWindowStr = 'Open in New Window';
-const addToWorkspaceStr = 'Add to Workspace';
 
 // TODO: Add cancel button
 /** Doesn't throw errors. */
@@ -79,6 +75,10 @@ export async function uiCloneTo({
   await Promise.all([
     reloadRepos ? User.reloadRepos() : undefined,
     (async () => {
+      const openStr = 'Open';
+      const openInNewWindowStr = 'Open in New Window';
+      const addToWorkspaceStr = 'Add to Workspace';
+
       const action = await window.showInformationMessage(
         `Cloned ${name} to ${repoPath}!`,
         openStr,

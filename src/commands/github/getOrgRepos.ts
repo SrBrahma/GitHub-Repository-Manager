@@ -1,62 +1,20 @@
 // GitHub GraphQL API Explorer: https://docs.github.com/en/graphql/overview/explorer
 
+import type { Octokit } from '@octokit/rest';
 import type { Repository } from '../../store/repository';
-import { octokit } from '../../store/user';
-import { getOctokitErrorMessage } from './getOctokitErrorMessage';
+import {
+  extractRepositoryFromData,
+  getOctokitErrorMessage,
+  repoInfosQuery,
+} from './queryUtils';
 
-export function extractRepositoryFromData(
-  data: any,
-): Repository<false, 'user-is-member'> {
-  return {
-    name: data.name,
-    description: data.description,
-    ownerLogin: data.owner.login,
-    languageName: data.primaryLanguage?.name,
-    url: data.url,
-
-    isPrivate: data.isPrivate,
-    isFork: data.isFork,
-    isTemplate: data.isTemplate,
-
-    // parent may be null if isn't a fork.
-    parentRepoName: data.parent?.name,
-    parentRepoOwnerLogin: data.parent?.owner.login,
-
-    createdAt: new Date(data.createdAt),
-    updatedAt: new Date(data.updatedAt),
-  };
-}
-
-/** Used for both orgRepos and userRepos.
- *
- * The different indendation from query doesn't matter. https://stackoverflow.com/q/62398415/10247962 */
-export const repoInfosQuery = `
-name
-description
-owner {
-  login
-}
-primaryLanguage {
-  name
-}
-url
-isPrivate
-isFork
-isTemplate
-parent {
-  name
-  owner {
-    login
-  }
-}
-createdAt
-updatedAt
-`;
-
-export async function getOrgRepos(
-  login: string,
-): Promise<Repository<false, 'user-is-member'>[]> {
-  if (!octokit) throw new Error('Octokit not set up!');
+export async function getOrgRepos({
+  login,
+  octokit,
+}: {
+  login: string;
+  octokit: Octokit;
+}): Promise<Repository<false, 'user-is-member'>[]> {
   try {
     const repos: Repository<false, 'user-is-member'>[] = [];
 
@@ -85,7 +43,7 @@ export async function getOrgRepos(
 }
 
 const query = `
-query getOrgRepos ($after: String, $org: String!) {
+query getOrgReposQuery ($after: String, $org: String!) {
   viewer {
     organization(login: $org) {
       repositories(

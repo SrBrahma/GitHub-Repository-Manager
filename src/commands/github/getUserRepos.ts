@@ -1,13 +1,18 @@
 // GitHub GraphQL API Explorer: https://docs.github.com/en/graphql/overview/explorer
 
+import type { Octokit } from '@octokit/rest';
 import type { Repository } from '../../store/repository';
-import { octokit } from '../../store/user';
-import { getOctokitErrorMessage } from './getOctokitErrorMessage';
-import { extractRepositoryFromData, repoInfosQuery } from './getOrgRepos';
+import {
+  extractRepositoryFromData,
+  getOctokitErrorMessage,
+  repoInfosQuery,
+} from './queryUtils';
 
-export async function getUserRepos(): Promise<Repository<false, 'user-is-member'>[]> {
-  if (!octokit) throw new Error('Octokit not set up!');
-
+export async function getUserRepos({
+  octokit,
+}: {
+  octokit: Octokit;
+}): Promise<Repository<false, 'user-is-member'>[]> {
   try {
     const repos: Repository<false, 'user-is-member'>[] = [];
     // For pagination (if user has more repos than the query results (current max per query is 100))
@@ -36,7 +41,7 @@ export async function getUserRepos(): Promise<Repository<false, 'user-is-member'
 
 // Made with https://developer.github.com/v4/explorer/
 const query = `
-query getRepos ($after: String) {
+query getReposQuery ($after: String) {
   viewer {
     repositories(
       first: 100, after: $after

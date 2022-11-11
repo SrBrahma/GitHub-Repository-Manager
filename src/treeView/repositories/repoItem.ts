@@ -1,6 +1,6 @@
 import os from 'os';
 import vscode, { ThemeColor } from 'vscode';
-import type { Dirtiness } from '../../commands/git/dirtiness/dirtiness';
+import type { Dirtiness } from '../../commands/git/dirtiness';
 import type { Remote, Repository } from '../../store/repository';
 import { hasRepoRemoteWithUserAccess, isRepoOnDisk } from '../../store/repository';
 import type { TreeItemConstructor } from '../treeViewBase';
@@ -34,51 +34,48 @@ function getIcon(repo: Repository): vscode.ThemeIcon | undefined {
 const dirtyToMessage: Record<Dirtiness, string> = {
   clean: '',
   dirty: 'This repository has local changes',
-  error:
-    'An error has happened while getting dirtiness state! Read extension Output!',
+  error: 'An error happened while getting dirtiness state! Read extension Output!',
   unknown: "Checking if it's dirty...",
 };
 
-// + (repo.isTemplate ? ' | Template' : '') //TODO
+// TODO Maybe for windows it requires regex escape?
+// os.homedir e.g. = linux: '/home/user'
+const prettifyLocalPath = (path: string): string => {
+  return path.replace(RegExp(`^${os.homedir()}`), '~');
+};
+
+// the | &nbsp; | adds a little more spacing.
 function getTooltip(repo: Repository) {
-  // the | &nbsp; | adds a little more spacing.
-  const R = hasRepoRemoteWithUserAccess(repo) ? repo : undefined;
-  const D = isRepoOnDisk(repo) ? repo : undefined;
-  // TODO Maybe for windows it requires regex escape?
-  // os.homedir e.g. = linux: '/home/user'
-  const localPath = !D
-    ? undefined
-    : D.localPath.replace(RegExp(`^${os.homedir()}`), '~');
+  const repoWithUserAccess = hasRepoRemoteWithUserAccess(repo) ? repo : undefined;
+  const R = (fun: (f: Repository<boolean, 'user-is-member'>) => string): string =>
+    repoWithUserAccess ? fun(repoWithUserAccess) : '';
+
+  const repoOnDisk = isRepoOnDisk(repo) ? repo : undefined;
+  const D = (fun: (fun: Repository<true, Remote>) => string): string =>
+    repoOnDisk ? fun(repoOnDisk) : '';
 
   const string =
     `
 |     |     |     |
 | --- | --- | --- |
 **Name** | &nbsp; | ${repo.name}` +
-    (!R
-      ? ''
-      : `\r\n**Description** | &nbsp; | ${
-          R.description ? R.description : 'No description'
-        }`) +
-    (!R ? '' : `\r\n**Author** | &nbsp; | ${R.ownerLogin}`) +
-    (!R
-      ? ''
-      : `\r\n**Visibility** | &nbsp; | ${R.isPrivate ? 'Private' : 'Public'}`) +
-    (!R ? '' : R.languageName ? `\r\n**Language** | &nbsp; |${R.languageName}` : '') +
-    (!R
-      ? ''
-      : R.isFork
-      ? `\r\n**Fork of** | &nbsp; | ${R.parentRepoOwnerLogin} / ${R.parentRepoName}`
-      : '') +
-    (!R ? '' : `\r\n**Updated at** | &nbsp; | ${R.updatedAt}`) +
-    (!R ? '' : `\r\n**Created at** | &nbsp; | ${R.createdAt}`) +
-    (!D ? '' : `\r\n**Local path** | &nbsp; | ${localPath}`) +
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    (!D
-      ? ''
-      : D.dirty !== 'clean'
-      ? `\r\n**Dirty** | &nbsp; | ${dirtyToMessage[D.dirty]}`
-      : '');
+    R((r) => `\r\n**Description** | &nbsp; | ${r.description || 'No description'}`) +
+    R((r) => `\r\n**Author** | &nbsp; | ${r.ownerLogin}`) +
+    R((r) => `\r\n**Visibility** | &nbsp; | ${r.isPrivate ? 'Private' : 'Public'}`) +
+    R((r) => (r.languageName ? `\r\n**Language** | &nbsp; |${r.languageName}` : '')) +
+    R((r) =>
+      r.isFork
+        ? `\r\n**Fork of** | &nbsp; | ${r.parentRepoOwnerLogin} / ${r.parentRepoName}`
+        : '',
+    ) +
+    R((r) => `\r\n**Updated at** | &nbsp; | ${r.updatedAt.toLocaleString()}`) +
+    R((r) => `\r\n**Created at** | &nbsp; | ${r.createdAt.toLocaleString()}`) +
+    D((r) => `\r\n**Local path** | &nbsp; | ${prettifyLocalPath(r.localPath)}`) +
+    D((r) =>
+      r.dirty !== 'clean'
+        ? `\r\n**Dirty** | &nbsp; | ${dirtyToMessage[r.dirty]}`
+        : '',
+    );
 
   return new vscode.MarkdownString(string);
 }

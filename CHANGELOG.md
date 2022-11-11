@@ -4,13 +4,18 @@
 
 - Added icons to `Cloned - Others` repositories.
 - Added support for repositories without remote in `Cloned - Others`
+- Changed `defaultCloneDirectoryMaximumDepth` setting from 3 to 2 as it was said to be in Readme.
 - Removed `<ownerName> / ` from cloned repositories labels that you are not owner. Now only the repository name will show. They are still sorted last.
+- Removed button for creating GitHub repository for existing project (that button). I really didn't remember that this existed and I no longer find it useful. Maybe I should even remove the '+' button there. VSCode has a similar functionality already integrated.
+
+  ![](images/changelog/1_7_0.png)
 
 #### Inner
 
 - Moved to `pnpm`
 - Removed `ESLint` formatting rules and added `Prettier`
 - Moved from `webpack` to `esbuild`
+- Many code improvements and simplifications.
 
 ## 1.6.0
 

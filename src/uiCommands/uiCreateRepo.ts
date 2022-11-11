@@ -1,8 +1,8 @@
 import vscode from 'vscode';
 import type { CreateGitHubRepositoryReturn } from '../commands/github/createGitHubRepository';
 import { createGitHubRepository } from '../commands/github/createGitHubRepository';
+import { myQuickPick } from '../main/myQuickPick';
 import { User } from '../store/user';
-import { myQuickPick } from '../vscode/myQuickPick';
 import { uiCloneTo } from './uiCloneTo';
 
 export type NewRepository = CreateGitHubRepositoryReturn;
@@ -24,7 +24,9 @@ export async function uiCreateRepoCore(options: {
     /** If undefined, should create repository to the user */
     let organizationLogin: string | undefined = undefined;
 
-    const orgsUserCanCreateRepo = User.organizationUserCanCreateRepositories;
+    const orgsUserCanCreateRepo = User.organizations.filter(
+      (o) => o.userCanCreateRepositories,
+    );
 
     if (orgsUserCanCreateRepo.length === 0) {
       return; // Do nothing. The user just hasn't loaded yet!

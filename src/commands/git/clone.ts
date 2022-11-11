@@ -27,8 +27,8 @@
 import path from 'path';
 import execa from 'execa';
 import fse from 'fs-extra';
-import { getRemoteHead as getRemoteHeadBranch } from '../getRemoteHeadBranch/getRemoteHeadBranch';
-import { getRepositoryGitUrl } from '../getRepositoryGitUrl';
+import { getRemoteHead as getRemoteHeadBranch } from './getRemoteHeadBranch';
+import { getRepositoryGitUrl } from './utils';
 
 export async function cloneRepo(options: {
   repositoryName: string;

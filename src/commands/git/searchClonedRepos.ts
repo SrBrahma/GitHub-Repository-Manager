@@ -64,12 +64,9 @@ export async function getLocalReposPathAndUrl(): Promise<DirWithGitUrl[]> {
 
   // Get starting search paths.
   const startingSearchPaths = getStartingSearchPaths();
-  if (startingSearchPaths.length === 0) {
-    noLocalSearchPaths = true;
-    return [];
-  }
 
-  noLocalSearchPaths = false; // Reset it if was true
+  noLocalSearchPaths = startingSearchPaths.length === 0;
+  if (!noLocalSearchPaths) return [];
 
   // Get local repositories paths.
   const repositoriesPaths: string[] = [];

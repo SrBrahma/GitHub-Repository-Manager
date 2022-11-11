@@ -1,9 +1,8 @@
 import vscode, { commands, Uri, window, workspace } from 'vscode';
-import { uiCreateRepo } from '../../commandsUi/uiCreateRepo';
-import { uiPublish } from '../../commandsUi/uiPublish/uiPublish';
 import { Configs } from '../../main/configs';
 import { hasRepoRemote } from '../../store/repository';
 import { RepositoriesState, User } from '../../store/user';
+import { uiCreateRepo } from '../../uiCommands/uiCreateRepo';
 import { BaseTreeDataProvider, TreeItem } from '../treeViewBase';
 import {
   activateClonedRepos,
@@ -20,6 +19,7 @@ export function activateTreeViewRepositories(): void {
     'githubRepoMgr.views.repositories',
     repositoriesTreeDataProvider,
   );
+
   User.subscribe('repos', () => {
     repositoriesTreeDataProvider.refresh();
   });
@@ -53,10 +53,6 @@ export function activateTreeViewRepositories(): void {
   // Create Repo
   vscode.commands.registerCommand('githubRepoMgr.commands.repos.createRepo', () =>
     uiCreateRepo(),
-  );
-
-  vscode.commands.registerCommand('githubRepoMgr.commands.repos.publish', () =>
-    uiPublish(),
   );
 
   // Sets the default directory for cloning
@@ -98,7 +94,7 @@ class TreeDataProvider extends BaseTreeDataProvider {
         return new TreeItem({
           label: 'Loading...',
         });
-      case RepositoriesState.partial:
+      case RepositoriesState.checkingDirtiness:
       case RepositoriesState.fullyLoaded: {
         const userLogin = User.login;
         if (!userLogin) throw new Error('User.login is not set!');

@@ -1,10 +1,10 @@
 import { Octokit } from '@octokit/rest';
 import gitUrlParse from 'git-url-parse';
-import vscode from 'vscode';
-import { getDirtiness } from '../commands/git/dirtiness/dirtiness';
-import { getUser } from '../commands/github/getUserData';
-import type { DirWithGitUrl } from '../commands/searchClonedRepos/searchClonedRepos';
-import { getLocalReposPathAndUrl } from '../commands/searchClonedRepos/searchClonedRepos';
+import vscode, { authentication, window } from 'vscode';
+import { getDirtiness } from '../commands/git/dirtiness';
+import type { DirWithGitUrl } from '../commands/git/searchClonedRepos';
+import { getLocalReposPathAndUrl } from '../commands/git/searchClonedRepos';
+import { getUserData } from '../commands/github/getUserData';
 import { myExtensionSetContext } from '../main/utils';
 import { Organization } from './organization';
 import type { Repository } from './repository';
@@ -13,7 +13,6 @@ import { isRepoOnDisk } from './repository';
 const AUTH_PROVIDER_ID = 'github';
 const SCOPES = ['repo', 'read:org'];
 
-// Values are named as we use them to setContext and also for better debugging (console.log(user.state))
 export enum UserState {
   /** On extension start */
   init = 'init',
@@ -32,10 +31,9 @@ export enum RepositoriesState {
   none,
   /** Fetching the repositories list from the server. A "Loading" should be shown. */
   fetching,
-  /** Repos may be shown, but we are still fetching some data or doing local steps.
-   * // TODO rename this! */
-  partial,
-  /** There are no informations remaining to be fetched */
+  /** Repos may be shown, but we are still fetching some data or doing local steps. */
+  checkingDirtiness,
+  /** Everything fetched and done */
   fullyLoaded,
 }
 
@@ -43,7 +41,10 @@ export enum RepositoriesState {
 // be all in reloadRepos().
 
 class UserClass {
-  /** The User current status. */
+  /**
+   * The User current status.
+   * Readonly so we don't change it by accident. Use setUserState().
+   */
   readonly state: UserState = UserState.init;
   /** Used by cloneRepo() */
   token: string | undefined;
@@ -51,7 +52,6 @@ class UserClass {
   login: string | undefined;
   /** The user GitHub url/uri. */
   profileUri: string | undefined;
-  userOrganization: Organization | undefined;
   /** Also includes the user Organization */
   organizations: Organization[] = [];
   /** The User current status. */
@@ -59,12 +59,6 @@ class UserClass {
   clonedRepos: Repository<true, 'user-is-member'>[] = [];
   /** Repositories that are cloned but not from user / user's org */
   otherLocalsRepos: Repository<true>[] = [];
-
-  /** Returns the orgs that the user can create new repositories.
-   * As it uses this.organizations, it includes the user Organization. */
-  get organizationUserCanCreateRepositories() {
-    return this.organizations.filter((o) => o.userCanCreateRepositories);
-  }
 
   /** The ones listening for changes. */
   private subscribers: ['account' | 'repos', () => void][] = [];
@@ -79,6 +73,7 @@ class UserClass {
   /** Will also informSubscribers('account') */
   setUserState(state: UserState) {
     (this.state as any) = state; // as any to override readonly
+    // To be used by package.json when clauses etc
     void myExtensionSetContext('userState', state);
     this.informSubscribers('account');
   }
@@ -89,51 +84,20 @@ class UserClass {
     this.informSubscribers('repos');
   }
 
-  private resetUser(opts: { resetUserStatus: boolean; resetOctokit: boolean }) {
+  private reset({ repositoriesState }: { repositoriesState: RepositoriesState }) {
     this.login = undefined;
     this.profileUri = undefined;
     this.organizations = [];
-    if (opts.resetUserStatus) this.setUserState(UserState.notLogged);
-    if (opts.resetOctokit) {
-      octokit = undefined;
-      this.token = undefined;
-    }
-  }
-
-  private resetRepos(opts: { resetRepositoriesStatus: boolean }) {
     this.clonedRepos = [];
     this.otherLocalsRepos = [];
-    if (opts.resetRepositoriesStatus)
-      this.setRepositoriesState(RepositoriesState.none);
+    this.setRepositoriesState(repositoriesState);
   }
 
-  onLogOut() {
-    this.resetUser({ resetOctokit: true, resetUserStatus: true });
-    this.resetRepos({ resetRepositoriesStatus: true });
-  }
-
-  async activate() {
-    vscode.commands.registerCommand(
-      'githubRepoMgr.commands.auth.vscodeAuth',
-      async () => {
-        try {
-          /** Returns the new authed token. May throw errors. */
-          const token = (
-            await vscode.authentication.getSession(AUTH_PROVIDER_ID, SCOPES, {
-              createIfNone: true,
-            })
-          ).accessToken;
-          await this.initOctokit(token);
-        } catch (err: any) {
-          void vscode.window.showErrorMessage(err.message);
-        }
-      },
-    );
+  private async loadLocalToken() {
     try {
-      // vscode.authentication.onDidChangeSessions(e => ...); // It doesn't get the logout.
       /** Stored token */
       const token = (
-        await vscode.authentication.getSession(AUTH_PROVIDER_ID, SCOPES, {
+        await authentication.getSession(AUTH_PROVIDER_ID, SCOPES, {
           createIfNone: false,
         })
       )?.accessToken;
@@ -141,42 +105,59 @@ class UserClass {
       if (token) await this.initOctokit(token);
       else this.setUserState(UserState.notLogged);
     } catch (err: any) {
-      void vscode.window.showErrorMessage(err.message);
+      void window.showErrorMessage(err.message);
     }
   }
 
+  public activate() {
+    vscode.commands.registerCommand(
+      'githubRepoMgr.commands.auth.vscodeAuth',
+      async () => {
+        try {
+          /** Returns the new authed token. May throw errors. */
+          const token = (
+            await authentication.getSession(AUTH_PROVIDER_ID, SCOPES, {
+              createIfNone: true,
+            })
+          ).accessToken;
+          await this.initOctokit(token);
+        } catch (err: any) {
+          void window.showErrorMessage(err.message);
+        }
+      },
+    );
+    void this.loadLocalToken();
+  }
+
   /** Inits octokit and sets token. */
-  async initOctokit(token: string): Promise<void> {
+  public async initOctokit(token: string): Promise<void> {
     octokit = new Octokit({ auth: token });
     this.token = token;
 
     /** reloadRepos() will change the userState on its end. */
-    await User.reloadRepos().catch((err) => {
-      void vscode.window.showErrorMessage(err.message);
-      console.error('Octokit init error: ', err);
+    await this.reloadRepos().catch((err) => {
+      void window.showErrorMessage(err.message);
       octokit = undefined;
       this.token = undefined;
     });
   }
 
-  private async loadUser(): Promise<void> {
+  private async loadUser({ octokit }: { octokit: Octokit }): Promise<void> {
     try {
       this.setUserState(UserState.logging);
-      const { login, organizations, profileUri } = await getUser();
+      const { login, organizations, profileUri } = await getUserData({ octokit });
       this.login = login;
       this.profileUri = profileUri;
-      // We set name as login. The user real name really isn't useful anywhere here and would be too personal, invasive.
-      this.userOrganization = new Organization({
-        login,
-        name: login,
-        isUserOrg: true,
-        userCanCreateRepositories: true,
-      });
 
-      this.organizations.push(this.userOrganization);
-      this.organizations.push(
+      this.organizations = [
+        new Organization({
+          login,
+          name: login, // Using the user real name could feel too invasive.
+          isUserOrg: true,
+          userCanCreateRepositories: true,
+        }),
         ...organizations.map(
-          (org: any) =>
+          (org) =>
             new Organization({
               isUserOrg: false,
               login: org.login,
@@ -184,24 +165,26 @@ class UserClass {
               userCanCreateRepositories: org.viewerCanCreateRepositories,
             }),
         ),
-      );
+      ];
       this.setUserState(UserState.logged);
     } catch (err: any) {
-      void vscode.window.showErrorMessage(err.message);
+      void window.showErrorMessage(err.message);
       this.setUserState(UserState.errorLogging);
       throw new Error(err);
     }
   }
 
   /** Must be executed after loadUser and loadLocalRepos */
-  private async loadRepos({
+  private async loadRepositories({
     localRepos,
+    octokit,
   }: {
     localRepos: DirWithGitUrl[];
+    octokit: Octokit;
   }): Promise<void> {
     this.setRepositoriesState(RepositoriesState.fetching);
     await Promise.all(
-      this.organizations.map((org) => org.loadOrgRepos({ localRepos })),
+      this.organizations.map((org) => org.loadOrgRepos({ localRepos, octokit })),
     );
 
     // Get dirtyness status of local repos
@@ -222,23 +205,27 @@ class UserClass {
       }));
 
     // To show unknown dirtiness or at least the not-cloned repos, if none is cloned.
-    this.setRepositoriesState(RepositoriesState.partial);
+    this.setRepositoriesState(RepositoriesState.checkingDirtiness);
+
     // Updates dirty forms from time to time while not done
     const interval = setInterval(() => {
       this.informSubscribers('repos');
     }, 250);
 
-    // Check dirty of orgs' local repos
-    await Promise.all(
-      this.organizations.map((org) =>
-        Promise.all(
-          org.clonedRepos.map(async (localRepo) => {
-            localRepo.dirty = await getDirtiness(localRepo.localPath);
-          }),
+    try {
+      // Check dirty of orgs' local repos
+      await Promise.all(
+        this.organizations.map((org) =>
+          Promise.all(
+            org.clonedRepos.map(async (localRepo) => {
+              localRepo.dirty = await getDirtiness(localRepo.localPath);
+            }),
+          ),
         ),
-      ),
-    );
-    clearInterval(interval);
+      );
+    } finally {
+      clearInterval(interval);
+    }
 
     this.setRepositoriesState(RepositoriesState.fullyLoaded);
   }
@@ -246,19 +233,18 @@ class UserClass {
   /** Fetch again the user data and its orgs that he belongs to. */
   // TODO add local reload, for actions like delete to avoid unncessary refetch
   public async reloadRepos(): Promise<void> {
-    if (this.repositoriesState === RepositoriesState.fetching) return; // Don't allow multiple fetches (it should, by cancelling first)
+    if (!octokit) throw new Error('Octokit not set up!');
 
-    this.resetUser({ resetUserStatus: false, resetOctokit: false });
-    this.resetRepos({ resetRepositoriesStatus: false });
-    if (!octokit)
-      // Ignore if octokit not set up, after resetting above.
-      return;
-    this.setRepositoriesState(RepositoriesState.fetching);
-    const [, localRepos] = await Promise.all([
-      this.loadUser(),
+    // Don't allow multiple fetches (it should, by cancelling first)
+    if (this.repositoriesState === RepositoriesState.fetching) return;
+
+    this.reset({ repositoriesState: RepositoriesState.fetching });
+
+    const [localRepos] = await Promise.all([
       getLocalReposPathAndUrl(),
+      this.loadUser({ octokit }),
     ]);
-    await this.loadRepos({ localRepos });
+    await this.loadRepositories({ localRepos, octokit });
   }
 }
 
