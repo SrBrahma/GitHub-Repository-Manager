@@ -1,7 +1,7 @@
 <div align="center">
 
-[![Version](https://vsmarketplacebadges.dev/version-short/henriquebruno.github-repository-manager.svg)](https://marketplace.visualstudio.com/items?itemName=henriqueBruno.github-repository-manager)
-[![Installs](https://vsmarketplacebadges.dev/installs-short/henriquebruno.github-repository-manager.svg)](https://marketplace.visualstudio.com/items?itemName=henriqueBruno.github-repository-manager)
+[![Version](https://img.shields.io/visual-studio-marketplace/v/henriqueBruno.github-repository-manager)](https://marketplace.visualstudio.com/items?itemName=henriqueBruno.github-repository-manager)
+![Installs](https://img.shields.io/visual-studio-marketplace/i/henriqueBruno.github-repository-manager)
 
 </div>
 <h1 align="center">
@@ -22,7 +22,7 @@ VS Code extension that lists your personal and organizations GitHub repositories
 </div>
 <br/>
 
-_This gif is a little old! We are now using the VS Code integrated GitHub login system and the extension is prettier! The gif will be eventually updated!_
+_This gif is a little old! We are now using the VS Code integrated GitHub login system and the extension is prettier!_
 
 <br/>
 
