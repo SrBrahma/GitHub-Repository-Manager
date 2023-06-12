@@ -216,7 +216,7 @@
         "icon": "$(star)"
       },
       {
-        "command": "githubRepoMgr.commands.clonedRepos.setAsFavorite",
+        "command": "githubRepoMgr.commands.clonedRepos.unSetAsFavorite",
         "title": "Unset as Favorite",
         "icon": "$(star-full)"
       },
